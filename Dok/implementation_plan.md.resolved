@@ -1,0 +1,59 @@
+# Implementation Plan: Wave Projects Center.ID MVP
+
+## Goal Description
+Project ini bertujuan untuk membangun platform e-commerce dan manajemen proyek (Wave Projects Center.ID) berbasis Next.js untuk frontend dan Laravel untuk backend API. Sistem dirancang agar dapat dideploy di Vercel Hobby menggunakan layanan gratis seperti TiDB Cloud, Midtrans, Cloudinary, AI Gemini Flash, dan OneSignal.
+Tujuan utama saat ini adalah mewujudkan sistem Core (Backend & API) serta Frontend dasar agar Anda dapat melakukan stress testing / uji beban secara lokal menggunakan K6.
+
+## User Review Required
+> [!IMPORTANT]
+> **Kredensial Layanan Pihak Ketiga:** Untuk menjalankan flow K6 secara utuh (terutama pembuatan Token Midtrans dan integrasi AI Gemini/Cloudinary), apakah Anda sudah memiliki kredensial API? Jika Anda ingin mengujinya secara lokal dan tidak ingin menggunakan API nyata, kita bisa mengimplementasikan "Mock Mode" pada tahap awal untuk simulasi K6. Tolong informasikan apakah ingin mockup atau sudah siap `.env` keys nya.
+
+> [!CAUTION]
+> Pada Vercel Hobby terdapat batasan timeout 10 detik. Sesuai PRD, saya akan mengimplementasikan antrean secara asynchronous (Queue) dan pemicu external via `/api/v1/internal/queue-runner`.
+
+## Proposed Changes
+
+### 1. Struktur Proyek & Inisialisasi
+Akan dibuat 2 direktori utama:
+- `backend/` : Laravel 11.
+- `frontend/` : Next.js 14+ (App Router).
+
+### 2. Backend Laravel Ecosystem (API)
+#### Database Migrations (TiDB Compatible)
+Membuat file migrasi untuk entitas inti sesuai Database Design Document:
+- `users`, `roles`, `packages`.
+- `orders`, `payments`, `attachments`.
+- `generated_prds`, `notifications`, `activity_logs`.
+
+#### API Endpoints (Sesuai K6 Script)
+- **`GET /api/v1/packages`**: Menampilkan daftar paket.
+- **`POST /api/v1/orders/checkout`**: Endpoint transaksi (menghasilkan midtrans snap token, menyimpan order, dispatch job antrean AI PRD & notifikasi). Termasuk X-Idempotency-Key.
+- **`POST /api/v1/payments/callback`**: Webhook midtrans.
+- **`POST /api/v1/files/signature`**: Membuat signature Cloudinary.
+- **`GET /api/v1/internal/queue-runner`**: Eksekusi antrean asinkron (cron).
+
+#### Third-Party Integrations
+- Midtrans PHP SDK / REST wrapper.
+- Gemini API (untuk prompt generasi PRD di background job).
+- OneSignal REST API.
+- Cloudinary Signature Generator.
+
+### 3. Frontend Next.js (Web/App)
+Membuat skeleton aplikasi dengan Tailwind CSS & Komponen dasar:
+- Landing Page (Hero, Packages).
+- Checkout Page (Simulasi upload to Cloudinary & Bayar).
+
+### 4. K6 Load Testing
+Menyalin script k6 ke `k6_test/stress_test_wave.js` sesuai di PRD.
+
+## Verification Plan
+
+### Automated Tests
+1. Menjalankan backend lokal menggunakan `php artisan serve`.
+2. Menjalankan K6 Load Test menggunakan `k6 run k6_test/stress_test_wave.js` dengan target backend lokal.
+3. Memastikan SLA `p(95) < 3000ms` tercapai tanpa limit koneksi.
+
+### Manual Verification
+1. Mengakses Frontend Next.js lokal, melakukan checkout dari browser.
+2. Memeriksa apakah token Midtrans berhasil digenerate di layar browser.
+3. Memastikan background job `Gemini` bisa di picu.
