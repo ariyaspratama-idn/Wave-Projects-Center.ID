@@ -215,8 +215,8 @@ export default function CheckoutPage() {
                     <label className="block text-xs text-gray-400 mb-2">Metode Pembayaran *</label>
                     <div className="flex gap-3">
                         {[
-                            { val: "DP_30" as const, label: "DP 30%", sub: `Rp ${(selectedPkg.price * 0.3).toLocaleString("id-ID")}` },
-                            { val: "FULL" as const, label: "Bayar Penuh", sub: `Rp ${selectedPkg.price.toLocaleString("id-ID")}` },
+                            { val: "DP_30" as const, label: "DP 30%", sub: `Rp ${((selectedPkg?.price || 0) * 0.3).toLocaleString("id-ID")}` },
+                            { val: "FULL" as const, label: "Bayar Penuh", sub: `Rp ${(selectedPkg?.price || 0).toLocaleString("id-ID")}` },
                         ].map((opt) => (
                             <button
                                 type="button"
