@@ -20,3 +20,4 @@ UI-UX.txt
 UI.txt
 extract_docx.py
 .venv/
+.vercel

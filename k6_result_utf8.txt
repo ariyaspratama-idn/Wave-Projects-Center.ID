@@ -1,0 +1,484 @@
+﻿
+         /\      Grafana   /ΓÇ╛ΓÇ╛/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ΓÇ╛ΓÇ╛\ 
+  /          \   |   (  |  (ΓÇ╛)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: stress_test_wave.js
+        output: -
+
+     scenarios: (100.00%) 2 scenarios, 45 max VUs, 2m30s max duration (incl. graceful stop):
+              * browsing_and_chat: Up to 30 looping VUs for 1m45s over 3 stages (gracefulRampDown: 15s, gracefulStop: 30s)
+              * heavy_checkout: 2 iterations for each of 15 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+running (0m01.0s), 15/45 VUs, 0 complete and 0 interrupted iterations
+browsing_and_chat   [   1% ] 00/30 VUs  0m01.0s/1m45.0s
+heavy_checkout      [   0% ] 15 VUs     0m01.0s/2m0s  00/30 iters, 2 per VU
+
+running (0m02.0s), 16/45 VUs, 0 complete and 0 interrupted iterations
+browsing_and_chat   [   2% ] 01/30 VUs  0m02.0s/1m45.0s
+heavy_checkout      [   0% ] 15 VUs     0m02.0s/2m0s  00/30 iters, 2 per VU
+
+running (0m03.0s), 17/45 VUs, 0 complete and 0 interrupted iterations
+browsing_and_chat   [   3% ] 02/30 VUs  0m03.0s/1m45.0s
+heavy_checkout      [   0% ] 15 VUs     0m03.0s/2m0s  00/30 iters, 2 per VU
+
+running (0m04.0s), 18/45 VUs, 15 complete and 0 interrupted iterations
+browsing_and_chat   [   4% ] 03/30 VUs  0m04.0s/1m45.0s
+heavy_checkout      [  50% ] 15 VUs     0m04.0s/2m0s  15/30 iters, 2 per VU
+
+running (0m05.0s), 19/45 VUs, 16 complete and 0 interrupted iterations
+browsing_and_chat   [   5% ] 04/30 VUs  0m05.0s/1m45.0s
+heavy_checkout      [  50% ] 15 VUs     0m05.0s/2m0s  15/30 iters, 2 per VU
+
+running (0m06.0s), 20/45 VUs, 17 complete and 0 interrupted iterations
+browsing_and_chat   [   6% ] 05/30 VUs  0m06.0s/1m45.0s
+heavy_checkout      [  50% ] 15 VUs     0m06.0s/2m0s  15/30 iters, 2 per VU
+
+running (0m07.0s), 06/45 VUs, 33 complete and 0 interrupted iterations
+browsing_and_chat   [   7% ] 06/30 VUs  0m07.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m08.0s), 07/45 VUs, 35 complete and 0 interrupted iterations
+browsing_and_chat   [   8% ] 07/30 VUs  0m08.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m09.0s), 08/45 VUs, 37 complete and 0 interrupted iterations
+browsing_and_chat   [   9% ] 08/30 VUs  0m09.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m10.0s), 09/45 VUs, 39 complete and 0 interrupted iterations
+browsing_and_chat   [  10% ] 09/30 VUs  0m10.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m11.0s), 10/45 VUs, 42 complete and 0 interrupted iterations
+browsing_and_chat   [  10% ] 10/30 VUs  0m11.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m12.0s), 11/45 VUs, 45 complete and 0 interrupted iterations
+browsing_and_chat   [  11% ] 11/30 VUs  0m12.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m13.0s), 12/45 VUs, 48 complete and 0 interrupted iterations
+browsing_and_chat   [  12% ] 12/30 VUs  0m13.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m14.0s), 13/45 VUs, 52 complete and 0 interrupted iterations
+browsing_and_chat   [  13% ] 13/30 VUs  0m14.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m15.0s), 14/45 VUs, 56 complete and 0 interrupted iterations
+browsing_and_chat   [  14% ] 14/30 VUs  0m15.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m16.0s), 15/45 VUs, 60 complete and 0 interrupted iterations
+browsing_and_chat   [  15% ] 15/30 VUs  0m16.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m17.0s), 16/45 VUs, 65 complete and 0 interrupted iterations
+browsing_and_chat   [  16% ] 16/30 VUs  0m17.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m18.0s), 17/45 VUs, 70 complete and 0 interrupted iterations
+browsing_and_chat   [  17% ] 17/30 VUs  0m18.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m19.0s), 18/45 VUs, 75 complete and 0 interrupted iterations
+browsing_and_chat   [  18% ] 18/30 VUs  0m19.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m20.0s), 19/45 VUs, 81 complete and 0 interrupted iterations
+browsing_and_chat   [  19% ] 19/30 VUs  0m20.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m21.0s), 20/45 VUs, 87 complete and 0 interrupted iterations
+browsing_and_chat   [  20% ] 20/30 VUs  0m21.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m22.0s), 21/45 VUs, 93 complete and 0 interrupted iterations
+browsing_and_chat   [  21% ] 21/30 VUs  0m22.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m23.0s), 22/45 VUs, 100 complete and 0 interrupted iterations
+browsing_and_chat   [  22% ] 22/30 VUs  0m23.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m24.0s), 23/45 VUs, 107 complete and 0 interrupted iterations
+browsing_and_chat   [  23% ] 23/30 VUs  0m24.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m25.0s), 24/45 VUs, 114 complete and 0 interrupted iterations
+browsing_and_chat   [  24% ] 24/30 VUs  0m25.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m26.0s), 25/45 VUs, 122 complete and 0 interrupted iterations
+browsing_and_chat   [  25% ] 25/30 VUs  0m26.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m27.0s), 26/45 VUs, 130 complete and 0 interrupted iterations
+browsing_and_chat   [  26% ] 26/30 VUs  0m27.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m28.0s), 27/45 VUs, 138 complete and 0 interrupted iterations
+browsing_and_chat   [  27% ] 27/30 VUs  0m28.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m29.0s), 28/45 VUs, 147 complete and 0 interrupted iterations
+browsing_and_chat   [  28% ] 28/30 VUs  0m29.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m30.0s), 29/45 VUs, 156 complete and 0 interrupted iterations
+browsing_and_chat   [  29% ] 29/30 VUs  0m30.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m31.0s), 30/45 VUs, 165 complete and 0 interrupted iterations
+browsing_and_chat   [  30% ] 30/30 VUs  0m31.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m32.0s), 30/45 VUs, 175 complete and 0 interrupted iterations
+browsing_and_chat   [  30% ] 30/30 VUs  0m32.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m33.0s), 30/45 VUs, 185 complete and 0 interrupted iterations
+browsing_and_chat   [  31% ] 30/30 VUs  0m33.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m34.0s), 30/45 VUs, 195 complete and 0 interrupted iterations
+browsing_and_chat   [  32% ] 30/30 VUs  0m34.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m35.0s), 30/45 VUs, 205 complete and 0 interrupted iterations
+browsing_and_chat   [  33% ] 30/30 VUs  0m35.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m36.0s), 30/45 VUs, 215 complete and 0 interrupted iterations
+browsing_and_chat   [  34% ] 30/30 VUs  0m36.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m37.0s), 30/45 VUs, 225 complete and 0 interrupted iterations
+browsing_and_chat   [  35% ] 30/30 VUs  0m37.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m38.0s), 30/45 VUs, 235 complete and 0 interrupted iterations
+browsing_and_chat   [  36% ] 30/30 VUs  0m38.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m39.0s), 30/45 VUs, 245 complete and 0 interrupted iterations
+browsing_and_chat   [  37% ] 30/30 VUs  0m39.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m40.0s), 30/45 VUs, 255 complete and 0 interrupted iterations
+browsing_and_chat   [  38% ] 30/30 VUs  0m40.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m41.0s), 30/45 VUs, 265 complete and 0 interrupted iterations
+browsing_and_chat   [  39% ] 30/30 VUs  0m41.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m42.0s), 30/45 VUs, 275 complete and 0 interrupted iterations
+browsing_and_chat   [  40% ] 30/30 VUs  0m42.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m43.0s), 30/45 VUs, 285 complete and 0 interrupted iterations
+browsing_and_chat   [  41% ] 30/30 VUs  0m43.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m44.0s), 30/45 VUs, 295 complete and 0 interrupted iterations
+browsing_and_chat   [  42% ] 30/30 VUs  0m44.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m45.0s), 30/45 VUs, 305 complete and 0 interrupted iterations
+browsing_and_chat   [  43% ] 30/30 VUs  0m45.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m46.0s), 30/45 VUs, 315 complete and 0 interrupted iterations
+browsing_and_chat   [  44% ] 30/30 VUs  0m46.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m47.0s), 30/45 VUs, 325 complete and 0 interrupted iterations
+browsing_and_chat   [  45% ] 30/30 VUs  0m47.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m48.0s), 30/45 VUs, 335 complete and 0 interrupted iterations
+browsing_and_chat   [  46% ] 30/30 VUs  0m48.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m49.0s), 30/45 VUs, 345 complete and 0 interrupted iterations
+browsing_and_chat   [  47% ] 30/30 VUs  0m49.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m50.0s), 30/45 VUs, 355 complete and 0 interrupted iterations
+browsing_and_chat   [  48% ] 30/30 VUs  0m50.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m51.0s), 30/45 VUs, 365 complete and 0 interrupted iterations
+browsing_and_chat   [  49% ] 30/30 VUs  0m51.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m52.0s), 30/45 VUs, 375 complete and 0 interrupted iterations
+browsing_and_chat   [  50% ] 30/30 VUs  0m52.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m53.0s), 30/45 VUs, 385 complete and 0 interrupted iterations
+browsing_and_chat   [  50% ] 30/30 VUs  0m53.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m54.1s), 30/45 VUs, 394 complete and 0 interrupted iterations
+browsing_and_chat   [  52% ] 30/30 VUs  0m54.1s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m55.0s), 30/45 VUs, 402 complete and 0 interrupted iterations
+browsing_and_chat   [  52% ] 30/30 VUs  0m55.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m56.0s), 30/45 VUs, 406 complete and 0 interrupted iterations
+browsing_and_chat   [  53% ] 30/30 VUs  0m56.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m57.0s), 30/45 VUs, 408 complete and 0 interrupted iterations
+browsing_and_chat   [  54% ] 30/30 VUs  0m57.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m58.0s), 30/45 VUs, 419 complete and 0 interrupted iterations
+browsing_and_chat   [  55% ] 30/30 VUs  0m58.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (0m59.0s), 30/45 VUs, 426 complete and 0 interrupted iterations
+browsing_and_chat   [  56% ] 30/30 VUs  0m59.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m00.0s), 30/45 VUs, 438 complete and 0 interrupted iterations
+browsing_and_chat   [  57% ] 30/30 VUs  1m00.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m01.0s), 30/45 VUs, 449 complete and 0 interrupted iterations
+browsing_and_chat   [  58% ] 30/30 VUs  1m01.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m02.0s), 30/45 VUs, 456 complete and 0 interrupted iterations
+browsing_and_chat   [  59% ] 30/30 VUs  1m02.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m03.0s), 30/45 VUs, 468 complete and 0 interrupted iterations
+browsing_and_chat   [  60% ] 30/30 VUs  1m03.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m04.0s), 30/45 VUs, 479 complete and 0 interrupted iterations
+browsing_and_chat   [  61% ] 30/30 VUs  1m04.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m05.1s), 30/45 VUs, 484 complete and 0 interrupted iterations
+browsing_and_chat   [  62% ] 30/30 VUs  1m05.1s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m06.2s), 30/45 VUs, 496 complete and 0 interrupted iterations
+browsing_and_chat   [  63% ] 30/30 VUs  1m06.2s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m07.0s), 30/45 VUs, 497 complete and 0 interrupted iterations
+browsing_and_chat   [  64% ] 30/30 VUs  1m07.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m08.0s), 30/45 VUs, 509 complete and 0 interrupted iterations
+browsing_and_chat   [  65% ] 30/30 VUs  1m08.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m09.0s), 30/45 VUs, 517 complete and 0 interrupted iterations
+browsing_and_chat   [  66% ] 30/30 VUs  1m09.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m10.0s), 30/45 VUs, 527 complete and 0 interrupted iterations
+browsing_and_chat   [  67% ] 30/30 VUs  1m10.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m11.0s), 30/45 VUs, 539 complete and 0 interrupted iterations
+browsing_and_chat   [  68% ] 30/30 VUs  1m11.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m12.0s), 30/45 VUs, 547 complete and 0 interrupted iterations
+browsing_and_chat   [  69% ] 30/30 VUs  1m12.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m13.0s), 30/45 VUs, 557 complete and 0 interrupted iterations
+browsing_and_chat   [  70% ] 30/30 VUs  1m13.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m14.0s), 30/45 VUs, 569 complete and 0 interrupted iterations
+browsing_and_chat   [  70% ] 30/30 VUs  1m14.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m15.0s), 30/45 VUs, 577 complete and 0 interrupted iterations
+browsing_and_chat   [  71% ] 30/30 VUs  1m15.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m16.0s), 30/45 VUs, 587 complete and 0 interrupted iterations
+browsing_and_chat   [  72% ] 30/30 VUs  1m16.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m17.0s), 30/45 VUs, 599 complete and 0 interrupted iterations
+browsing_and_chat   [  73% ] 30/30 VUs  1m17.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m18.0s), 30/45 VUs, 607 complete and 0 interrupted iterations
+browsing_and_chat   [  74% ] 30/30 VUs  1m18.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m19.0s), 30/45 VUs, 617 complete and 0 interrupted iterations
+browsing_and_chat   [  75% ] 30/30 VUs  1m19.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m20.0s), 30/45 VUs, 629 complete and 0 interrupted iterations
+browsing_and_chat   [  76% ] 30/30 VUs  1m20.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m21.0s), 30/45 VUs, 637 complete and 0 interrupted iterations
+browsing_and_chat   [  77% ] 30/30 VUs  1m21.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m22.0s), 30/45 VUs, 647 complete and 0 interrupted iterations
+browsing_and_chat   [  78% ] 30/30 VUs  1m22.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m23.0s), 30/45 VUs, 659 complete and 0 interrupted iterations
+browsing_and_chat   [  79% ] 30/30 VUs  1m23.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m24.0s), 30/45 VUs, 667 complete and 0 interrupted iterations
+browsing_and_chat   [  80% ] 30/30 VUs  1m24.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m25.0s), 30/45 VUs, 677 complete and 0 interrupted iterations
+browsing_and_chat   [  81% ] 30/30 VUs  1m25.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m26.0s), 30/45 VUs, 689 complete and 0 interrupted iterations
+browsing_and_chat   [  82% ] 30/30 VUs  1m26.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m27.0s), 30/45 VUs, 696 complete and 0 interrupted iterations
+browsing_and_chat   [  83% ] 30/30 VUs  1m27.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m28.0s), 30/45 VUs, 707 complete and 0 interrupted iterations
+browsing_and_chat   [  84% ] 30/30 VUs  1m28.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m29.0s), 30/45 VUs, 718 complete and 0 interrupted iterations
+browsing_and_chat   [  85% ] 30/30 VUs  1m29.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m30.0s), 30/45 VUs, 725 complete and 0 interrupted iterations
+browsing_and_chat   [  86% ] 30/30 VUs  1m30.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m31.0s), 30/45 VUs, 737 complete and 0 interrupted iterations
+browsing_and_chat   [  87% ] 30/30 VUs  1m31.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m32.0s), 29/45 VUs, 748 complete and 0 interrupted iterations
+browsing_and_chat   [  88% ] 29/30 VUs  1m32.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m33.0s), 27/45 VUs, 755 complete and 0 interrupted iterations
+browsing_and_chat   [  89% ] 27/30 VUs  1m33.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m34.0s), 24/45 VUs, 767 complete and 0 interrupted iterations
+browsing_and_chat   [  90% ] 24/30 VUs  1m34.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m35.0s), 22/45 VUs, 776 complete and 0 interrupted iterations
+browsing_and_chat   [  90% ] 22/30 VUs  1m35.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m36.0s), 20/45 VUs, 782 complete and 0 interrupted iterations
+browsing_and_chat   [  91% ] 20/30 VUs  1m36.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m37.0s), 19/45 VUs, 791 complete and 0 interrupted iterations
+browsing_and_chat   [  92% ] 19/30 VUs  1m37.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m38.0s), 17/45 VUs, 798 complete and 0 interrupted iterations
+browsing_and_chat   [  93% ] 17/30 VUs  1m38.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m39.0s), 16/45 VUs, 802 complete and 0 interrupted iterations
+browsing_and_chat   [  94% ] 16/30 VUs  1m39.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m40.0s), 13/45 VUs, 810 complete and 0 interrupted iterations
+browsing_and_chat   [  95% ] 13/30 VUs  1m40.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m41.0s), 10/45 VUs, 815 complete and 0 interrupted iterations
+browsing_and_chat   [  96% ] 10/30 VUs  1m41.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m42.0s), 08/45 VUs, 818 complete and 0 interrupted iterations
+browsing_and_chat   [  97% ] 08/30 VUs  1m42.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m43.0s), 05/45 VUs, 823 complete and 0 interrupted iterations
+browsing_and_chat   [  98% ] 05/30 VUs  1m43.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m44.0s), 04/45 VUs, 825 complete and 0 interrupted iterations
+browsing_and_chat   [  99% ] 04/30 VUs  1m44.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m45.0s), 03/45 VUs, 826 complete and 0 interrupted iterations
+browsing_and_chat   [ 100% ] 03/30 VUs  1m45.0s/1m45.0s
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+running (1m46.0s), 01/45 VUs, 828 complete and 0 interrupted iterations
+browsing_and_chat Γåô [ 100% ] 03/30 VUs  1m45s        
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
+
+
+  Γûê THRESHOLDS 
+
+    http_req_duration{name:CheckoutAPI}
+    Γ£ô 'p(95)<3000' p(95)=242.18ms
+
+    http_req_failed
+    Γ£ô 'rate<0.02' rate=0.00%
+
+
+  Γûê TOTAL RESULTS 
+
+    checks_total.......: 2487    23.387479/s
+    checks_succeeded...: 100.00% 2487 out of 2487
+    checks_failed......: 0.00%   0 out of 2487
+
+    Γ£ô status is 200
+    Γ£ô Order berhasil dibuat (201/200)
+    Γ£ô Snap Token Midtrans Terbaca
+
+    HTTP
+    http_req_duration..............: avg=56.47ms min=1.78ms med=8.48ms max=1.44s p(90)=79.99ms p(95)=247.56ms
+      { expected_response:true }...: avg=56.47ms min=1.78ms med=8.48ms max=1.44s p(90)=79.99ms p(95)=247.56ms
+      { name:CheckoutAPI }.........: avg=59.48ms min=1.78ms med=8.76ms max=1.44s p(90)=77.09ms p(95)=242.18ms
+    http_req_failed................: 0.00%  0 out of 1658
+    http_reqs......................: 1658   15.591653/s
+
+    EXECUTION
+    iteration_duration.............: avg=3.13s   min=3s     med=3.02s  max=5.04s p(90)=3.31s   p(95)=3.84s   
+    iterations.....................: 829    7.795826/s
+    vus............................: 1      min=1         max=30
+    vus_max........................: 45     min=45        max=45
+
+    NETWORK
+    data_received..................: 872 kB 8.2 kB/s
+    data_sent......................: 507 kB 4.8 kB/s
+
+
+
+
+running (1m46.3s), 00/45 VUs, 829 complete and 0 interrupted iterations
+browsing_and_chat Γ£ô [ 100% ] 00/30 VUs  1m45s        
+heavy_checkout    Γ£ô [ 100% ] 15 VUs     0m06.5s/2m0s  30/30 iters, 2 per VU
