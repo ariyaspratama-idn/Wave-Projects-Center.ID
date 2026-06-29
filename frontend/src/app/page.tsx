@@ -137,7 +137,7 @@ function Packages() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/backend/api/v1/packages")
+    fetch("/api/v1/packages")
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data) {

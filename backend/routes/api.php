@@ -18,14 +18,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-$v1Routes = function () {
+Route::prefix('v1')->group(function () {
     Route::get('/packages', [\App\Http\Controllers\Api\V1\PackageController::class, 'index']);
     Route::post('/orders/checkout', [\App\Http\Controllers\Api\V1\OrderController::class, 'checkout']);
     Route::post('/payments/callback', [\App\Http\Controllers\Api\V1\PaymentController::class, 'callback']);
-};
-
-Route::prefix('v1')->group($v1Routes);
-Route::prefix('backend/api/v1')->group($v1Routes);
+});
 
 $migrateClosure = function () {
     try {

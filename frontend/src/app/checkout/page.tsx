@@ -8,7 +8,7 @@ export default function CheckoutPage() {
     const [loadingPkgs, setLoadingPkgs] = useState(true);
 
     useEffect(() => {
-        fetch("/api/backend/api/v1/packages")
+        fetch("/api/v1/packages")
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.data) {
@@ -44,7 +44,7 @@ export default function CheckoutPage() {
         setError("");
 
         try {
-            const res = await fetch("/api/backend/api/v1/orders/checkout", {
+            const res = await fetch("/api/v1/orders/checkout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
