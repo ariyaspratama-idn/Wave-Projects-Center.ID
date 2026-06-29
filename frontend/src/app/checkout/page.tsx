@@ -38,7 +38,7 @@ export default function CheckoutPage() {
         setError("");
 
         try {
-            const res = await fetch("/api/v1/orders/checkout", {
+            const res = await fetch("/api/backend/api/v1/orders/checkout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -165,8 +165,8 @@ export default function CheckoutPage() {
                                 key={p.id}
                                 onClick={() => setForm({ ...form, package_id: p.id })}
                                 className={`rounded-xl p-4 text-left transition-all text-sm ${form.package_id === p.id
-                                        ? "bg-primary/20 border border-primary/50"
-                                        : "bg-white/5 border border-white/10 hover:border-white/20"
+                                    ? "bg-primary/20 border border-primary/50"
+                                    : "bg-white/5 border border-white/10 hover:border-white/20"
                                     }`}
                             >
                                 <span className="font-semibold block">{p.name}</span>
@@ -215,8 +215,8 @@ export default function CheckoutPage() {
                                 key={opt.val}
                                 onClick={() => setForm({ ...form, payment_choice: opt.val })}
                                 className={`flex-1 rounded-xl p-4 text-left transition-all text-sm ${form.payment_choice === opt.val
-                                        ? "bg-primary/20 border border-primary/50"
-                                        : "bg-white/5 border border-white/10 hover:border-white/20"
+                                    ? "bg-primary/20 border border-primary/50"
+                                    : "bg-white/5 border border-white/10 hover:border-white/20"
                                     }`}
                             >
                                 <span className="font-semibold block">{opt.label}</span>
