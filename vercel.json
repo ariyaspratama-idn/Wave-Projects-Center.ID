@@ -5,8 +5,7 @@
             "framework": "nextjs"
         },
         "backend": {
-            "root": "backend",
-            "framework": "vite"
+            "root": "backend"
         }
     },
     "rewrites": [
