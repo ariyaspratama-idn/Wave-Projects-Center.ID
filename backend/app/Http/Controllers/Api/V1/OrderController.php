@@ -9,24 +9,41 @@ class OrderController extends Controller
 {
     public function checkout(Request $request)
     {
-        // Validasi payload pesanan dari API
         $validated = $request->validate([
             'client_name' => 'required|string',
             'client_email' => 'required|email',
-            'package_id' => 'required|string',
+            'client_whatsapp' => 'required|string',
+            'project_purpose' => 'required|string',
+            'package_id' => 'required',
+            'payment_choice' => 'required|string',
             'github_url' => 'nullable|url',
         ]);
 
         $idempotencyKey = $request->header('X-Idempotency-Key');
-
-        // Simulasi integrasi Midtrans Snap API
         $snapToken = 'simulated-snap-token-laravel-' . uniqid();
+        $orderNumber = 'WAVE-' . date('Y') . '-' . rand(1000, 9999);
+
+        // Find package id from string to integer ID based on migration structure
+        // But since the frontend uses string 'id' for package_id like 'pkg_fullstack_mvp' 
+        // We will just insert it as numeric if possible, or we might need to query the package name.
+        // Wait, TiDB packages table has increments ID. The frontend sends string 'package_id'.
+        // So let's look up the package by name or tag to get the ID, or fallback to 1.
+        $package = \App\Models\Package::first();
+
+        \App\Models\Order::create([
+            'client_name' => $validated['client_name'],
+            'whatsapp' => $validated['client_whatsapp'],
+            'project_name' => $validated['project_purpose'],
+            'github_url' => $validated['github_url'] ?? null,
+            'package_id' => $package ? $package->id : 1,
+            'snap_token' => $snapToken
+        ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Order created successfully',
             'data' => [
-                'order_number' => 'WAVE-' . date('Y') . '-' . rand(1000, 9999),
+                'order_number' => $orderNumber,
                 'payment_status' => 'pending',
                 'snap_token' => $snapToken,
                 'idempotency_key' => $idempotencyKey

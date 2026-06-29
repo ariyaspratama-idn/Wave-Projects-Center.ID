@@ -1,15 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-
-const PACKAGES = [
-    { id: "pkg_landing", name: "Landing Page", price: 1500000 },
-    { id: "pkg_fullstack_mvp", name: "Fullstack MVP", price: 5000000 },
-    { id: "pkg_custom_portal", name: "Custom Portal", price: 15000000 },
-];
+import { useState, useEffect } from "react";
 
 export default function CheckoutPage() {
+    const [PACKAGES, setPACKAGES] = useState<any[]>([]);
+    const [loadingPkgs, setLoadingPkgs] = useState(true);
+
+    useEffect(() => {
+        fetch("/api/backend/api/v1/packages")
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    setPACKAGES(data.data);
+                }
+                setLoadingPkgs(false);
+            })
+            .catch(() => setLoadingPkgs(false));
+    }, []);
+
     const [form, setForm] = useState({
         client_name: "",
         client_email: "",
@@ -26,11 +35,8 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const selectedPkg = PACKAGES.find((p) => p.id === form.package_id)!;
-    const totalPayment =
-        form.payment_choice === "DP_30"
-            ? selectedPkg.price * 0.3
-            : selectedPkg.price;
+    const selectedPkg = PACKAGES.find((p) => p.id === form.package_id) || PACKAGES[0];
+    const totalPayment = selectedPkg ? (form.payment_choice === "DP_30" ? selectedPkg.price * 0.3 : selectedPkg.price) : 0;
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -99,6 +105,8 @@ export default function CheckoutPage() {
             </div>
         );
     }
+
+    if (loadingPkgs) return <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center text-gray-500">Memuat data checkout...</div>;
 
     return (
         <div className="min-h-screen bg-[#0a0f1e] py-10 px-4">

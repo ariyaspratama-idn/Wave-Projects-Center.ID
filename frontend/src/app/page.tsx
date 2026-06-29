@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /* ───── Navbar ───── */
 function Navbar() {
@@ -133,32 +133,23 @@ function Features() {
 
 /* ───── Packages ───── */
 function Packages() {
-  const pkgs = [
-    {
-      tag: "Starter",
-      name: "Landing Page",
-      price: "Rp 1.500.000",
-      desc: "Website company profile satu halaman, responsif, cepat, dan SEO friendly.",
-      features: ["Desain Custom", "Responsive Mobile", "Form Kontak", "SEO Dasar", "Deploy Vercel"],
-      popular: false,
-    },
-    {
-      tag: "Popular",
-      name: "Fullstack MVP",
-      price: "Rp 5.000.000",
-      desc: "Aplikasi web lengkap dengan backend API, database, dan admin panel terintegrasi.",
-      features: ["Analisis AI", "Admin Panel", "TiDB Database", "Midtrans Payment", "PWA Support", "Cloudinary Storage"],
-      popular: true,
-    },
-    {
-      tag: "Enterprise",
-      name: "Custom Portal",
-      price: "Rp 15.000.000+",
-      desc: "Sistem skala besar dengan multi-role dashboard, AI automation, dan arsitektur cloud-native.",
-      features: ["Custom Architecture", "Multi-Role RBAC", "AI PRD Generator", "OneSignal Push", "K6 Load Testing", "SLA 99.9%"],
-      popular: false,
-    },
-  ];
+  const [pkgs, setPkgs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/backend/api/v1/packages")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setPkgs(data.data);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div className="text-center py-24 text-gray-500">Memuat Paket dari Cloud...</div>;
+
   return (
     <section id="packages" className="py-24 px-4">
       <div className="max-w-6xl mx-auto">
@@ -185,7 +176,7 @@ function Packages() {
               <p className="text-3xl font-extrabold gradient-text mt-3 mb-2">{p.price}</p>
               <p className="text-sm text-gray-400 mb-6 leading-relaxed flex-1">{p.desc}</p>
               <ul className="space-y-2 mb-8">
-                {p.features.map((f, j) => (
+                {p.features?.map((f: string, j: number) => (
                   <li key={j} className="flex items-center gap-2 text-sm text-gray-300">
                     <span className="text-green-400 text-xs">✓</span> {f}
                   </li>
@@ -194,8 +185,8 @@ function Packages() {
               <Link
                 href="/checkout"
                 className={`text-center py-3 rounded-xl font-semibold text-sm transition-all ${p.popular
-                    ? "bg-primary hover:bg-primary-light text-white glow-blue"
-                    : "bg-white/5 border border-white/10 hover:border-primary/40 text-gray-300 hover:text-white"
+                  ? "bg-primary hover:bg-primary-light text-white glow-blue"
+                  : "bg-white/5 border border-white/10 hover:border-primary/40 text-gray-300 hover:text-white"
                   }`}
               >
                 Pesan Sekarang
