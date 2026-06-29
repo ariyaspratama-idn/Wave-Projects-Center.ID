@@ -1,16 +1,20 @@
 {
-    "functions": {
-        "backend/api/index.php": {
-            "runtime": "vercel-php@0.6.1"
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "out"
+            }
+        },
+        {
+            "src": "backend/api/index.php",
+            "use": "vercel-php@0.6.1"
         }
-    },
+    ],
     "rewrites": [
         {
             "source": "/api/v1/(.*)",
-            "destination": "/backend/api/index.php"
-        },
-        {
-            "source": "/backend/(.*)",
             "destination": "/backend/api/index.php"
         }
     ]
