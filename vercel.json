@@ -1,27 +1,26 @@
 {
-    "services": {
-        "frontend": {
-            "root": "frontend",
-            "framework": "nextjs"
+    "builds": [
+        {
+            "src": "frontend/package.json",
+            "use": "@vercel/next"
         },
-        "backend": {
-            "root": "backend"
+        {
+            "src": "backend/api/index.php",
+            "use": "vercel-php@0.6.1"
         }
-    },
+    ],
     "rewrites": [
         {
-            "source": "/api/v1(/.*)?",
-            "destination": {
-                "type": "service",
-                "service": "backend"
-            }
+            "source": "/api/v1/(.*)",
+            "destination": "/backend/api/index.php"
+        },
+        {
+            "source": "/_next/(.*)",
+            "destination": "/frontend/_next/$1"
         },
         {
             "source": "/(.*)",
-            "destination": {
-                "type": "service",
-                "service": "frontend"
-            }
+            "destination": "/frontend/$1"
         }
     ]
 }
