@@ -22,6 +22,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/packages', [\App\Http\Controllers\Api\V1\PackageController::class, 'index']);
     Route::post('/orders/checkout', [\App\Http\Controllers\Api\V1\OrderController::class, 'checkout']);
     Route::post('/payments/callback', [\App\Http\Controllers\Api\V1\PaymentController::class, 'callback']);
+    Route::post('/files/signature', [\App\Http\Controllers\Api\V1\FileController::class, 'signature']);
 });
 
 $migrateClosure = function () {

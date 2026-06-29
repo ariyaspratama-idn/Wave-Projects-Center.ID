@@ -30,7 +30,7 @@ class OrderController extends Controller
         // So let's look up the package by name or tag to get the ID, or fallback to 1.
         $package = \App\Models\Package::first();
 
-        \App\Models\Order::create([
+        $order = \App\Models\Order::create([
             'client_name' => $validated['client_name'],
             'whatsapp' => $validated['client_whatsapp'],
             'project_name' => $validated['project_purpose'],
@@ -38,6 +38,16 @@ class OrderController extends Controller
             'package_id' => $package ? $package->id : 1,
             'snap_token' => $snapToken
         ]);
+
+        $attachment = $request->input('attachment');
+        if ($attachment && is_array($attachment) && isset($attachment['public_id']) && isset($attachment['secure_url'])) {
+            \Illuminate\Support\Facades\DB::table('attachments')->insert([
+                'order_id' => $order->id,
+                'cloudinary_public_id' => $attachment['public_id'],
+                'file_name' => $attachment['filename'] ?? 'uploaded_file',
+                'secure_url' => $attachment['secure_url'],
+            ]);
+        }
 
         return response()->json([
             'success' => true,

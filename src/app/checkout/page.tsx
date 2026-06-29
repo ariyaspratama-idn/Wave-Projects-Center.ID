@@ -34,6 +34,8 @@ export default function CheckoutPage() {
     } | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [file, setFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
 
     const selectedPkg = PACKAGES.find((p) => p.id === form.package_id) || PACKAGES[0];
     const totalPayment = selectedPkg ? (form.payment_choice === "DP_30" ? selectedPkg.price * 0.3 : selectedPkg.price) : 0;
@@ -44,13 +46,49 @@ export default function CheckoutPage() {
         setError("");
 
         try {
+            let uploadedAttachment = null;
+            if (file) {
+                setUploading(true);
+                const sigRes = await fetch("/api/v1/files/signature", { method: "POST" });
+                const sigData = await sigRes.json();
+
+                if (!sigData.success) throw new Error("Gagal mendapatkan signature Cloudinary dari server");
+
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("api_key", sigData.data.api_key);
+                formData.append("timestamp", sigData.data.timestamp);
+                formData.append("signature", sigData.data.signature);
+                formData.append("folder", sigData.data.folder);
+
+                const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${sigData.data.cloud_name}/auto/upload`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!uploadRes.ok) throw new Error("Gagal mengunggah file ke Cloudinary");
+
+                const uploadData = await uploadRes.json();
+                uploadedAttachment = {
+                    public_id: uploadData.public_id,
+                    secure_url: uploadData.secure_url,
+                    filename: file.name
+                };
+                setUploading(false);
+            }
+
+            const bodyPayload = {
+                ...form,
+                attachment: uploadedAttachment
+            };
+
             const res = await fetch("/api/v1/orders/checkout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-Idempotency-Key": `checkout-${Date.now()}`,
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify(bodyPayload),
             });
 
             const data = await res.json();
@@ -59,9 +97,10 @@ export default function CheckoutPage() {
             } else {
                 setError(data.message || "Terjadi kesalahan");
             }
-        } catch {
-            setError("Gagal terhubung ke server");
+        } catch (err: any) {
+            setError(err.message || "Gagal terhubung ke server");
         } finally {
+            setUploading(false);
             setLoading(false);
         }
     }
@@ -210,6 +249,16 @@ export default function CheckoutPage() {
                     />
                 </div>
 
+                {/* File Upload */}
+                <div>
+                    <label className="block text-xs text-gray-400 mb-1.5">Lampiran Dokumen / Referensi (opsional)</label>
+                    <input
+                        type="file"
+                        onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer"
+                    />
+                </div>
+
                 {/* Payment Choice */}
                 <div>
                     <label className="block text-xs text-gray-400 mb-2">Metode Pembayaran *</label>
@@ -246,7 +295,7 @@ export default function CheckoutPage() {
                     disabled={loading}
                     className="w-full bg-primary hover:bg-primary-light disabled:opacity-50 text-white font-semibold py-3.5 rounded-xl transition-all glow-blue text-sm"
                 >
-                    {loading ? "Memproses..." : `Bayar Rp ${totalPayment.toLocaleString("id-ID")}`}
+                    {loading ? (uploading ? "Mengunggah File..." : "Memproses...") : `Bayar Rp ${totalPayment.toLocaleString("id-ID")}`}
                 </button>
 
                 <p className="text-xs text-gray-600 text-center">
