@@ -1,0 +1,1 @@
+<?php $pdo = new PDO('mysql:host=gateway01.ap-southeast-1.prod.aws.tidbcloud.com;port=4000', '2qbhFjoVxRDEvRF.root', 'ZKCQrJAeQz155qIc', [PDO::MYSQL_ATTR_SSL_CA => 'c:/Users/Admin/.gemini/antigravity/scratch/Wave Project.ID Center/backend/cacert.pem']); foreach($pdo->query('SHOW DATABASES') as $row) { echo $row[0] . PHP_EOL; }

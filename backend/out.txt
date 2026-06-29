@@ -1,0 +1,28 @@
+﻿
+  Dropping all tables  783ms DONE
+
+   INFO  Preparing database.  
+
+  Creating migration table  40ms FAIL
+
+   Illuminate\Database\QueryException 
+
+  SQLSTATE[42000]: Syntax error or access violation: 1142 CREATE command denied to user '2qbhFjoVxRDEvRF.root'@'%' for table 'migrations' (Connection: mysql, SQL: create table `migrations` (`id` int unsigned not null auto_increment primary key, `migration` varchar(255) not null, `batch` int not null) default character set utf8mb4 collate 'utf8mb4_general_ci')
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:829
+    825Γûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    826Γûò                 );
+    827Γûò             }
+    828Γûò 
+  Γ₧£ 829Γûò             throw new QueryException(
+    830Γûò                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    831Γûò             );
+    832Γûò         }
+    833Γûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:581
+      PDOException::("SQLSTATE[42000]: Syntax error or access violation: 1142 CREATE command denied to user '2qbhFjoVxRDEvRF.root'@'%' for table 'migrations'")
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connection.php:581
+      PDO::prepare("create table `migrations` (`id` int unsigned not null auto_increment primary key, `migration` varchar(255) not null, `batch` int not null) default character set utf8mb4 collate 'utf8mb4_general_ci'")
+
