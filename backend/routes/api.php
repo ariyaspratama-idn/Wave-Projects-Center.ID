@@ -24,3 +24,12 @@ Route::prefix('v1')->group(function () {
     Route::post('/payments/callback', [\App\Http\Controllers\Api\V1\PaymentController::class, 'callback']);
     Route::post('/files/signature', [\App\Http\Controllers\Api\V1\FileController::class, 'signature']);
 });
+
+Route::get('/migrate-now', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
+        return response()->json(['success' => true, 'output' => \Illuminate\Support\Facades\Artisan::output()]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+    }
+});
