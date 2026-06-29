@@ -1,0 +1,732 @@
+SOFTWARE ARCHITECTURE DOCUMENT (SAD)
+
+Wave Projects Center.ID
+Version: 1.0
+
+Document Type:
+Software Architecture Document (SAD)
+Architecture Standard:
+ISO/IEC/IEEE 42010 
+C4 Model 
+TOGAF Principles 
+Arc42 Reference 
+OWASP ASVS 
+Cloud Native Architecture 
+
+Status:
+Approved For Engineering
+
+Dependencies:
+PRD 
+BPD 
+SRS 
+TDD 
+DDD 
+API Design 
+UI/UX Design System 
+Wireframe Specification 
+Information Architecture 
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan arsitektur teknis lengkap sistem Wave Projects Center.ID.
+Tujuan:
+Menjadi referensi utama engineering 
+Menjamin scalability 
+Menjamin maintainability 
+Menjamin security 
+Menjadi dasar DevOps 
+
+2. ARCHITECTURE VISION
+Vision Statement
+Wave Projects Center.ID dibangun sebagai platform digital software house terintegrasi yang menghubungkan pelanggan, AI Consultant, tim developer, tim marketing, dan owner dalam satu ekosistem cloud-native berbasis serverless architecture.
+
+3. ARCHITECTURAL DRIVERS
+Business Drivers
+BD-01
+Automasi konsultasi proyek menggunakan AI
+
+BD-02
+Pemesanan otomatis
+
+BD-03
+Pembayaran online
+
+BD-04
+Project delivery automation
+
+BD-05
+Scalable multi-project handling
+
+4. QUALITY ATTRIBUTES
+QA-01 Availability
+Target:
+99.9%
+
+QA-02 Scalability
+Target:
+100.000+
+monthly users
+
+QA-03 Performance
+Target:
+< 2.5 sec
+95th Percentile
+
+QA-04 Security
+Target:
+OWASP ASVS Level 2
+
+QA-05 Maintainability
+Target:
+Microservice Ready
+
+5. C4 MODEL LEVEL 1
+SYSTEM CONTEXT DIAGRAM
+┌─────────────────────────────┐
+│         CUSTOMER            │
+└─────────────┬───────────────┘
+              │
+              ▼
+┌─────────────────────────────┐
+│  WAVE PROJECTS CENTER.ID    │
+└─────────────┬───────────────┘
+              │
+ ┌────────────┼─────────────┐
+ ▼            ▼             ▼
+
+Gemini AI   Midtrans    Cloudinary
+
+ ▼            ▼             ▼
+
+OneSignal    GitHub     TiDB Cloud
+
+6. C4 MODEL LEVEL 2
+CONTAINER DIAGRAM
+┌─────────────────────────────┐
+│        NEXT.JS APP          │
+│   Frontend + PWA            │
+└─────────────┬───────────────┘
+              │
+              ▼
+┌─────────────────────────────┐
+│     LARAVEL API SERVER      │
+│      Vercel Serverless      │
+└─────────────┬───────────────┘
+              │
+     ┌────────┼────────┐
+     ▼        ▼        ▼
+
+ TiDB      Gemini     Midtrans
+
+     ▼
+ Cloudinary
+
+     ▼
+ OneSignal
+
+7. C4 MODEL LEVEL 3
+COMPONENT DIAGRAM
+Frontend Components
+Auth Module
+
+Landing Module
+
+AI Chat Module
+
+Package Module
+
+Checkout Module
+
+Dashboard Module
+
+Notification Module
+
+Profile Module
+
+Backend Components
+Authentication Service
+
+AI Service
+
+Package Service
+
+Order Service
+
+Payment Service
+
+Notification Service
+
+PRD Generator Service
+
+Analytics Service
+
+8. ENTERPRISE SYSTEM ARCHITECTURE
+CLIENT
+
+Browser
+PWA
+
+      │
+
+      ▼
+
+CDN
+
+      │
+
+      ▼
+
+NEXT.JS
+
+      │
+
+      ▼
+
+API GATEWAY
+
+      │
+
+      ▼
+
+LARAVEL SERVICES
+
+      │
+
+ ┌────┼─────┐
+
+ ▼    ▼     ▼
+
+AI   PAYMENT DB
+
+ │     │     │
+
+ ▼     ▼     ▼
+
+Gemini Midtrans TiDB
+
+      │
+
+      ▼
+
+OneSignal
+
+9. SERVERLESS ARCHITECTURE
+Frontend
+Next.js
+Deployment:
+Vercel
+
+Backend
+Laravel API
+Deployment:
+Vercel Functions
+
+Database
+TiDB Cloud
+
+Storage
+Cloudinary
+
+Notifications
+OneSignal
+
+10. DOMAIN ARCHITECTURE
+Core Domains
+Customer Domain
+User Management
+Customer Profile
+
+Project Domain
+Orders
+Projects
+Deliverables
+
+Payment Domain
+Invoices
+Transactions
+Refunds
+
+AI Domain
+Consultation
+PRD Generation
+Recommendation
+
+Analytics Domain
+Revenue
+Growth
+Conversion
+
+11. APPLICATION ARCHITECTURE
+Layered Architecture
+Presentation Layer
+
+Business Layer
+
+Application Layer
+
+Infrastructure Layer
+
+Data Layer
+
+12. SECURITY ARCHITECTURE
+Authentication
+JWT
+Refresh Token
+
+Authorization
+RBAC
+Role Based Access Control
+Roles:
+Customer
+Developer
+Marketing
+Owner
+
+Encryption
+AES-256
+
+Password
+Argon2id
+
+HTTPS
+TLS 1.3
+
+13. OWASP SECURITY MODEL
+Protection
+SQL Injection
+XSS
+CSRF
+SSRF
+RCE
+Broken Authentication
+IDOR
+Rate Limiting
+
+Security Headers
+Content-Security-Policy
+
+Strict-Transport-Security
+
+X-Frame-Options
+
+X-Content-Type-Options
+
+14. IDENTITY & ACCESS MANAGEMENT
+Roles
+Customer
+View Own Data
+
+Developer
+Assigned Projects Only
+
+Marketing
+Orders & Revenue
+
+Owner
+Full Access
+
+15. DATABASE ARCHITECTURE
+Main Database
+TiDB Cloud
+
+Core Tables
+users
+
+orders
+
+payments
+
+packages
+
+projects
+
+generated_prds
+
+notifications
+
+activity_logs
+
+16. DATA FLOW ARCHITECTURE
+Customer
+    │
+    ▼
+AI Chat
+    │
+    ▼
+Package Recommendation
+    │
+    ▼
+Checkout
+    │
+    ▼
+Payment
+    │
+    ▼
+Project Queue
+    │
+    ▼
+PRD Generation
+    │
+    ▼
+Developer Dashboard
+
+17. AI ARCHITECTURE
+AI Provider
+Google Gemini 1.5 Flash
+
+Backup Provider
+OpenRouter
+DeepSeek
+Llama
+
+AI Services
+Project Analysis
+Package Recommendation
+PRD Generation
+Technical Suggestions
+
+18. PAYMENT ARCHITECTURE
+Provider
+Midtrans
+
+Flow
+Checkout
+
+▼
+
+Create Transaction
+
+▼
+
+Snap Token
+
+▼
+
+Customer Payment
+
+▼
+
+Webhook
+
+▼
+
+Update Status
+
+▼
+
+Notification
+
+19. NOTIFICATION ARCHITECTURE
+Provider
+OneSignal
+
+Events
+Payment Success
+Payment Failed
+PRD Generated
+Project Delivered
+System Alert
+
+20. FILE STORAGE ARCHITECTURE
+Provider
+Cloudinary
+
+Upload Strategy
+Direct Upload
+
+Benefits
+No Vercel Memory Usage
+No Timeout
+Lower Latency
+
+21. OBSERVABILITY ARCHITECTURE
+Monitoring
+Sentry
+
+Metrics
+Response Time
+Error Rate
+User Activity
+AI Usage
+Revenue
+
+Logging
+Application Logs
+Security Logs
+Audit Logs
+
+22. PERFORMANCE ARCHITECTURE
+Caching
+Browser Cache
+
+CDN Cache
+
+API Cache
+
+Optimization
+Lazy Loading
+Code Splitting
+Image Optimization
+Compression
+
+23. SCALABILITY ARCHITECTURE
+Horizontal Scaling
+Serverless Auto Scale
+
+Database Scaling
+TiDB Distributed Cluster
+
+Future
+Kubernetes
+
+Redis
+
+Kafka
+
+ElasticSearch
+
+24. DISASTER RECOVERY ARCHITECTURE
+RPO
+15 Minutes
+
+RTO
+1 Hour
+
+Recovery Strategy
+Automated Backup
+Database Snapshot
+Cloudinary Backup
+GitHub Repository Mirror
+
+25. HIGH AVAILABILITY ARCHITECTURE
+Users
+
+ ▼
+
+Cloudflare
+
+ ▼
+
+Vercel Edge
+
+ ▼
+
+API
+
+ ▼
+
+TiDB Multi Zone
+
+26. DEVOPS ARCHITECTURE
+Repository
+GitHub
+
+Branching Strategy
+main
+
+develop
+
+feature/*
+
+Pull Request Flow
+Developer
+
+▼
+
+Pull Request
+
+▼
+
+Code Review
+
+▼
+
+QA Review
+
+▼
+
+Merge
+
+27. CI/CD ARCHITECTURE
+Pipeline
+Git Push
+
+▼
+
+GitHub Actions
+
+▼
+
+Automated Test
+
+▼
+
+Build
+
+▼
+
+Deploy
+
+▼
+
+Vercel
+
+28. INFRASTRUCTURE AS CODE
+Tools
+Terraform
+
+Resources
+Vercel
+TiDB
+Cloudinary
+OneSignal
+
+29. ENTERPRISE INTEGRATION ARCHITECTURE
+External Systems
+Gemini AI
+
+Midtrans
+
+Cloudinary
+
+OneSignal
+
+GitHub
+
+Cron Job
+
+30. EVENT DRIVEN ARCHITECTURE
+Events
+OrderCreated
+
+PaymentSuccess
+
+PRDGenerated
+
+ProjectAssigned
+
+ProjectCompleted
+
+InvoiceGenerated
+
+31. MESSAGE FLOW
+Order Created
+     │
+     ▼
+Payment Success
+     │
+     ▼
+Queue Job
+     │
+     ▼
+Generate PRD
+     │
+     ▼
+Developer Notification
+
+32. ARCHITECTURE DECISION RECORDS (ADR)
+ADR-001
+Next.js Dipilih
+Alasan:
+SEO
+PWA
+Performance
+
+ADR-002
+Laravel Dipilih
+Alasan:
+Rapid Development
+API Friendly
+
+ADR-003
+TiDB Dipilih
+Alasan:
+Distributed SQL
+Free Tier
+Scalable
+
+ADR-004
+Cloudinary Dipilih
+Alasan:
+Direct Upload
+No Storage Cost
+
+33. DEPLOYMENT ARCHITECTURE
+Internet
+
+ ▼
+
+Cloudflare
+
+ ▼
+
+Vercel Frontend
+
+ ▼
+
+Vercel API
+
+ ▼
+
+TiDB Cloud
+
+ ▼
+
+Cloudinary
+
+ ▼
+
+OneSignal
+
+34. ARCHITECTURE GOVERNANCE
+Review Cycle
+Monthly
+
+Security Audit
+Quarterly
+
+Architecture Review Board
+Product Owner
+Lead Developer
+QA Lead
+
+35. GO-LIVE ARCHITECTURE CHECKLIST
+✓ Infrastructure Ready
+✓ Database Ready
+✓ AI Ready
+✓ Payment Ready
+✓ Notification Ready
+✓ Backup Ready
+✓ Monitoring Ready
+✓ Security Audit Passed
+✓ Performance Test Passed
+✓ Disaster Recovery Tested
+
+APPENDIX A — ENTERPRISE ARCHITECTURE ROADMAP
+Phase 1 (MVP)
+Monolith Modular Laravel
+
+Phase 2
+Domain Driven Design
+
+Phase 3
+Microservices
+
+Phase 4
+Multi-Tenant SaaS
+
+Phase 5
+Global Architecture
+Multi Region Deployment
+
+DOCUMENT APPROVAL
+Prepared By:
+Solution Architect
+Reviewed By:
+Lead Engineer
+Approved By:
+Stakeholders
+Version:
+1.0
+Status:
+Approved For Engineering

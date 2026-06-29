@@ -1,0 +1,629 @@
+DATABASE DESIGN DOCUMENT (DDD)
+
+Wave Projects Center.ID
+Version: 1.0
+
+Document Type: Database Design Document
+Database Engine: TiDB Serverless (MySQL Compatible)
+Status: Approved For Development
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan desain basis data untuk sistem Wave Projects Center.ID mulai dari model konseptual hingga implementasi fisik database.
+Tujuan:
+
+Menjamin integritas data
+
+
+Menjamin konsistensi data
+
+
+Mendukung skalabilitas
+
+
+Menjadi dasar migration Laravel
+
+
+Menjadi referensi seluruh tim teknis
+
+
+2. DATABASE OVERVIEW
+Database Name
+wave_projects_center
+Database Type
+Relational Database
+Engine
+TiDB Cloud Serverless
+Compatibility
+MySQL 8.0
+Character Set
+utf8mb4
+Collation
+utf8mb4_unicode_ci
+Timezone
+UTC
+
+3. DATABASE DESIGN PRINCIPLES
+Principle 01
+Normalization
+Minimum:
+3NF
+
+Principle 02
+Soft Delete Support
+Seluruh data penting harus mendukung soft delete.
+
+Principle 03
+Auditability
+Seluruh aktivitas penting dicatat.
+
+Principle 04
+Scalability
+Dirancang agar siap menjadi multi-tenant.
+
+4. CONCEPTUAL DATA MODEL (CDM)
+Core Entities
+User
+Role
+Permission
+Package
+Order
+Payment
+Attachment
+GeneratedPRD
+Notification
+AuditLog
+ActivityLog
+SystemSetting
+
+Business Relationships
+User
+↓
+Order
+↓
+Payment
+↓
+GeneratedPRD
+↓
+Delivery
+
+5. LOGICAL DATA MODEL (LDM)
+USER
+1
+↓
+N
+ORDER
+
+ORDER
+1
+↓
+N
+PAYMENT
+
+ORDER
+1
+↓
+N
+ATTACHMENT
+
+ORDER
+1
+↓
+1
+GENERATED_PRD
+
+USER
+1
+↓
+N
+NOTIFICATION
+
+USER
+1
+↓
+N
+ACTIVITY_LOG
+
+6. ENTITY RELATIONSHIP DIAGRAM (ERD)
+users
+↓
+orders
+↓
+payments
+↓
+generated_prds
+↓
+deliveries
+
+users
+↓
+notifications
+
+users
+↓
+activity_logs
+
+roles
+↓
+permissions
+↓
+role_permissions
+↓
+user_roles
+
+packages
+↓
+orders
+
+7. PHYSICAL DATA MODEL (PDM)
+TOTAL TABLES
+18
+
+Master Tables
+users
+roles
+permissions
+packages
+system_settings
+
+Transaction Tables
+orders
+payments
+attachments
+generated_prds
+notifications
+deliveries
+
+Audit Tables
+audit_logs
+activity_logs
+payment_logs
+notification_logs
+
+Bridge Tables
+user_roles
+role_permissions
+
+Queue Tables
+jobs
+failed_jobs
+
+8. TABLE SPECIFICATION
+================================================
+TABLE: users
+================================================
+Purpose
+Menyimpan seluruh akun pengguna.
+Columns
+id BIGINT PK
+uuid CHAR(36)
+name VARCHAR(150)
+email VARCHAR(150)
+password VARCHAR(255)
+phone VARCHAR(20)
+avatar_url TEXT
+status ENUM
+active
+inactive
+suspended
+last_login_at DATETIME
+created_at TIMESTAMP
+updated_at TIMESTAMP
+deleted_at TIMESTAMP
+Indexes
+PRIMARY(id)
+UNIQUE(uuid)
+UNIQUE(email)
+INDEX(status)
+INDEX(last_login_at)
+
+Estimated Rows
+100.000+
+
+================================================
+TABLE: roles
+================================================
+Columns
+id BIGINT PK
+name VARCHAR(100)
+description TEXT
+created_at
+updated_at
+Indexes
+PRIMARY(id)
+UNIQUE(name)
+
+Default Data
+Super Admin
+Admin
+Marketing
+Developer
+Customer
+Owner
+
+================================================
+TABLE: permissions
+================================================
+Columns
+id BIGINT PK
+code VARCHAR(100)
+name VARCHAR(150)
+description TEXT
+Indexes
+UNIQUE(code)
+
+================================================
+TABLE: user_roles
+================================================
+Columns
+user_id BIGINT
+role_id BIGINT
+Composite PK
+(user_id, role_id)
+
+================================================
+TABLE: role_permissions
+================================================
+Columns
+role_id BIGINT
+permission_id BIGINT
+Composite PK
+(role_id, permission_id)
+
+================================================
+TABLE: packages
+================================================
+Columns
+id BIGINT PK
+name VARCHAR(150)
+slug VARCHAR(150)
+description LONGTEXT
+price DECIMAL(15,2)
+estimated_days INT
+features JSON
+status ENUM
+active
+inactive
+Indexes
+UNIQUE(slug)
+INDEX(status)
+INDEX(price)
+
+================================================
+TABLE: orders
+================================================
+Purpose
+Menyimpan transaksi proyek.
+Columns
+id BIGINT PK
+order_number VARCHAR(50)
+user_id BIGINT
+package_id BIGINT
+title VARCHAR(255)
+description LONGTEXT
+project_type VARCHAR(100)
+estimated_cost DECIMAL(15,2)
+final_cost DECIMAL(15,2)
+status ENUM
+draft
+pending_payment
+paid
+in_progress
+review
+delivered
+completed
+cancelled
+payment_type ENUM
+dp
+full
+created_at
+updated_at
+deleted_at
+Indexes
+UNIQUE(order_number)
+INDEX(user_id)
+INDEX(package_id)
+INDEX(status)
+INDEX(created_at)
+
+Estimated Rows
+1.000.000+
+
+================================================
+TABLE: payments
+================================================
+Columns
+id BIGINT PK
+order_id BIGINT
+transaction_id VARCHAR(100)
+payment_method VARCHAR(50)
+amount DECIMAL(15,2)
+status ENUM
+pending
+success
+failed
+expired
+refund
+paid_at DATETIME
+Indexes
+UNIQUE(transaction_id)
+INDEX(order_id)
+INDEX(status)
+INDEX(paid_at)
+
+================================================
+TABLE: attachments
+================================================
+Columns
+id BIGINT PK
+order_id BIGINT
+cloudinary_public_id VARCHAR(255)
+file_name VARCHAR(255)
+file_size BIGINT
+file_type VARCHAR(50)
+secure_url TEXT
+Indexes
+INDEX(order_id)
+INDEX(file_type)
+
+================================================
+TABLE: generated_prds
+================================================
+Columns
+id BIGINT PK
+order_id BIGINT
+version VARCHAR(20)
+content LONGTEXT
+generated_by_ai BOOLEAN
+generated_at DATETIME
+Indexes
+UNIQUE(order_id)
+INDEX(generated_at)
+
+================================================
+TABLE: notifications
+================================================
+Columns
+id BIGINT PK
+user_id BIGINT
+title VARCHAR(255)
+message TEXT
+type VARCHAR(50)
+is_read BOOLEAN
+sent_at DATETIME
+Indexes
+INDEX(user_id)
+INDEX(is_read)
+INDEX(sent_at)
+
+================================================
+TABLE: deliveries
+================================================
+Columns
+id BIGINT PK
+order_id BIGINT
+delivery_url TEXT
+delivery_notes LONGTEXT
+delivered_at DATETIME
+verified_at DATETIME
+Indexes
+INDEX(order_id)
+
+================================================
+TABLE: audit_logs
+================================================
+Purpose
+Audit seluruh aktivitas kritikal.
+Columns
+id BIGINT PK
+user_id BIGINT
+action VARCHAR(255)
+entity_type VARCHAR(100)
+entity_id BIGINT
+old_value JSON
+new_value JSON
+ip_address VARCHAR(50)
+created_at DATETIME
+Indexes
+INDEX(user_id)
+INDEX(entity_type)
+INDEX(created_at)
+
+================================================
+TABLE: activity_logs
+================================================
+Purpose
+Tracking aktivitas harian.
+Columns
+id BIGINT PK
+user_id BIGINT
+activity TEXT
+created_at DATETIME
+Indexes
+INDEX(user_id)
+INDEX(created_at)
+
+9. FOREIGN KEY DESIGN
+users.id
+↓
+orders.user_id
+
+packages.id
+↓
+orders.package_id
+
+orders.id
+↓
+payments.order_id
+
+orders.id
+↓
+attachments.order_id
+
+orders.id
+↓
+generated_prds.order_id
+
+orders.id
+↓
+deliveries.order_id
+
+users.id
+↓
+notifications.user_id
+
+10. INDEX STRATEGY
+Primary Index
+Seluruh PK
+
+Unique Index
+email
+uuid
+slug
+order_number
+transaction_id
+
+Query Index
+status
+user_id
+package_id
+created_at
+paid_at
+
+11. PARTITION STRATEGY
+MVP
+No Partition
+
+Future
+payment_logs
+audit_logs
+activity_logs
+partition by month
+
+12. DATA RETENTION POLICY
+Operational Data
+Retained Forever
+
+Audit Logs
+5 Years
+
+Notification Logs
+2 Years
+
+Failed Jobs
+90 Days
+
+13. BACKUP STRATEGY
+Daily Backup
+02:00 UTC
+
+Weekly Full Backup
+Sunday
+
+Monthly Archive
+1st Day of Month
+
+Retention
+90 Days
+
+14. DISASTER RECOVERY
+RPO
+24 Hours
+
+RTO
+4 Hours
+
+Recovery Method
+TiDB Point In Time Recovery
+
+15. MIGRATION STRATEGY
+Phase 1
+Create Master Tables
+users
+roles
+permissions
+packages
+
+Phase 2
+Create Transaction Tables
+orders
+payments
+attachments
+
+Phase 3
+Create Supporting Tables
+notifications
+audit_logs
+activity_logs
+
+Phase 4
+Seeder Execution
+roles
+permissions
+packages
+settings
+
+16. SECURITY REQUIREMENTS
+Database Connection
+TLS Enabled
+
+Password
+bcrypt
+
+Sensitive Data
+Encrypted
+
+Least Privilege Access
+Enabled
+
+Audit Logging
+Mandatory
+
+17. CAPACITY ESTIMATION
+Year 1
+Users
+10.000
+Orders
+25.000
+Payments
+30.000
+Storage
+500 GB
+
+Year 2
+Users
+100.000
+Orders
+250.000
+Payments
+300.000
+Storage
+5 TB
+
+Year 3
+Users
+500.000+
+Orders
+1.000.000+
+Payments
+1.500.000+
+Storage
+20 TB+
+
+18. DATABASE ACCEPTANCE CRITERIA
+✓ Referential Integrity Valid
+✓ No Duplicate Transaction
+✓ Index Coverage > 90%
+✓ Migration Success 100%
+✓ Backup Success 100%
+✓ Recovery Tested
+✓ Query P95 < 200 ms
+
+DOCUMENT APPROVAL
+Prepared By:
+Database Architect
+Reviewed By:
+Lead Backend Developer
+Approved By:
+Solution Architect
+Version:
+1.0

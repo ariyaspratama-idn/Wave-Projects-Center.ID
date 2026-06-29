@@ -1,26 +1,17 @@
 {
-    "builds": [
-        {
-            "src": "frontend/package.json",
-            "use": "@vercel/next"
-        },
-        {
-            "src": "backend/api/index.php",
-            "use": "vercel-php@0.6.1"
+    "functions": {
+        "backend/api/index.php": {
+            "runtime": "vercel-php@0.6.1"
         }
-    ],
+    },
     "rewrites": [
         {
             "source": "/api/v1/(.*)",
             "destination": "/backend/api/index.php"
         },
         {
-            "source": "/_next/(.*)",
-            "destination": "/frontend/_next/$1"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "/frontend/$1"
+            "source": "/backend/(.*)",
+            "destination": "/backend/api/index.php"
         }
     ]
 }

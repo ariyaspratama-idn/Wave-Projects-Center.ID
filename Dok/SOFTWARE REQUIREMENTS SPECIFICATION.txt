@@ -1,0 +1,589 @@
+SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
+
+Wave Projects Center.ID
+Version: 1.0
+Document Type: Software Requirements Specification
+Standard: IEEE 830 / ISO-IEC-IEEE 29148
+Status: Approved for Development
+
+INTRODUCTION
+
+1.1 Purpose
+Dokumen ini mendefinisikan kebutuhan perangkat lunak secara lengkap untuk sistem Wave Projects Center.ID.
+
+Dokumen digunakan sebagai acuan resmi bagi:
+
+Product Owner
+
+Business Analyst
+
+UI/UX Designer
+
+Frontend Developer
+
+Backend Developer
+
+QA Engineer
+
+DevOps Engineer
+
+Stakeholder
+
+
+1.2 Product Scope
+Wave Projects Center.ID adalah platform digital yang menyediakan layanan:
+
+Konsultasi AI
+
+
+Pemesanan jasa software
+
+
+Pembayaran online
+
+
+Generasi PRD otomatis
+
+
+Manajemen proyek
+
+
+Monitoring transaksi
+
+
+Dashboard operasional
+
+
+1.3 Intended Audience
+Product Owner
+Menentukan kebutuhan bisnis.
+Developer
+Mengimplementasikan sistem.
+QA
+Melakukan pengujian.
+Stakeholder
+Melakukan validasi kebutuhan.
+
+1.4 Definitions
+AI
+Artificial Intelligence
+PRD
+Product Requirements Document
+UAT
+User Acceptance Testing
+RBAC
+Role Based Access Control
+MVP
+Minimum Viable Product
+API
+Application Programming Interface
+
+2. OVERALL DESCRIPTION
+2.1 Product Perspective
+Platform terdiri dari:
+Frontend
+↓
+Laravel API
+↓
+TiDB Database
+↓
+External Services
+
+Gemini
+
+
+Midtrans
+
+
+Cloudinary
+
+
+OneSignal
+
+
+Sentry
+
+
+2.2 User Classes
+Guest
+Pengunjung website.
+
+Customer
+Pelanggan.
+
+Marketing
+Tim penjualan.
+
+Developer
+Tim pengembang.
+
+Admin
+Administrator sistem.
+
+Owner
+Pemilik bisnis.
+
+2.3 Assumptions
+
+Internet tersedia.
+
+
+Midtrans aktif.
+
+
+Gemini API aktif.
+
+
+Cloudinary aktif.
+
+
+OneSignal aktif.
+
+
+2.4 Constraints
+
+Vercel Serverless Environment
+
+
+TiDB Cloud Resource Limits
+
+
+Gemini API Rate Limits
+
+
+Midtrans API Availability
+
+
+3. FUNCTIONAL REQUIREMENTS
+MODULE A
+AUTHENTICATION
+
+FR-AUTH-001
+Sistem harus memungkinkan pengguna login menggunakan email dan password.
+Priority:
+Critical
+
+FR-AUTH-002
+Sistem harus mengenkripsi password menggunakan bcrypt.
+Priority:
+Critical
+
+FR-AUTH-003
+Sistem harus mendukung logout.
+Priority:
+Critical
+
+FR-AUTH-004
+Sistem harus mendukung reset password.
+Priority:
+High
+
+FR-AUTH-005
+Sistem harus mendukung RBAC.
+Priority:
+Critical
+
+FR-AUTH-006
+Sistem harus mencatat aktivitas login.
+Priority:
+High
+
+MODULE B
+USER MANAGEMENT
+
+FR-USER-001
+Admin dapat membuat pengguna baru.
+
+FR-USER-002
+Admin dapat mengubah pengguna.
+
+FR-USER-003
+Admin dapat menonaktifkan pengguna.
+
+FR-USER-004
+Admin dapat mengatur role.
+
+FR-USER-005
+Admin dapat mengatur permission.
+
+MODULE C
+LANDING WEBSITE
+
+FR-LND-001
+Sistem harus menampilkan profil perusahaan.
+
+FR-LND-002
+Sistem harus menampilkan portfolio.
+
+FR-LND-003
+Sistem harus menampilkan pricing.
+
+FR-LND-004
+Sistem harus menyediakan CTA.
+
+FR-LND-005
+Sistem harus SEO friendly.
+
+MODULE D
+AI CONSULTATION
+
+FR-AI-001
+Pengguna dapat mengirim pesan.
+
+FR-AI-002
+AI harus menghasilkan jawaban.
+
+FR-AI-003
+AI harus menyimpan riwayat percakapan.
+
+FR-AI-004
+AI harus memberikan rekomendasi paket.
+
+FR-AI-005
+AI harus memberikan estimasi proyek.
+
+FR-AI-006
+AI harus mendeteksi kebutuhan pengguna.
+
+FR-AI-007
+AI harus menghasilkan requirement summary.
+
+FR-AI-008
+AI harus mendukung multi-turn conversation.
+
+MODULE E
+PACKAGE MANAGEMENT
+
+FR-PKG-001
+Admin dapat membuat paket.
+
+FR-PKG-002
+Admin dapat mengubah paket.
+
+FR-PKG-003
+Admin dapat menghapus paket.
+
+FR-PKG-004
+Admin dapat mengaktifkan paket.
+
+FR-PKG-005
+Pengguna dapat melihat paket.
+
+MODULE F
+ORDER MANAGEMENT
+
+FR-ORD-001
+Pengguna dapat membuat pesanan.
+
+FR-ORD-002
+Sistem harus menghasilkan nomor pesanan unik.
+
+FR-ORD-003
+Sistem harus menyimpan detail pesanan.
+
+FR-ORD-004
+Sistem harus mendukung upload lampiran.
+
+FR-ORD-005
+Sistem harus mendukung draft order.
+
+FR-ORD-006
+Sistem harus mendukung status order.
+Status:
+Pending
+Paid
+In Progress
+Delivered
+Completed
+Cancelled
+
+MODULE G
+PAYMENT
+
+FR-PAY-001
+Sistem harus terintegrasi Midtrans.
+
+FR-PAY-002
+Sistem harus membuat transaksi.
+
+FR-PAY-003
+Sistem harus memproses callback.
+
+FR-PAY-004
+Sistem harus memvalidasi signature.
+
+FR-PAY-005
+Sistem harus menghindari duplicate payment.
+
+FR-PAY-006
+Sistem harus menyimpan payment logs.
+
+FR-PAY-007
+Sistem harus mendukung DP.
+
+FR-PAY-008
+Sistem harus mendukung pelunasan.
+
+MODULE H
+FILE MANAGEMENT
+
+FR-FILE-001
+Sistem harus mendukung upload file.
+
+FR-FILE-002
+Sistem harus menggunakan Cloudinary.
+
+FR-FILE-003
+Sistem harus menyimpan metadata.
+
+FR-FILE-004
+Sistem harus mendukung preview file.
+
+FR-FILE-005
+Sistem harus mendukung penghapusan file.
+
+MODULE I
+AI PRD GENERATOR
+
+FR-PRD-001
+Sistem harus menghasilkan PRD otomatis.
+
+FR-PRD-002
+PRD harus berbentuk markdown.
+
+FR-PRD-003
+PRD harus tersimpan permanen.
+
+FR-PRD-004
+Developer dapat melihat PRD.
+
+FR-PRD-005
+PRD dapat diunduh.
+
+MODULE J
+DASHBOARD
+
+FR-DASH-001
+Developer dapat melihat queue.
+
+FR-DASH-002
+Marketing dapat melihat transaksi.
+
+FR-DASH-003
+Owner dapat melihat KPI.
+
+FR-DASH-004
+Admin dapat melihat statistik sistem.
+
+FR-DASH-005
+Dashboard harus realtime.
+
+MODULE K
+NOTIFICATION
+
+FR-NOTIF-001
+Sistem harus mengirim push notification.
+
+FR-NOTIF-002
+Sistem harus mendukung OneSignal.
+
+FR-NOTIF-003
+Sistem harus mendukung segmentasi.
+
+FR-NOTIF-004
+Sistem harus menyimpan log notifikasi.
+
+MODULE L
+REPORTING
+
+FR-REP-001
+Admin dapat melihat laporan pendapatan.
+
+FR-REP-002
+Admin dapat export PDF.
+
+FR-REP-003
+Admin dapat export Excel.
+
+FR-REP-004
+Admin dapat melihat statistik bulanan.
+
+4. NON FUNCTIONAL REQUIREMENTS
+Performance
+NFR-PERF-001
+Response Time
+≤ 2.5 detik
+
+NFR-PERF-002
+Concurrent Users
+1000+
+
+NFR-PERF-003
+Availability
+99.9%
+
+Security
+NFR-SEC-001
+HTTPS wajib.
+
+NFR-SEC-002
+Password wajib bcrypt.
+
+NFR-SEC-003
+JWT Authentication.
+
+NFR-SEC-004
+CSRF Protection.
+
+NFR-SEC-005
+XSS Protection.
+
+NFR-SEC-006
+SQL Injection Protection.
+
+NFR-SEC-007
+Rate Limiting.
+
+Reliability
+NFR-REL-001
+Database backup harian.
+
+NFR-REL-002
+Recovery Point Objective < 24 jam.
+
+NFR-REL-003
+Recovery Time Objective < 4 jam.
+
+Scalability
+NFR-SCL-001
+Horizontal scaling support.
+
+NFR-SCL-002
+Queue processing support.
+
+NFR-SCL-003
+Multi tenant ready.
+
+Maintainability
+NFR-MNT-001
+Laravel Coding Standard.
+
+NFR-MNT-002
+PSR-12 Compliance.
+
+NFR-MNT-003
+Automated Testing Support.
+
+5. EXTERNAL INTERFACE REQUIREMENTS
+Gemini API
+Purpose:
+AI Consultation
+AI PRD Generator
+
+Midtrans API
+Purpose:
+Payment Processing
+
+Cloudinary API
+Purpose:
+File Storage
+
+OneSignal API
+Purpose:
+Push Notification
+
+Sentry API
+Purpose:
+Monitoring
+
+6. DATA REQUIREMENTS
+Main Entities
+
+Users
+
+
+Roles
+
+
+Permissions
+
+
+Packages
+
+
+Orders
+
+
+Payments
+
+
+Attachments
+
+
+GeneratedPRD
+
+
+Notifications
+
+
+AuditLogs
+
+
+7. SECURITY REQUIREMENTS
+SEC-001
+Semua endpoint harus menggunakan HTTPS.
+
+SEC-002
+Semua webhook harus menggunakan signature validation.
+
+SEC-003
+Semua aktivitas penting harus tercatat audit log.
+
+SEC-004
+Password tidak boleh disimpan plaintext.
+
+SEC-005
+API harus menggunakan rate limit.
+
+SEC-006
+Role wajib diverifikasi sebelum akses.
+
+8. SYSTEM ACCEPTANCE CRITERIA
+Semua Functional Requirement lulus UAT.
+
+Error Rate < 1%.
+
+Payment Success > 98%.
+
+Availability > 99.9%.
+
+Semua Critical Bug ditutup.
+
+Load Test berhasil.
+
+Security Review berhasil.
+
+9. REQUIREMENT TRACEABILITY MATRIX
+PRD Requirement
+↓
+Business Process
+↓
+Functional Requirement
+↓
+Technical Design
+↓
+Implementation
+↓
+Testing
+↓
+Deployment
+
+APPROVAL
+Prepared By:
+Business Analyst
+Reviewed By:
+Product Owner
+Approved By:
+Stakeholders
+Version:
+1.0

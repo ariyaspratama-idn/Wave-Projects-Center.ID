@@ -1,0 +1,677 @@
+DEVOPS, INFRASTRUCTURE, CI/CD & DEPLOYMENT ARCHITECTURE SPECIFICATION
+
+Wave Projects Center.ID
+Version: 1.0
+
+Document Type:
+DevOps & Infrastructure Architecture Specification
+Architecture Standards:
+DevOps Institute Framework 
+GitOps Principles 
+SRE Best Practices 
+OWASP DevSecOps 
+CI/CD Maturity Model 
+Infrastructure as Code (IaC) 
+
+Status:
+Approved For DevOps Implementation
+
+Dependencies:
+PRD 
+BPD 
+SRS 
+TDD 
+DDD 
+API Specification 
+SAD 
+Security Architecture 
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan seluruh standar:
+Source Control 
+Git Strategy 
+CI/CD 
+Deployment 
+Monitoring 
+Infrastructure 
+Security 
+Backup 
+Disaster Recovery 
+Tujuan:
+Deployment otomatis 
+Zero downtime deployment 
+High availability 
+Infrastructure scalability 
+DevSecOps compliance 
+
+2. DEVOPS VISION
+Mission
+Membangun pipeline deployment otomatis yang aman, cepat, scalable, dan dapat diandalkan untuk seluruh lifecycle Wave Projects Center.ID.
+
+3. ENVIRONMENT ARCHITECTURE
+Environment Structure
+Development
+
+↓
+
+Staging
+
+↓
+
+Production
+
+Development
+Purpose:
+Developer Testing
+Deployment:
+Automatic
+
+Staging
+Purpose:
+QA Testing
+Deployment:
+Automatic
+
+Production
+Purpose:
+Customer Facing
+Deployment:
+Manual Approval Required
+
+4. INFRASTRUCTURE OVERVIEW
+Internet
+
+▼
+
+Cloudflare
+
+▼
+
+Vercel Edge Network
+
+▼
+
+Next.js Frontend
+
+▼
+
+Laravel API
+
+▼
+
+TiDB Cloud
+
+▼
+
+Cloudinary
+
+▼
+
+OneSignal
+
+▼
+
+Gemini AI
+
+5. GIT STRATEGY
+Branching Model
+main
+
+develop
+
+feature/*
+
+hotfix/*
+
+release/*
+
+Main Branch
+Production Ready
+
+Develop Branch
+Integration Branch
+
+Feature Branch
+Example
+feature/payment-module
+
+feature/ai-chat
+
+feature/customer-dashboard
+
+6. GIT WORKFLOW
+Developer
+
+▼
+
+Feature Branch
+
+▼
+
+Pull Request
+
+▼
+
+Code Review
+
+▼
+
+QA Review
+
+▼
+
+Merge Develop
+
+▼
+
+Staging Deploy
+
+▼
+
+Merge Main
+
+▼
+
+Production Deploy
+
+7. COMMIT CONVENTION
+Standard
+Conventional Commits
+
+Examples
+feat(ai): add recommendation engine
+
+fix(payment): webhook validation bug
+
+docs(prd): update requirements
+
+refactor(auth): improve jwt middleware
+
+test(order): add checkout test
+
+8. REPOSITORY STRUCTURE
+Frontend Repository
+wave-frontend
+
+/src
+/components
+/hooks
+/pages
+/public
+/tests
+
+Backend Repository
+wave-api
+
+/app
+/routes
+/config
+/database
+/tests
+
+Infrastructure Repository
+wave-infra
+
+terraform/
+scripts/
+github-actions/
+monitoring/
+
+9. CI/CD ARCHITECTURE
+Git Push
+
+▼
+
+GitHub Actions
+
+▼
+
+Lint
+
+▼
+
+Unit Test
+
+▼
+
+Build
+
+▼
+
+Security Scan
+
+▼
+
+Deploy Staging
+
+▼
+
+QA Approval
+
+▼
+
+Deploy Production
+
+10. GITHUB ACTIONS PIPELINE
+Pipeline Stages
+Stage 1
+Code Checkout
+
+Stage 2
+Install Dependencies
+
+Stage 3
+Lint
+
+Stage 4
+Unit Test
+
+Stage 5
+Build
+
+Stage 6
+Security Scan
+
+Stage 7
+Deploy
+
+11. CI QUALITY GATES
+Minimum Coverage
+80%
+
+Build Status
+Must Pass
+
+Security Scan
+Must Pass
+
+Critical Vulnerability
+0
+Allowed
+
+12. DEVSECOPS PIPELINE
+Code
+
+▼
+
+SAST
+
+▼
+
+Dependency Scan
+
+▼
+
+Secrets Scan
+
+▼
+
+Container Scan
+
+▼
+
+Deploy
+
+13. SECURITY SCANNING
+SAST
+Tools
+SonarQube
+
+Semgrep
+
+Dependency Scan
+Dependabot
+
+Snyk
+
+Secret Detection
+GitGuardian
+
+TruffleHog
+
+14. ENVIRONMENT VARIABLES MANAGEMENT
+Development
+GitHub Secrets
+
+Staging
+Encrypted Secrets
+
+Production
+Restricted Access
+
+Variables:
+APP_KEY
+
+JWT_SECRET
+
+MIDTRANS_SERVER_KEY
+
+GEMINI_API_KEY
+
+ONESIGNAL_API_KEY
+
+CLOUDINARY_SECRET
+
+15. DEPLOYMENT STRATEGY
+Frontend
+Platform:
+Vercel
+
+Deployment Type:
+Blue Green Deployment
+
+Backend
+Platform:
+Vercel
+
+Deployment Type:
+Rolling Deployment
+
+16. RELEASE STRATEGY
+Major Release
+v2.0.0
+
+Minor Release
+v1.1.0
+
+Patch Release
+v1.0.1
+
+17. DATABASE DEPLOYMENT STRATEGY
+Database
+TiDB Cloud
+
+Migration Rules
+Forward Compatible
+
+Zero Downtime
+
+Rollback Ready
+
+18. TERRAFORM INFRASTRUCTURE
+Managed Resources
+Vercel
+
+TiDB
+
+Cloudinary
+
+Monitoring
+
+DNS
+
+Folder Structure
+terraform/
+
+modules/
+
+environments/
+
+production/
+
+staging/
+
+19. MONITORING ARCHITECTURE
+Monitoring Stack
+Sentry
+
+Grafana
+
+Prometheus
+
+Metrics
+CPU
+Memory
+Response Time
+Error Rate
+Database Latency
+AI Usage
+Revenue
+
+20. OBSERVABILITY ARCHITECTURE
+Three Pillars
+Logs
+Application Logs
+Audit Logs
+Security Logs
+
+Metrics
+System Metrics
+Business Metrics
+
+Traces
+Distributed Tracing
+
+21. LOGGING ARCHITECTURE
+Application Logs
+{
+ "timestamp":"...",
+ "service":"order-service",
+ "level":"error",
+ "message":"payment failed"
+}
+
+Log Retention
+Production
+365 Days
+
+22. ALERTING ARCHITECTURE
+Critical Alerts
+Database Down
+Payment Failure
+AI Failure
+API Downtime
+Deployment Failure
+
+Notification Channels
+Email
+Push Notification
+Telegram
+Slack
+
+23. SRE SPECIFICATION
+Availability SLA
+99.9%
+
+Error Budget
+0.1%
+
+MTTR
+< 1 Hour
+
+MTBF
+> 30 Days
+
+24. CAPACITY PLANNING
+Year 1
+10.000 Users
+
+Year 2
+50.000 Users
+
+Year 3
+100.000+ Users
+
+25. BACKUP STRATEGY
+Database Backup
+Daily
+
+Source Code Backup
+Every Commit
+
+Asset Backup
+Cloudinary Export
+
+Retention
+90 Days
+
+26. DISASTER RECOVERY PLAN
+Recovery Objectives
+RPO
+15 Minutes
+
+RTO
+1 Hour
+
+Recovery Steps
+Restore Database
+
+Restore Assets
+
+Restore Configuration
+
+Validate Services
+
+Resume Operations
+
+27. INCIDENT MANAGEMENT
+Severity Levels
+SEV-1
+System Down
+
+SEV-2
+Major Function Failure
+
+SEV-3
+Minor Function Failure
+
+SEV-4
+Cosmetic Issue
+
+28. INCIDENT RESPONSE FLOW
+Incident
+
+▼
+
+Detection
+
+▼
+
+Triage
+
+▼
+
+Assignment
+
+▼
+
+Resolution
+
+▼
+
+Postmortem
+
+29. CHANGE MANAGEMENT
+Approval Required
+Production Changes
+Database Changes
+Security Changes
+Infrastructure Changes
+
+30. PRODUCTION GO-LIVE RUNBOOK
+Pre Go-Live
+✓ Infrastructure Ready
+✓ Database Ready
+✓ Security Review
+✓ Load Testing
+✓ Backup Testing
+✓ Monitoring Setup
+
+Go-Live
+✓ Deploy
+✓ Verify
+✓ Smoke Test
+✓ Enable Monitoring
+
+Post Go-Live
+✓ Monitor 24 Hours
+✓ Incident Watch
+✓ Performance Review
+
+31. LOAD TESTING STRATEGY
+Tool
+k6
+
+Scenarios
+Browse Website
+AI Chat
+Checkout
+Payment Webhook
+File Upload
+Dashboard Access
+
+32. SECURITY HARDENING CHECKLIST
+✓ HTTPS Only
+✓ CSP Enabled
+✓ JWT Expiration
+✓ RBAC Active
+✓ Rate Limiting
+✓ Secret Rotation
+✓ Audit Logging
+✓ Dependency Scan
+✓ Vulnerability Scan
+
+33. PRODUCTION READINESS CHECKLIST
+✓ CI/CD Ready
+✓ Infrastructure Ready
+✓ Monitoring Ready
+✓ Security Ready
+✓ Backup Ready
+✓ DR Tested
+✓ Performance Validated
+✓ Documentation Complete
+
+34. DEVOPS KPI
+Deployment Frequency
+Daily
+
+Lead Time
+< 24 Hours
+
+Change Failure Rate
+< 5%
+
+Recovery Time
+< 1 Hour
+
+35. ARCHITECTURE GOVERNANCE
+Review Frequency
+Monthly
+
+Security Audit
+Quarterly
+
+Infrastructure Audit
+Quarterly
+
+DevOps Audit
+Semi Annual
+
+APPENDIX A
+ENTERPRISE TOOLCHAIN
+Source Control
+GitHub
+CI/CD
+GitHub Actions
+Hosting
+Vercel
+Database
+TiDB Cloud
+Monitoring
+Sentry
+Notifications
+OneSignal
+AI
+Google Gemini
+
+DOCUMENT APPROVAL
+Prepared By:
+DevOps Architect
+Reviewed By:
+Lead Engineer
+Approved By:
+Stakeholders
+Version:
+1.0
+Status:
+Approved For Infrastructure Implementation

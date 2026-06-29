@@ -1,0 +1,511 @@
+BUSINESS PROCESS DOCUMENT (BPD)
+
+Wave Projects Center.ID
+Version: 1.0
+Status: Approved for Development
+Document Owner: Product Owner
+Classification: Internal Use Only
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan seluruh proses bisnis operasional Wave Projects Center.ID mulai dari calon pelanggan masuk ke platform hingga proyek selesai diserahkan kepada pelanggan.
+Dokumen ini digunakan oleh:
+Product Owner
+Business Analyst
+UI/UX Designer
+Backend Developer
+Frontend Developer
+QA Engineer
+Marketing Team
+Project Manager
+DevOps Engineer
+
+2. BUSINESS OVERVIEW
+Wave Projects Center.ID merupakan platform digital yang mengintegrasikan:
+Promosi layanan
+Konsultasi AI
+Pemesanan proyek
+Pembayaran online
+Pembuatan PRD otomatis
+Manajemen pekerjaan developer
+Monitoring proyek
+Serah terima hasil
+ke dalam satu sistem terpusat.
+
+3. BUSINESS OBJECTIVES
+Objective 01
+Mengurangi proses manual konsultasi pelanggan.
+Target:
+80% pertanyaan umum ditangani AI.
+
+Objective 02
+Mempercepat proses pemesanan.
+Target:
+Checkout selesai < 5 menit.
+
+Objective 03
+Mengurangi kesalahan komunikasi.
+Target:
+Seluruh kebutuhan proyek terdokumentasi otomatis dalam PRD.
+
+Objective 04
+Mempercepat distribusi pekerjaan.
+Target:
+PRD tersedia maksimal 5 menit setelah pembayaran berhasil.
+
+4. STAKEHOLDER MATRIX
+External Stakeholder
+Customer / Client
+Peran:
+Pemesan layanan.
+
+Payment Gateway
+Peran:
+Memproses pembayaran.
+
+Cloudinary
+Peran:
+Menyimpan file.
+
+Gemini AI
+Peran:
+Konsultasi dan generasi PRD.
+
+Internal Stakeholder
+Marketing Team
+Peran:
+Monitoring transaksi.
+
+Developer Team
+Peran:
+Pengerjaan proyek.
+
+Owner
+Peran:
+Pengambilan keputusan.
+
+System AI
+Peran:
+Virtual Consultant.
+
+5. AS-IS BUSINESS PROCESS
+(PROSES SAAT INI)
+Customer
+↓
+Chat WhatsApp
+↓
+Diskusi Manual
+↓
+Negosiasi
+↓
+Transfer Manual
+↓
+Konfirmasi Transfer
+↓
+Developer Membaca Chat
+↓
+Membuat Catatan Manual
+↓
+Mulai Pengerjaan
+↓
+Serah Terima
+
+
+
+
+Masalah:
+Tidak terpusat
+Sulit ditelusuri
+Banyak informasi hilang
+Tidak terukur
+Sulit diskalakan
+
+
+6. TO-BE BUSINESS PROCESS
+(PROSES TARGET)
+Customer
+↓
+AI Consultation
+↓
+Pilih Paket
+↓
+Checkout
+↓
+Pembayaran
+↓
+AI Generate PRD
+↓
+Developer Queue
+↓
+Development
+↓
+Testing
+↓
+Delivery
+↓
+Project Closed
+
+Manfaat:
+Terstandarisasi
+Terdokumentasi
+Otomatis
+Mudah diaudit
+
+
+7. BUSINESS PROCESS LEVEL 1
+CORE PROCESS
+Lead Generation
+↓
+AI Consultation
+↓
+Order Management
+↓
+Payment Processing
+↓
+PRD Generation
+↓
+Project Execution
+↓
+Project Delivery
+↓
+Customer Retention
+
+8. CUSTOMER JOURNEY MAP
+PHASE 1
+DISCOVERY
+Customer menemukan:
+
+ebsite
+Portfolio
+Pricing
+
+Tujuan:
+Mengenal layanan.
+
+PHASE 2
+CONSULTATION
+Customer berbicara dengan AI.
+Tujuan:
+Menentukan kebutuhan.
+Output:
+Rekomendasi paket.
+
+PHASE 3
+ORDERING
+Customer mengisi checkout.
+Tujuan:
+Membuat pesanan.
+Output:
+Order Created.
+
+PHASE 4
+PAYMENT
+Customer melakukan pembayaran.
+Output:
+Payment Success.
+
+PHASE 5
+DEVELOPMENT
+Developer mengerjakan proyek.
+Output:
+Progress Project.
+
+PHASE 6
+DELIVERY
+Project diserahkan.
+Output:
+Project Completed.
+
+9. SWIMLANE PROCESS
+LANE 1
+CUSTOMER
+Chat AI
+Pilih Paket
+Checkout
+Upload File
+Bayar
+Tracking
+
+
+LANE 2
+SYSTEM AI
+Analisis kebutuhan
+Rekomendasi paket
+Generate PRD
+
+LANE 3
+PAYMENT GATEWAY
+Terima pembayaran
+Kirim callback
+
+LANE 4
+MARKETING
+Monitor pembayaran
+Follow up customer
+
+LANE 5
+DEVELOPER
+Membaca PRD
+Mengerjakan proyek
+Update progress
+
+LANE 6
+OWNER
+Monitoring KPI
+Monitoring revenue
+
+10. AI CONSULTATION PROCESS
+TRIGGER
+Customer membuka AI Chat.
+FLOW
+Customer Input
+↓
+AI Analysis
+↓
+Intent Detection
+↓
+Requirement Extraction
+↓
+Package Recommendation
+↓
+Customer Decision
+↓
+Checkout
+OUTPUT
+Recommended Package
+Business Rule:
+BR-AI-001
+AI wajib memberikan rekomendasi paket.
+BR-AI-002
+AI wajib menolak repository private.
+BR-AI-003
+AI wajib memberikan alasan rekomendasi.
+
+
+
+
+11. ORDER MANAGEMENT PROCESS
+TRIGGER
+Customer klik Checkout.
+FLOW
+Input Data
+↓
+Validation
+↓
+Order Creation
+↓
+Order Number Generation
+↓
+Save Database
+↓
+Create Payment Session
+OUTPUT
+Pending Order
+Business Rule:
+BR-ORD-001
+Order Number harus unik.
+BR-ORD-002
+Email wajib valid.
+BR-ORD-003
+Package harus aktif.
+
+12. FILE UPLOAD PROCESS
+TRIGGER
+Customer upload lampiran.
+FLOW
+Request Upload Signature
+↓
+Cloudinary Signed Token
+↓
+Direct Upload
+↓
+Store Metadata
+↓
+Attach to Order
+OUTPUT
+Attachment Stored
+Business Rule:
+BR-UPL-001
+Maksimal 100 MB.
+BR-UPL-002
+ZIP, PDF, PNG, JPG.
+BR-UPL-003
+Upload tidak boleh melalui backend.
+
+13. PAYMENT PROCESS
+TRIGGER
+Customer memilih metode bayar.
+FLOW
+Create Snap Token
+↓
+Customer Pay
+↓
+Midtrans Verification
+↓
+Webhook Callback
+↓
+Signature Validation
+↓
+Update Status
+↓
+Push Notification
+OUTPUT
+Paid Order
+Business Rule:
+BR-PAY-001
+Signature wajib valid.
+BR-PAY-002
+Webhook harus idempotent.
+BR-PAY-003
+Duplicate callback diabaikan.
+
+14. AI PRD GENERATION PROCESS
+TRIGGER
+Payment Success.
+FLOW
+Payment Verified
+↓
+Queue Created
+↓
+AI Prompt Builder
+↓
+Gemini Processing
+↓
+Generate PRD
+↓
+Store PRD
+↓
+Notify Developer
+OUTPUT
+Generated PRD
+Business Rule:
+BR-PRD-001
+PRD harus berbentuk Markdown.
+BR-PRD-002
+PRD harus memiliki fitur MVP.
+BR-PRD-003
+PRD harus tersimpan permanen.
+
+15. PROJECT EXECUTION PROCESS
+TRIGGER
+Developer menerima PRD.
+FLOW
+Queue
+↓
+Assign Developer
+↓
+Development
+↓
+Internal Review
+↓
+QA Testing
+↓
+Ready For Delivery
+OUTPUT
+Completed Project
+Business Rule:
+BR-DEV-001
+Status wajib diperbarui.
+BR-DEV-002
+Semua aktivitas tercatat.
+
+16. DELIVERY PROCESS
+TRIGGER
+Project Ready.
+FLOW
+Generate BAST
+↓
+Customer Verification
+↓
+Final Payment Check
+↓
+Release Asset
+↓
+Project Closed
+OUTPUT
+Delivered Project
+Business Rule:
+BR-DLV-001
+Source code tidak boleh diberikan jika belum lunas.
+BR-DLV-002
+BAST wajib dibuat.
+
+17. INCIDENT MANAGEMENT PROCESS
+TRIGGER
+System Failure.
+FLOW
+Incident Detection
+↓
+Incident Classification
+↓
+Developer Investigation
+↓
+Resolution
+↓
+Verification
+↓
+Incident Closure
+OUTPUT
+Resolved Incident
+Priority:
+P1 Critical
+15 Menit
+P2 Major
+1 Jam
+P3 Minor
+24 Jam
+
+18. KPI MONITORING PROCESS
+1. Daily Metrics
+Visitor
+AI Chat Session
+Order Count
+Revenue
+Weekly Metrics
+Conversion Rate
+Average Order Value
+Customer Satisfaction
+Monthly Metrics
+Revenue Growth
+Active Customer
+Project Success Rate
+
+
+19. BUSINESS RULE MATRIX
+BR-AI-001
+AI wajib memberikan rekomendasi.
+BR-AI-002
+Repository private ditolak.
+BR-ORD-001
+Order Number unik.
+BR-PAY-001
+Signature Midtrans valid.
+BR-PAY-002
+Webhook idempotent.
+BR-UPL-001
+Direct Upload Only.
+BR-PRD-001
+PRD wajib markdown.
+BR-DLV-001
+Aset ditahan jika belum lunas.
+BR-DLV-002
+BAST wajib dibuat.
+
+20. SUCCESS MEASUREMENT
+Operational KPI
+Checkout Success Rate > 95%
+
+Payment Success Rate > 98%
+
+AI Recommendation Accuracy > 85%
+
+Project Delivery Success > 95%
+
+Customer Satisfaction > 4.5/5
+
+System Availability > 99.9%
+
+APPROVAL
+Prepared By:Ariyas Pratama Ramadhan
+Reviewed By:Ariyas Pratama Ramadhan
+Approved By:Ariyas Pratama Ramadhan
+Version: 1.0

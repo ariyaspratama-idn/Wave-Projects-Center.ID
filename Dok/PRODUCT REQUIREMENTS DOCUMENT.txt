@@ -1,0 +1,659 @@
+PRODUCT REQUIREMENTS DOCUMENT (PRD)
+Wave Projects Center.ID
+
+1. Meta Informasi Dokumen
+
+Latar Belakang & Tujuan
+
+Problem Statement:
+Saat ini, proses promosi, penyebaran informasi, penerimaan pesanan pembuatan sistem (Web/APK), komunikasi dengan pelanggan, serta penerimaan pembayaran masih terpencar di berbagai platform pihak ketiga. Hal ini menyebabkan alur kerja yang tidak tersentralisasi, keterlambatan komunikasi, dan pengerjaan pesanan yang tidak terstruktur.
+
+Visi Produk:
+Membangun Wave Projects Center sebagai ekosistem single-platform tersentralisasi. Platform ini berfungsi sebagai media promosi, komunikasi diskusi (AI Chat), pintu pemesanan, pemrosesan pembayaran, hingga serah terima hasil proyek. Bagi tim developer, sistem ini bertindak sebagai manajer tugas terstruktur yang akan menyalurkan pesanan otomatis setelah pembayaran divalidasi (Lunas atau DP 30%).
+
+Metrik Kesuksesan (KPIs):
+
+Efisiensi Pemesanan: Pengguna dapat menelusuri portofolio, mencoba akun demo, dan melakukan checkout pesanan dalam satu alur yang lancar.
+
+Otomatisasi AI: Bot AI (gratis/unlimited API) mampu merespons pertanyaan pelanggan, mencocokkan kebutuhan dengan paket yang tersedia, dan men-generate draft PRD teknis untuk tim developer.
+
+Performa Transaksi: Sistem mampu memproses pesanan dan meneruskan notifikasi ke tim marketing & developer dalam hitungan detik setelah pembayaran dikonfirmasi.
+
+Stabilitas Sistem: Uptime 99.9% pada environment serverless, serta lolos pengujian beban (stress testing) tinggi menggunakan k6 tanpa menyentuh timeout Vercel.
+
+Ruang Lingkup (Scope)
+
+In Scope (Fase 1 - MVP):
+
+Modul Chat AI: Asisten cerdas berbasis AI untuk menganalisis kebutuhan klien, menjawab pertanyaan teknis pengembangan full-stack, dan merekomendasikan paket layanan.
+
+Modul Pemesanan: Formulir checkout yang mencakup data diri, tujuan proyek, serta integrasi unggahan file (via Cloudinary) atau tautan repositori GitHub publik klien.
+
+Modul Pembayaran: Integrasi Payment Gateway (Midtrans) untuk opsi pembayaran Full atau DP 30%. Dilengkapi pembuatan bukti transaksi digital.
+
+Modul PRD & Automasi Tugas: Generation otomatis dokumen teknis (PRD internal) oleh AI untuk tim developer berdasarkan form pemesanan klien.
+
+Modul Serah Terima: Pembuatan dokumen serah terima digital dan penahanan aset hingga klien melunasi sisa pembayaran.
+
+Out of Scope:
+
+Modul HR & Absensi Karyawan (Dikelola di sistem terpisah).
+
+Aplikasi Mobile Native (Fokus pada optimasi Progressive Web App / PWA terlebih dahulu).
+
+4. Target Pengguna (User Personas & Roles)
+
+Pelanggan / Klien: Pihak yang mencari jasa pembuatan Web/APK, membutuhkan konsultasi AI, dan melacak status pesanan mereka.
+
+Sistem AI: "Karyawan Virtual" yang bertugas menyambut klien, menentukan paket, menyusun PRD untuk developer, dan membuat draf dokumen serah terima.
+
+Tim Marketing / Kasir: Memantau konfirmasi pembayaran, mengelola interaksi lanjutan di luar AI, dan merilis file proyek saat status sudah lunas.
+
+Tim Developer: Menerima antrean pekerjaan (berisi PRD dari AI), mengembangkan aplikasi (menggunakan ekosistem koding Antigravity di environment Linux), melakukan deploy, dan melaporkan progres sistem.
+
+Super Admin / Owner: Memiliki akses penuh ke laporan transaksi, metrik harian, dan manajemen pengguna.
+
+5. Kebutuhan Fungsional (User Stories)
+
+Epic 1: AI Chat & Analisis Kebutuhan
+
+
+
+
+
+Epic 2: Checkout & Pembayaran (Midtrans)
+
+Epic 3: Manajemen Proyek & Automasi Dokumen
+
+6. Arsitektur Sistem & Kebutuhan Non-Fungsional (NFR)
+Pengembangan sistem akan dilakukan menggunakan basis Laravel (v10/v11). Mengingat arsitektur sangat bergantung pada tier gratis (Hobby/Free Tier), berikut adalah batasan dan mitigasi arsitekturnya:
+
+6.1. Deployment & Backend (Vercel Hobby Tier)
+
+Kendala: Vercel Hobby memiliki batas waktu eksekusi fungsi maksimal 10 detik.
+
+Mitigasi: Segala proses berat (seperti AI API calls, generation PDF bukti transaksi, atau upload file) tidak boleh dilakukan secara sinkron. Gunakan arsitektur asinkron (misalnya, webhook response cepat lalu processing berjalan di background atau client-side).
+
+6.2. Manajemen Database (TiDB Cloud Free)
+
+Kendala: Keterbatasan jumlah koneksi konkuren pada tier gratis.
+
+Mitigasi: Wajib mengaktifkan Connection Pooling (misal: PDO::ATTR_PERSISTENT di Laravel) agar serverless function Vercel tidak membuat koneksi baru setiap kali diakses, yang dapat menyebabkan Connection Exhaustion.
+
+
+
+
+
+6.3. Manajemen Media (Cloudinary Free)
+
+Mitigasi Storage: Dilarang mengunggah file gambar/dokumen melewati backend Laravel. Gunakan metode Direct-to-Cloud Upload dari frontend langsung ke Cloudinary untuk menghemat alokasi memori dan menghindari timeout Vercel.
+
+6.4. Sistem Notifikasi (OneSignal Free)
+
+Digunakan untuk mengirim push notification real-time ke perangkat Tim Marketing/Developer saat ada pesanan baru masuk atau pembayaran tervalidasi.
+
+Strategi Pengujian Kinerja (Stress & Load Testing dengan k6)
+
+Untuk memastikan limit gratisan dari Vercel dan TiDB tidak tumbang saat trafik tinggi, wajib dilakukan uji beban menggunakan skrip otomatis k6:
+
+Skenario Simulasi Order Masuk: Mensimulasikan 50-100 Virtual Users (VUs) yang melakukan checkout bersamaan untuk menguji Connection Pooling TiDB.
+
+Skenario Webhook Payment: Menembak endpoint callback pembayaran secara bertubi-tubi untuk memastikan Vercel merespons di bawah 2 detik agar tidak di-blacklist oleh Payment Gateway.
+
+Threshold (SLA): 95% dari seluruh request harus memiliki waktu respons di bawah 2.5 detik (p-95 < 2500ms), dan error rate harus di bawah 1%.
+
+ Kriteria Kesiapan Rilis (Go-Live Readiness Checklist)
+Sebelum rilis produksi, pastikan poin-poin berikut telah tervalidasi:
+
+[ ] Infrastruktur: Build commands di vercel.json berhasil di-deploy tanpa kegagalan ke cabang main GitHub.
+
+[ ] Keamanan Webhook: Endpoint callback pembayaran sudah dilengkapi validasi signature key untuk mencegah tembakan data palsu.
+
+[ ] Performa: Telah lolos uji tembak stress test K6 sesuai parameter di atas.
+
+[ ] Isolasi Media: Seluruh unggahan file klien sudah dikonfirmasi mengarah langsung ke Cloudinary, bukan membebani Vercel.
+
+[ ] Integrasi AI: Token API unlimited AI telah terhubung dan mampu menghasilkan draf PRD teknis.
+
+Kebutuhan Fungsional Tambahan (Extended Functional Requirements)
+
+Epic 3: Manajemen Media & Aset (Cloudinary) 
+
+User Story: Sebagai pengguna (klien/developer), saya ingin mengunggah file gambar, aset proyek, atau lampiran pendukung tanpa menyebabkan sistem mengalami kegagalan timeout. 
+
+Kriteria Penerimaan (Acceptance Criteria):
+
+Sistem menggunakan metode Direct-to-Cloud Upload dari sisi klien ke Cloudinary. 
+
+Backend Laravel hanya bertugas menghasilkan signed upload signature berumur pendek (< 30 detik) untuk mengamankan proses unggahan.
+
+Vercel Serverless Functions terbebas dari beban pemrosesan, manipulasi, atau kompresi gambar. 
+
+Epic 4: Sistem Notifikasi Real-time (OneSignal) 
+
+User Story: Sebagai tim internal (Marketing & Developer), saya ingin mendapatkan notifikasi instan ketika terjadi perubahan status transaksi atau kondisi kritis pada sistem. 
+
+Kriteria Penerimaan (Acceptance Criteria):
+
+Ketika pembayaran berhasil dikonfirmasi oleh Payment Gateway, sistem memicu push notification melalui SDK OneSignal ke perangkat admin. 
+
+Sistem mendukung Tag-Based Routing untuk memisahkan segmentasi notifikasi antara tim marketing (fokus finansial) dan tim developer (fokus teknis/PRD). 
+
+Epic 5 & 6: Multi-Management & Smart Routing (Fase 2) 
+
+User Story: Sebagai pemilik platform, saya ingin sistem dapat mengelola banyak entitas proyek secara fleksibel dan mendistribusikan beban pekerjaan secara pintar ke tim developer yang tersedia. 
+
+Kriteria Penerimaan (Acceptance Criteria):
+
+Tabel database berevolusi menggunakan Composite Sharding Key untuk mencegah locking contention saat data transaksional meningkat. 
+
+Sistem memiliki logika Smart Order Routing untuk membagi beban kerja secara otomatis berdasarkan antrean aktif di dashboard developer. 
+
+Arsitektur Teknis & Mitigasi Infrastruktur Serverless
+
+Membangun aplikasi di atas infrastruktur gratisan memerlukan penanganan arsitektur yang sangat spesifik untuk menghindari pembatasan layanan (limits): 
+
+[Client Browser] 
+       │
+       ├──► (1) Request Signed URL ─────► [Vercel Serverless (Laravel)]
+       ├──► (2) Direct Upload Asset ────► [Cloudinary Storage]
+       │
+       ├──► (3) Submit Order & Pay ─────► [Vercel Serverless (Laravel)]
+                                                 │
+                                                 ├──► [TiDB Cloud (Connection Pool)]
+                                                 └──► [OneSignal API (Push Notification)]
+
+10.1. Mitigasi Serverless Timeout (Vercel Hobby Tier) 
+
+Tantangan: Vercel menetapkan batas eksekusi ketat (10-15 detik) untuk Serverless Functions pada akun Hobby. Proses berat seperti pemanggilan API AI untuk pembuatan PRD atau pengolahan laporan finansial berisiko mengalami Request Timeout (RTO). 
+
+Strategi Mitigasi:
+
+Asynchronous Processing (202 Accepted): Setiap permintaan yang membutuhkan pemrosesan AI tidak akan ditunggu secara sinkron. Server langsung mengembalikan respons HTTP 202, memasukkan tugas ke antrean (queue/background task), dan membebaskan fungsi Vercel agar tidak memicu timeout. 
+
+Chunking: Proses pemrosesan data besar wajib dipecah menjadi beberapa bagian kecil (chunks) yang dieksekusi secara bertahap menggunakan bantuan pemicu cron eksternal atau berkala. 
+
+10.2.  Manajemen Database Terdistribusi (TiDB Cloud Free) 
+
+Tantangan: Karakteristik serverless pada Vercel cenderung membuka koneksi database baru pada setiap request, yang dengan cepat dapat menghabiskan kuota batas koneksi (Connection Exhaustion) pada TiDB Cloud tier gratis. 
+
+Strategi Mitigasi:
+
+Persistent Connection Pooling: Konfigurasi driver database Laravel wajib memaksa penggunaan PDO::ATTR_PERSISTENT atau memanfaatkan proxy koneksi bawaan TiDB untuk menjaga koneksi tetap hidup dan dapat digunakan kembali (reused) antar request. 
+
+Isolasi Beban Kerja (HTAP): Memanfaatkan kemampuan arsitektur hybrid TiDB untuk memisahkan kueri transaksional cepat (OLTP) dengan kueri analitik berat dari AI (OLAP) guna menghindari penurunan performa pada tabel inti. 
+
+Arsitektur Data & Spesifikasi Kontrak API (TiDB Cloud) 
+
+ Skema Tabel Inti (Core Tables Layout) 
+
+Tabel: orders (Menyimpan Data Pesanan Utama)
+
+id (BIGINT, Primary Key, Auto Increment)
+
+order_number (VARCHAR(50), Unique)
+
+client_name (VARCHAR(100)) 
+
+client_email (VARCHAR(100)) 
+
+package_id (VARCHAR(20)) 
+
+github_url (VARCHAR(255), Nullable) 
+
+payment_status (ENUM('pending', 'dp_30', 'paid_full', 'refunded')) 
+
+project_status (ENUM('queued', 'in_progress', 'testing', 'completed')) 
+
+created_at (TIMESTAMP) 
+
+Tabel: generated_prds (Hasil Dokumentasi AI untuk Developer) 
+
+id (BIGINT, Primary Key)
+
+order_id (BIGINT, Foreign Key linked to orders.id)
+
+prd_content (LONGTEXT) (Format JSON/Markdown berisi spesifikasi teknis dari AI) 
+
+ai_model_used (VARCHAR(50)) 
+
+generated_at (TIMESTAMP)
+ Spesifikasi Kontrak API Utama (API Contracts) 
+
+A. Endpoint Pemesanan (Simultanitas Tinggi) 
+
+Protokol / Method: POST 
+
+Path: /api/v1/orders/checkout 
+
+Headers: Content-Type: application/json, X-Idempotency-Key: <UUID> 
+
+Request Payload (JSON): 
+
+JSON
+{
+  "client_name": "Ariyas Pratama",
+  "client_email": "ariyas@example.com",
+  "package_id": "pkg_fullstack_mvp",
+  "github_url": "https://github.com/ariyas/my-repo",
+  "payment_type": "dp_30"
+}
+
+
+Response Success (201 Created): 
+
+JSON
+{
+  "success": true,
+  "message": "Order created successfully",
+  "data": {
+    "order_number": "WAVE-2026-001",
+    "payment_status": "pending",
+    "snap_token": "midtrans-snap-token-xyz"
+  }
+}
+
+
+Response Error (422 Unprocessable Entity): 
+
+JSON
+{
+  "success": false,
+  "errors": {
+    "github_url": ["Tautan repositori harus berstatus publik untuk akses analisis sistem AI."]
+  }
+}
+
+B. Endpoint Callback / Webhook Payment (Asinkron) 
+
+Protokol / Method: POST 
+
+Path: /api/v1/payments/callback 
+
+Content-Type: application/json 
+
+Response (202 Accepted): Server menerima payload dari Midtrans, memvalidasi tanda tangan berkas, memasukkan data ke antrean, dan langsung mengembalikan respons sukses dalam < 1 detik agar koneksi segera terputus. 
+12. Keamanan, Webhook Idempotensi, & Validasi Signature 
+12.1.  Penanganan Idempotensi Webhook pada Serverless Vercel 
+
+Karena sifat jaringan internet dan retry policy dari sistem pembayaran yang agresif, endpoint webhook berisiko menerima payload yang sama berulang kali. 
+
+Strategi Mitigasi (Idempotency Key): Setiap request wajib menyertakan X-Idempotency-Key atau menggunakan kombinasi unik dari order_id + payment_status. Nilai ini disimpan sementara di dalam database atau cache. Jika request dengan key yang sama terdeteksi kembali, sistem langsung mengembalikan status sukses tanpa memproses ulang transaksi. 
+
+12.2.  Contoh Implementasi Middleware Validasi Signature (Laravel) 
+
+Untuk memastikan bahwa data callback benar-benar dikirim oleh Midtrans (bukan manipulasi pihak ketiga), tim engineering wajib menerapkan pengecekan Signature Key: 
+
+PHP
+namespace App\Http\Middleware;
+use Closure;use Illuminate\Http\Request;use Symfony\Component\HttpFoundation\Response;
+class VerifyMidtransSignature{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $payload = $request->getContent();
+        $orderId = $request->input('order_id');
+        $statusCode = $request->input('status_code');
+        $grossAmount = $request->input('gross_amount');
+        $serverKey = config('services.midtrans.server_key');
+
+        // Rekonstruksi SHA512 Signature standar Midtrans
+        $localSignature = hash("sha512", $orderId . $statusCode . $grossAmount . $serverKey);
+
+        if ($localSignature !== $request->input('signature_key')) {
+            return response()->json(['message' => 'Invalid Signature Key Callback denied.'], 403);
+        }
+
+        return $next($request);
+    }
+}
+
+12.3. Kebijakan Keamanan & Kepatuhan Data (UU PDP Compliance) 
+
+Gunakan metode Blind Index (Hashing HMAC-SHA256 dengan salt rahasia pada kolom terpisah, misal phone_number_hash) untuk kebutuhan pencarian data unik, sedangkan kolom aslinya tetap dienkripsi tanpa constraint unik.
+
+Penyimpanan Data Sensitif: Seluruh data pribadi klien (nama, email, log komunikasi) wajib dienkripsi saat disimpan di TiDB Cloudmenggunakan algoritma AES-256-GCM. 
+
+Kebijakan Retensi Log Finansial: Log transaksi finansial wajib dikunci dan disimpan secara utuh selama minimal 5 tahun untuk kebutuhan audit internal dan kepatuhan hukum, terpisah dari log aktivitas debug aplikasi biasa. 
+
+
+
+
+
+
+13. Manajemen Error & Skenario k6 Pengujian Beban 
+
+13.1.  Matriks Penanganan Error Sistem 
+
+13.2. Contoh Implementasi Potongan Skrip k6 Singkat 
+Gunakan skrip pengujian beban berikut di repositori lokal untuk memvalidasi performa platform sebelum melakukan penggabungan kode ke cabang utama (main branch): 
+
+JavaScript
+import http from 'k6/http';import { check, sleep } from 'k6';
+// Konfigurasi Parameter Uji Beban (SLA & Target)export const options = {
+  stages: [
+    { duration: '30s', target: 20 }, // Naikkan ke 20 pengguna bersamaan
+    { duration: '1m', target: 50 },  // Stress test puncak dengan 50 pengguna [cite: 19]
+    { duration: '30s', target: 0 },  // Penurunan performa normal
+  ],
+  thresholds: {
+    http_req_duration: ['p(95)<2500'], // 95% request harus selesai di bawah 2.5 detik [cite: 88]
+    http_req_failed: ['rate<0.01'],    // Toleransi kegagalan error rate kurang dari 1% [cite: 88]
+  },
+};
+export default function () {
+  const url = 'https://wave-projects-center-id.vercel.app/api/v1/orders/checkout';
+  const payload = JSON.stringify({
+    client_name: 'Tester k6',
+    client_email: 'k6@test.com',
+    package_id: 'pkg_fullstack_mvp',
+    github_url: 'https://github.com/test/public-repo',
+    payment_type: 'dp_30',
+  });
+
+  const params = {
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Idempotency-Key': `k6-uuid-${__VU}-${__ITER}`,
+    },
+  };
+
+  const res = http.post(url, payload, params);
+  
+  check(res, {
+    'status is 21 Created or 202': (r) => r.status === 21 || r.status === 202,
+  });
+
+  sleep(1);
+}
+
+13.3.  Arsitektur Observabilitas & Pemantauan Performa 
+
+
+Aplikasi (Sentry Layer): Mengonfigurasi Sentry untuk menangkap setiap anomali dengan tag penting seperti environment, user_role, dan transaction_id guna melacak letak kegagalan fungsi di klaster serverless Vercel. 
+
+Database (TiDB Cloud Dashboard Alerts): DevOps wajib mengaktifkan sistem peringatan otomatis berbasis email/Slack jika metrik penggunaan menyentuh ambang berikut: 
+
+Database CPU Usage > 80% selama lebih dari 3 menit berturut-turut. 
+
+Statement Latency > 1500ms pada kueri operasional harian. 
+
+Strategi Migrasi Data & Prosedur Operasional (SOP) 
+
+Mengingat database berjalan di klaster terdistribusi gratisan, perubahan skema tabel (DDL Migration) tidak boleh mengganggu operasional sistem aktif (Zero-Downtime): 
+
+SOP Migrasi Skema (TiDB Online DDL): Dilarang keras mengeksekusi perintah php artisan migrate secara langsung pada jam sibuk trafik jika melakukan modifikasi atau penghapusan kolom pada tabel besar. 
+
+Aturan Pengamanan Kolom (Data Backfilling): Seluruh proses penghapusan kolom lama hanya diizinkan apabila kode versi aplikasi terbaru yang tidak lagi menggunakan komponen tersebut telah berjalan dengan aman di Vercel selama minimal 7x24 jam. Jika aman, kolom lama baru boleh dihapus (dropped) lewat konsol database secara bertahap. 
+
+A. Solusi AI "Unlimited & Deep Reasoning".
+
+Teknologi: Menggunakan Google Gemini 1.5 Flash API (Free Tier) melalui SDK resmi Google.
+
+Limitasi Kuota: 15 RPM (Requests Per Minute) dan 1.000.000 TPM (Tokens Per Minute). Angka ini sangat besar dan gratis selamanya untuk skala agensi. 
+
+Strategi Mitigasi: Jika klien melakukan chat terlalu cepat dan terkena Rate Limit (HTTP 429), backend Laravel akan menangkap exception tersebut dan otomatis mengalihkan (failover) kueri ke OpenRouter API (Free Tier Tier) menggunakan model DeepSeek-R1 / Llama-3-Free.
+
+B. Antrean (Queue Engine) di Vercel.
+
+Masalah: Vercel Hobby mematikan proses dalam waktu maksimal 10 detik. Kita tidak bisa menjalankan perintah daemon php artisan queue:work secara terus-menerus di Vercel. 
+
+Solusi Konkret:
+
+Set driver antrean Laravel ke database (QUEUE_CONNECTION=database) di TiDB Cloud. 
+
+Buat satu endpoint khusus yang aman: /api/v1/internal/queue-runner?token=RAHASIA_WAVE.
+Di dalam endpoint tersebut, jalankan perintah: Artisan::call('queue:work --once --max-time=7'); (Berhenti di detik ke-7 agar fungsi Vercel tidak mengalami timeout).
+
+Gunakan layanan pihak ketiga gratis seperti Cron-Job.org untuk menembak endpoint tersebut setiap 1 menit sekali guna memproses antrean pembuatan PRD oleh AI di latar belakang. 
+
+2. ARSITEKTUR DATA COMPLETE (Spesifikasi Skema TiDB Cloud)
+
+Agar database tidak mengalami kebuntuan koneksi (Connection Exhaustion), seluruh relasi diatur secara efisien tanpa joint-query yang terlalu rumit. Berikut adalah skema tabel siap pakai dalam format SQL: 
+
+SQL
+
+-- 1. TABEL LAYANAN / PAKET HARGACREATE TABLE packages (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    base_price DECIMAL(12, 2) NOT NULL,
+    estimated_days INT NOT NULL,
+    features TEXT NOT NULL, -- Format JSON: ["PWA", "Admin Panel", "TiDB Storage"]
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- 2. TABEL TRANSAKSI UTAMACREATE TABLE orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_number VARCHAR(50) UNIQUE NOT NULL,
+    client_name VARCHAR(100) NOT NULL,
+    client_email VARCHAR(100) NOT NULL,
+    client_whatsapp VARCHAR(20) NOT NULL,
+    project_purpose TEXT NOT NULL,
+    package_id VARCHAR(50) NOT NULL,
+    github_url VARCHAR(255) NULL, -- Wajib Public
+    payment_choice ENUM('FULL', 'DP_30') NOT NULL,[cite: 1]
+    total_amount DECIMAL(12, 2) NOT NULL,
+    amount_paid DECIMAL(12, 2) DEFAULT 0.00,
+    midtrans_snap_token VARCHAR(255) NULL,
+    payment_status ENUM('PENDING', 'DP_PAID', 'FULLY_PAID', 'EXPIRED', 'FAILED') DEFAULT 'PENDING',[cite: 1]
+    project_status ENUM('WAITING_PAYMENT', 'QUEUED', 'DEVELOPING', 'TESTING', 'READY_TO_DELIVER', 'COMPLETED') DEFAULT 'WAITING_PAYMENT',[cite: 1]
+    deadline DATE NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (package_id) REFERENCES packages(id)
+);
+
+-- 3. TABEL INTEGRASI MEDIA CLOUDINARY (Lampiran Dokumen/Gambar Klien)CREATE TABLE order_attachments (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    cloudinary_public_id VARCHAR(255) NOT NULL,
+    file_url VARCHAR(255) NOT NULL,
+    file_type ENUM('IMAGE', 'ZIP', 'PDF') NOT NULL,
+    uploaded_by ENUM('CLIENT', 'DEVELOPER') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+
+-- 4. TABEL PRD DRAFT GENERATED BY AICREATE TABLE generated_prds (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT UNIQUE NOT NULL,
+    prd_markdown LONGTEXT NOT NULL, -- Berisi dokumen PRD lengkap
+    system_architecture_suggestion TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+
+3. ALUR DATA END-TO-END & TRACE INTEGRASI SISTEM
+
+Berikut adalah visualisasi bagaimana data berpindah antar-platform gratisan dari awal hingga akhir: 
+
+[Klien] ──► Chatting & Konsultasi AI ──► Pilih Paket & Isi Form (Input Link GitHub)
+                                                               │
+                                                               ▼
+[Klien] ◄── Link Bayar (Snap Token) ◄── Hit API Midtrans ◄── Validasi Kelayakan Paket via AI
+   │
+   ▼ (Bayar Lunas / DP 30%)
+[Midtrans Webhook] ──► [Vercel Laravel] ──► Ubah Status Jadi 'QUEUED' & Kirim Notif via OneSignal
+                                │
+                                ▼ (Triggered by Cron-job.org / Asynchronous Queue)
+                         [Gemini AI Engine] ──► Generate PRD Otomatis ──► Masuk Dashboard Dev
+
+Detail Langkah-Langkah Sistem:
+
+Fase Pra-Order: Klien berdiskusi dengan AI Chat di web. Jika sepakat, klien mengisi form checkout dan menyertakan link GitHub publik. 
+
+Fase Validasi AI: Backend mengirim data form + link GitHub ke Gemini API untuk dianalisis: "Apakah paket yang dipilih (misal: Paket Web Landing Page) sesuai dengan kompleksitas target sistem yang diinginkan klien?" Jika tidak sesuai, AI memberikan rekomendasi penyesuaian paket di layar sebelum pembayaran dilakukan. 
+
+Fase Transaksi: Klien memilih opsi bayar (DP 30% atau Full). Laravel menembak API Midtrans untuk mendapatkan snap_token. 
+
+Fase Webhook Pasca-Bayar: Midtrans mengirim sinyal sukses ke /api/v1/payments/callback. Sistem langsung memperbarui status di database TiDB, memicu OneSignal untuk menyalakan notifikasi di HP Team Marketing & Developer, dan memasukkan tugas pembuatan PRD ke antrean database. 
+
+4. SPESIFIKASI PROMPT AI ENGINE (Otomatisasi Dokumen PRD)
+
+[cite: 1]
+Untuk memastikan AI tidak memberikan jawaban ngawur (hallucination), backend Laravel wajib membungkus data klien menggunakan System Prompt yang ketat berikut[cite: 1]:
+
+Struktur Prompt Generator PRD Teknis (Dikirim ke Gemini API)
+[cite: 1]:
+
+Plaintext
+[CONTEXT]
+Anda adalah System Analyst & Full-Stack Developer Ahli di Wave Projects Center.ID. Tugas Anda adalah menerjemahkan formulir pemesanan klien menjadi dokumen Product Requirements Document (PRD) teknis yang siap dieksekusi oleh tim developer kami.
+
+[DATA KLIEN]
+- Nama Proyek: Pembuatan Aplikasi berdasarkan Form Klien
+- Tujuan Sistem: {project_purpose}
+- Paket yang Dipilih: {package_id}
+- Analisis Kode Awal (GitHub): {github_url}
+
+[RULES FORMAT DOKUMEN]
+Anda WAJIB mengeluarkan output dalam format Markdown murni dengan struktur persis seperti di bawah ini. Jangan bertele-tele, langsung berikan poin teknisnya:
+
+## 1. Arsitektur Komponen Utama (High-Level Architecture)
+- Jelaskan teknologi frontend, backend, dan susunan database terdistribusi yang direkomendasikan.
+
+## 2. Fitur MVP (Minimum Viable Product) yang Harus Dibuat
+- Pecah menjadi User Stories siap koding.
+
+## 3. Skema Data & Endpoint Tambahan
+- Berikan saran 3 tabel tambahan yang krusial untuk proyek ini beserta tipe datanya.
+
+## 4. Rencana Pengujian Beban (k6 Test Scenarios)
+- Tentukan endpoint mana yang paling kritis untuk dilakukan stress testing oleh developer menggunakan k6 berdasarkan fitur yang diminta klien.
+
+5. SKRIP IMPLEMENTASI PENGUJIAN KINERJA K6 SECARA LENGKAP
+
+[cite: 1]
+
+Tim Developer wajib menjalankan uji beban ini di komputer lokal (menggunakan terminal/CLI) sebelum melakukan deployment rilis agar yakin database gratisan tidak rontok[cite: 1].
+
+Buat berkas bernama stress_test_wave.js:
+
+JavaScript
+import http from 'k6/http';import { check, group, sleep } from 'k6';
+export const options = {
+  scenarios: {
+    // Skenario 1: Simulasi lonjakan trafik pengguna menjelajahi web dan bertanya ke AI
+    browsing_and_chat: {
+      executor: 'ramping-vus',
+      startVUs: 0,
+      stages: [
+        { duration: '30s', target: 30 }, // Naik dari 0 ke 30 user dalam 30 detik
+        { duration: '1m', target: 30 },  // Bertahan di 30 user selama 1 menit
+        { duration: '15s', target: 0 },  // Turun kembali ke 0
+      ],
+      gracefulRampDown: '15s',
+    },
+    // Skenario 2: Simulasi lonjakan transaksi checkout simultan (Stress Test Inti)[cite: 1]
+    heavy_checkout: {
+      executor: 'per-vu-iterations',
+      vus: 15, // 15 user melakukan checkout serentak[cite: 1]
+      iterations: 2,
+      maxDuration: '2m',
+    },
+  },
+  thresholds: {
+    'http_req_duration{name:CheckoutAPI}': ['p(95)<3000'], // Checkout wajib di bawah 3 detik agar tidak memicu limit Vercel[cite: 1]
+    'http_req_failed': ['rate<0.02'], // Tingkat kegagalan sistem maksimal harus di bawah 2%[cite: 1]
+  },
+};
+export default function () {
+  const BASE_URL = 'https://wave-projects-center-id.vercel.app/api/v1';
+
+  // GROUP 1: Simulasi Hit Landing Page & Paket Layanan[cite: 1]
+  group('01_Browsing Paket & Portofolio', function () {
+    const res = http.get(`${BASE_URL}/packages`);
+    check(res, {
+      'status is 200': (r) => r.status === 200,
+    });
+    sleep(1);
+  });
+
+  // GROUP 2: Simulasi Submit Transaksi Pemesanan[cite: 1]
+  group('02_Proses Checkout Pesanan Baru', function () {
+    const url = `${BASE_URL}/orders/checkout`;
+    const payload = JSON.stringify({
+      client_name: `Automated Test VU-${__VU}`,
+      client_email: `dev.test_${__VU}@waveprojects.id`,
+      client_whatsapp: '081234567890',
+      project_purpose: 'Saya ingin membuat sistem e-commerce produk kopi lokal terintegrasi kasir.',[cite: 1]
+      package_id: 'pkg_fullstack_mvp',
+      github_url: 'https://github.com/ariyas/public-dummy-repo',[cite: 1]
+      payment_choice: 'DP_30'[cite: 1]
+    });
+
+    const params = {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Idempotency-Key': `k6-stress-key-uuid-${__VU}-${__ITER}`,
+      },
+      tags: { name: 'CheckoutAPI' },
+    };
+
+    const res = http.post(url, payload, params);
+    check(res, {
+      'Order berhasil dibuat (201)': (r) => r.status === 201,
+      'Snap Token Midtrans Terbaca': (r) => r.json().data.snap_token !== undefined,
+    });
+    sleep(2);
+  });
+}
+
+
+6. GO-LIVE READINESS CHECKLIST (PRODUKSI)
+[cite: 1] 
+Sebelum domain waveprojectscenter.id disebarluaskan secara resmi, Anda sebagai Product Owner sekaligus Tim Teknis wajib mencentang kesiapan operasional berikut[cite: 1]:
+
+[ ] Vercel Hobby Optimization: Konfigurasi vercel.json telah membatasi ukuran maksimal payload unggahan berkas sebesar 4MB untuk mencegah out-of-memory.
+
+[ ] Cloudinary Direct Upload Signed Token: Sisi frontend (Web/PWA) sudah terbukti bisa mengunggah gambar langsung ke Cloudinary menggunakan tanda tangan keamanan (signed signature) dari Laravel tanpa menyentuh server Vercel[cite: 1].
+
+[ ] TiDB Connection Persistence: Driver database di berkas .env sudah menggunakan mode PDO::ATTR_PERSISTENT => true untuk mencegah jebakan error "Too many connections" dari TiDB Free Tier[cite: 1].
+
+[ ] Cron Automator Check: Akun di Cron-Job.org dipastikan aktif berdetak setiap menit dan menerima kode status HTTP 200 OK dari alamat web pelari antrean kita[cite: 1].
+
+[ ] Midtrans Production Toggle: Mode sandbox di dasbor Midtrans telah dimatikan, diganti ke mode Production, dan Secret Key asli sudah disembunyikan dengan aman di kolom Environment Variables Vercel[cite: 1].
+
+Lembar Persetujuan & Tanda Tangan (Sign-Off / Approvals)
+
+Bagian ini adalah kontrak formal yang menyatakan bahwa Product Owner, Tim Teknis/Developer, dan pemangku kepentingan (stakeholders) lainnya telah membaca, memahami, dan menyetujui seluruh ruang lingkup (scope) serta batasan tier gratisan yang tertulis di PRD ini sebelum kode pertama ditulis.
+
+Glosarium Istilah Teknis (Glossary)
+
+Mengingat PRD Wave Projects Center.ID ini sangat spesifik dalam mengakali infrastruktur serverless free-tier, glosarium sangat penting agar tim non-teknis (seperti Tim Marketing atau Kasir) dan tim developer baru memiliki bahasa serta pemahaman yang sama.
+
+MVP (Minimum Viable Product): Versi produk paling awal yang memiliki fitur minimal namun sudah cukup matang untuk diluncurkan ke pasar.
+
+Serverless Timeout: Batas waktu maksimal eksekusi fungsi di serverless cloud (seperti Vercel Hobby yang membatasi hingga 10–15 detik) sebelum koneksi diputus paksa.
+
+Connection Pooling: Teknik menjaga koneksi database tetap hidup dan dapat digunakan kembali untuk menghemat kuota limit koneksi pada database (TiDB Cloud).
+
+Idempotency (Kekal-tetap): Jaminan keamanan sistem di mana sebuah request (misal webhook pembayaran) yang ditembak berkali-kali secara tidak sengaja hanya akan diproses tepat satu kali oleh database.
+
+Webhook / Callback: Mekanisme pengiriman data otomatis dari satu sistem (Midtrans) ke sistem lain (Laravel Vercel) secara real-time segera setelah suatu peristiwa terjadi.
+
+VU (Virtual Users): Istilah pengguna tiruan dalam alat pengujian k6 untuk mensimulasikan beban trafik nyata.
+
+Referensi & Dokumen Pendukung (References & Appendices)
+
+Bagian ini mencantumkan tautan (links) langsung ke dokumentasi API pihak ketiga yang wajib dibaca oleh developer saat koding. Ini menghemat waktu pencarian dokumen teknis di tengah jalan.
+
+Dokumentasi API Core/Snap Midtrans: Panduan integrasi pembayaran dan konfigurasi signature key.
+
+Dokumentasi SDK Google Gemini AI (Laravel/PHP): Panduan implementasi prompt engineering asinkron.
+
+Dokumentasi Direct Upload Cloudinary: Panduan metode upload image langsung dari browser klien tanpa membebani server Vercel.
+
+Dokumentasi REST API OneSignal: Panduan pengiriman notifikasi instan berbasis segmen perangkat.
+
+Repositori Dokumentasi Pengujian k6: Standar penulisan skrip stress testing internal agensi.
+
+Rencana Pengembangan Fase Berikutnya (Future Scope / Out of MVP Roadmap)
+
+Bagian ini memberikan gambaran besar (vision) kepada tim mengenai apa yang akan dikerjakan setelah sistem gratisan Fase 1 (MVP) ini berhasil membuktikan kestabilannya di pasar. Ini menjaga agar kode yang ditulis saat ini tetap dirancang secara fleksibel (scalable).
+
+Upgrade Infrastruktur (Tier Berbayar): Migrasi dari Vercel Hobby ke Vercel Pro dan TiDB Serverless Dedicated jika total transaksi harian agensi telah melampaui 500+ pesanan per bulan.
+
+PWA to Native App: Membungkus kode frontend menjadi aplikasi Android/iOS menggunakan teknologi WebView/Capacitor setelah performa web stabil.
+
+Smart Multi-Tenancy Management: Pengembangan sistem agar Wave Projects Center.ID bisa disewa oleh agensi lain sebagai platform Whitelabel pemesanan web otomatis (SaaS).
+
+Dengan ini PRODUCT REQUIREMENTS DOCUMENT (PRD) Wave Projects Center.ID, dinyatakan telah selasai dan dinyatakan komplit segala jenis yang di lua pejanjian awal ini akan di lakukan pada tahap penegmbangan ataupun updatting program atas perstujuan klayen selkauk pemesan dan develope selaku pengembang program ini.

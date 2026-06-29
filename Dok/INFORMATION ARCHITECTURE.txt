@@ -1,0 +1,587 @@
+INFORMATION ARCHITECTURE (IA), SITEMAP, USER JOURNEY & USER FLOW SPECIFICATION
+
+Wave Projects Center.ID
+Version: 1.0
+
+Document Type:
+Information Architecture & UX Flow Specification
+Status:
+Approved For UX Architecture
+Dependencies:
+PRD 
+BPD 
+SRS 
+TDD 
+DDD 
+API Specification 
+UI/UX Design System 
+Wireframe & Prototype Specification 
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan:
+Struktur informasi sistem 
+Hierarki halaman 
+Navigasi aplikasi 
+User Journey 
+User Flow 
+Conversion Funnel 
+Service Blueprint 
+Permission Flow 
+Tujuan:
+Mengurangi kebingungan pengguna 
+Memastikan struktur sistem scalable 
+Menjadi dasar UX Design 
+Menjadi dasar Frontend Architecture 
+
+2. INFORMATION ARCHITECTURE OVERVIEW
+IA PRINCIPLES
+IA-01
+Findability
+Informasi mudah ditemukan.
+
+IA-02
+Scalability
+Mudah berkembang.
+
+IA-03
+Consistency
+Navigasi konsisten.
+
+IA-04
+Minimal Click Path
+Maksimal 3 klik menuju fitur utama.
+
+IA-05
+Role-Based Navigation
+Menu berbeda berdasarkan role.
+
+3. MASTER INFORMATION ARCHITECTURE
+Wave Projects Center.ID
+│
+├── Public Area
+│
+│   ├── Landing Page
+│   ├── Portfolio
+│   ├── Packages
+│   ├── AI Consultation
+│   ├── FAQ
+│   ├── Blog
+│   ├── Contact
+│   ├── Login
+│   └── Register
+│
+├── Customer Area
+│
+│   ├── Dashboard
+│   ├── Orders
+│   ├── Payments
+│   ├── Downloads
+│   ├── Notifications
+│   ├── Support Ticket
+│   └── Profile
+│
+├── Developer Area
+│
+│   ├── Dashboard
+│   ├── Assigned Projects
+│   ├── Generated PRD
+│   ├── Tasks
+│   ├── Reports
+│   └── Notifications
+│
+├── Marketing Area
+│
+│   ├── Dashboard
+│   ├── Orders
+│   ├── Revenue
+│   ├── Leads
+│   ├── CRM
+│   └── Notifications
+│
+└── Owner Area
+    ├── Executive Dashboard
+    ├── Revenue Analytics
+    ├── Growth Analytics
+    ├── Customer Analytics
+    ├── Operational Metrics
+    └── System Settings
+
+4. ENTERPRISE SITEMAP
+PUBLIC SITEMAP
+/
+│
+├── /
+├── /portfolio
+├── /packages
+├── /packages/{slug}
+├── /ai-chat
+├── /faq
+├── /blog
+├── /contact
+├── /login
+└── /register
+
+CUSTOMER SITEMAP
+/customer
+│
+├── dashboard
+├── orders
+│   ├── active
+│   ├── completed
+│   └── detail
+│
+├── payments
+│   ├── pending
+│   ├── history
+│   └── invoices
+│
+├── downloads
+├── notifications
+├── support
+└── profile
+
+DEVELOPER SITEMAP
+/developer
+│
+├── dashboard
+├── projects
+├── project/{id}
+├── generated-prd
+├── tasks
+├── reports
+└── notifications
+
+MARKETING SITEMAP
+/marketing
+│
+├── dashboard
+├── orders
+├── revenue
+├── leads
+├── crm
+└── notifications
+
+OWNER SITEMAP
+/owner
+│
+├── dashboard
+├── revenue
+├── growth
+├── customers
+├── operations
+├── reports
+└── settings
+
+5. NAVIGATION ARCHITECTURE
+PUBLIC NAVIGATION
+Logo
+
+Home
+Portfolio
+Packages
+AI Consultation
+FAQ
+Login
+
+[Start Project]
+
+CUSTOMER NAVIGATION
+Dashboard
+Orders
+Payments
+Downloads
+Notifications
+Support
+Profile
+
+DEVELOPER NAVIGATION
+Dashboard
+Projects
+PRD
+Tasks
+Reports
+Notifications
+
+MARKETING NAVIGATION
+Dashboard
+Orders
+Revenue
+Leads
+CRM
+Notifications
+
+OWNER NAVIGATION
+Executive Dashboard
+Revenue
+Growth
+Customers
+Operations
+Reports
+Settings
+
+6. USER JOURNEY MAP
+CUSTOMER JOURNEY
+STAGE 1
+Awareness
+Goal:
+Mengenal layanan
+Touchpoint:
+Landing Page 
+Portfolio 
+Social Media 
+Emotion:
+Curious
+
+STAGE 2
+Consideration
+Goal:
+Menentukan paket
+Touchpoint:
+AI Chat 
+Package Comparison 
+Emotion:
+Interested
+
+STAGE 3
+Purchase
+Goal:
+Checkout
+Touchpoint:
+Checkout 
+Midtrans 
+Emotion:
+Confident
+
+STAGE 4
+Project Tracking
+Goal:
+Memantau progres
+Touchpoint:
+Dashboard 
+Notifications 
+Emotion:
+Trust
+
+STAGE 5
+Delivery
+Goal:
+Menerima hasil
+Touchpoint:
+Downloads 
+Handover 
+Emotion:
+Satisfied
+
+7. CUSTOMER FLOW DIAGRAMS
+FLOW-01
+Visitor → AI Chat → Checkout
+Landing
+   │
+   ▼
+AI Chat
+   │
+   ▼
+Package Recommendation
+   │
+   ▼
+Package Detail
+   │
+   ▼
+Checkout
+
+FLOW-02
+Checkout → Payment
+Checkout
+    │
+    ▼
+Choose Payment
+
+    ├── Full
+    │
+    └── DP 30%
+
+    ▼
+
+Midtrans
+    │
+    ▼
+Payment Success
+
+FLOW-03
+Customer Dashboard
+Login
+  │
+  ▼
+Dashboard
+  │
+  ├── Orders
+  ├── Payments
+  ├── Downloads
+  ├── Notifications
+  └── Profile
+
+8. DEVELOPER USER FLOW
+FLOW-DEV-01
+Receive PRD
+Notification
+     │
+     ▼
+Assigned Project
+     │
+     ▼
+Generated PRD
+     │
+     ▼
+Project Planning
+
+FLOW-DEV-02
+Update Progress
+Project
+   │
+   ▼
+Task Update
+   │
+   ▼
+Progress Update
+   │
+   ▼
+Customer Notification
+
+FLOW-DEV-03
+Project Completion
+Testing
+   │
+   ▼
+Upload Deliverables
+   │
+   ▼
+Ready To Deliver
+
+9. MARKETING USER FLOW
+FLOW-MKT-01
+Payment Verification
+New Order
+   │
+   ▼
+Payment Status
+   │
+   ▼
+Verified
+   │
+   ▼
+Generate Project
+
+FLOW-MKT-02
+Customer Follow Up
+Lead
+  │
+  ▼
+Contact
+  │
+  ▼
+Proposal
+  │
+  ▼
+Conversion
+
+10. OWNER USER FLOW
+FLOW-OWN-01
+Executive Monitoring
+Login
+   │
+   ▼
+Dashboard
+   │
+   ├── Revenue
+   ├── Growth
+   ├── Customer
+   └── Operational
+
+11. SERVICE BLUEPRINT
+CUSTOMER
+
+Browse Website
+     │
+AI Chat
+     │
+Checkout
+     │
+Payment
+     │
+Receive Project
+
+────────────────────────────
+
+FRONTSTAGE
+
+Landing Page
+AI Chat
+Checkout
+Dashboard
+
+────────────────────────────
+
+BACKSTAGE
+
+Laravel API
+AI Engine
+Midtrans
+Cloudinary
+TiDB
+OneSignal
+
+────────────────────────────
+
+SUPPORT SYSTEM
+
+Vercel
+GitHub
+Monitoring
+Analytics
+
+12. SEARCH ARCHITECTURE
+Search Sources:
+Packages 
+Portfolio 
+Blog 
+FAQ 
+
+Search Features:
+Autocomplete 
+Suggestions 
+Recent Searches 
+Popular Searches 
+
+13. CONVERSION FUNNEL ARCHITECTURE
+Funnel 1
+Lead Generation
+Landing Page
+    ▼
+AI Chat
+    ▼
+Package Recommendation
+    ▼
+Checkout
+    ▼
+Payment
+
+Funnel 2
+Retargeting
+Visit
+   ▼
+AI Chat
+   ▼
+Leave Site
+   ▼
+Push Notification
+   ▼
+Return
+   ▼
+Checkout
+
+14. PERMISSION MATRIX
+
+15. ANALYTICS FLOW
+Event Tracking
+Landing Viewed
+Package Viewed
+AI Chat Started
+AI Chat Completed
+Checkout Started
+Checkout Completed
+Payment Success
+Payment Failed
+Download Completed
+Support Ticket Created
+
+16. HEATMAP TRACKING PLAN
+Landing Hero
+CTA Button
+Package Cards
+AI Chat Button
+Checkout Form
+Payment Option
+Dashboard Widgets
+
+17. CRO (CONVERSION RATE OPTIMIZATION)
+Primary KPI
+Landing → Checkout
+Target
+20%
+
+Secondary KPI
+Checkout → Payment
+Target
+90%
+
+18. ERROR FLOW ARCHITECTURE
+AI Failure
+AI Request
+    │
+Error
+    │
+Fallback Response
+    │
+Human Support
+
+Payment Failure
+Payment
+    │
+Failed
+    │
+Retry
+    │
+Success
+
+Upload Failure
+Upload
+   │
+Failed
+   │
+Retry
+   │
+Success
+
+19. NOTIFICATION FLOW
+Payment Success
+Midtrans
+   │
+Webhook
+   │
+OneSignal
+   │
+Customer
+Marketing
+Developer
+
+PRD Generated
+AI Engine
+    │
+Generate PRD
+    │
+Developer Notification
+
+20. FUTURE IA EXPANSION
+Phase 2
+Multi-Tenant SaaS
+Agency Management
+Client Workspace
+Subscription Billing
+
+Phase 3
+Mobile App
+AI Project Manager
+Developer Marketplace
+White Label Platform
+
+DOCUMENT APPROVAL
+Prepared By:
+UX Architect
+Reviewed By:
+Product Owner
+Approved By:
+Stakeholders
+Version:
+1.0
+Status:
+Approved For UX Architecture

@@ -1,0 +1,437 @@
+API DESIGN & DOCUMENTATION SPECIFICATION
+
+Wave Projects Center.ID
+
+Standar:
+OpenAPI 3.1 
+REST API Design Standard 
+JSON API Convention 
+OAuth/JWT Security Model 
+Swagger UI 
+Postman Collection 
+Version: 1.0
+Status: Approved for Development
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan seluruh kontrak API antara:
+Frontend 
+Backend 
+Mobile App (Future) 
+Third Party Services 
+External Integrations 
+Tujuan:
+Konsistensi API 
+Kemudahan integrasi 
+Standarisasi request/response 
+Dokumentasi developer 
+
+2. API ARCHITECTURE
+Architecture Pattern
+RESTful API
+Protocol
+HTTPS Only
+Data Format
+JSON
+Character Encoding
+UTF-8
+Versioning
+URL Versioning
+Contoh
+/api/v1/auth/login
+/api/v1/orders
+/api/v1/payments
+Future
+/api/v2/
+
+3. BASE URL
+Development
+https://dev-api.waveprojectscenter.id/api/v1
+Staging
+https://staging-api.waveprojectscenter.id/api/v1
+Production
+https://api.waveprojectscenter.id/api/v1
+
+4. API RESPONSE STANDARD
+Success Response
+{
+  "success": true,
+  "message": "Data retrieved successfully",
+  "data": {},
+  "meta": {}
+}
+Error Response
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": {
+    "email": [
+      "Email wajib diisi"
+    ]
+  }
+}
+
+5. HTTP STATUS STANDARD
+
+6. AUTHENTICATION API
+Module
+Authentication
+
+Login
+Endpoint
+POST /auth/login
+Request
+{
+  "email":"admin@mail.com",
+  "password":"password"
+}
+Response
+{
+  "success":true,
+  "token":"jwt_token",
+  "user":{
+    "id":1,
+    "name":"Admin"
+  }
+}
+
+Logout
+Endpoint
+POST /auth/logout
+Headers
+Authorization: Bearer TOKEN
+
+Refresh Token
+Endpoint
+POST /auth/refresh
+
+Forgot Password
+Endpoint
+POST /auth/forgot-password
+
+Reset Password
+Endpoint
+POST /auth/reset-password
+
+7. USER MANAGEMENT API
+List Users
+GET /users
+
+Detail User
+GET /users/{id}
+
+Create User
+POST /users
+
+Update User
+PUT /users/{id}
+
+Delete User
+DELETE /users/{id}
+
+8. ROLE MANAGEMENT API
+List Roles
+GET /roles
+
+Create Role
+POST /roles
+
+Update Role
+PUT /roles/{id}
+
+Delete Role
+DELETE /roles/{id}
+
+9. PACKAGE API
+List Packages
+GET /packages
+Query
+?page=1
+&limit=10
+&search=website
+
+Detail Package
+GET /packages/{id}
+
+Create Package
+POST /packages
+
+Update Package
+PUT /packages/{id}
+
+Delete Package
+DELETE /packages/{id}
+
+10. AI CONSULTATION API
+Create Session
+POST /ai/session
+Response
+{
+  "session_id":"uuid"
+}
+
+Send Message
+POST /ai/chat
+Request
+{
+  "session_id":"uuid",
+  "message":"Saya ingin membuat aplikasi laundry"
+}
+Response
+{
+  "reply":"Paket yang cocok adalah..."
+}
+
+Chat History
+GET /ai/history/{session_id}
+
+Generate Requirement Summary
+POST /ai/summary
+
+11. ORDER API
+Create Order
+POST /orders
+Request
+{
+  "package_id":1,
+  "title":"Aplikasi Laundry",
+  "description":"..."
+}
+Response
+{
+  "order_number":"ORD20260001"
+}
+
+List Orders
+GET /orders
+
+Detail Order
+GET /orders/{id}
+
+Update Order
+PUT /orders/{id}
+
+Cancel Order
+POST /orders/{id}/cancel
+
+12. FILE MANAGEMENT API
+Generate Upload Signature
+POST /files/signature
+Response
+{
+  "signature":"xxxxx",
+  "timestamp":123456,
+  "api_key":"xxxxx"
+}
+
+Save Metadata
+POST /files/metadata
+Request
+{
+  "public_id":"abc",
+  "secure_url":"https://..."
+}
+
+List Files
+GET /files
+
+13. PAYMENT API
+Create Payment
+POST /payments/create
+Response
+{
+  "snap_token":"xxxx"
+}
+
+Payment Status
+GET /payments/{id}
+
+Payment History
+GET /payments/history
+
+Payment Callback
+POST /payments/webhook
+Internal Endpoint
+Midtrans Only
+
+14. AI PRD GENERATOR API
+Generate PRD
+POST /prd/generate
+
+List PRD
+GET /prd
+
+Detail PRD
+GET /prd/{id}
+
+Download PRD
+GET /prd/{id}/download
+Formats
+markdown
+pdf
+docx
+
+15. DASHBOARD API
+Developer Dashboard
+GET /dashboard/developer
+
+Marketing Dashboard
+GET /dashboard/marketing
+
+Owner Dashboard
+GET /dashboard/owner
+
+KPI Dashboard
+GET /dashboard/kpi
+
+16. NOTIFICATION API
+List Notifications
+GET /notifications
+
+Mark Read
+POST /notifications/{id}/read
+
+Mark All Read
+POST /notifications/read-all
+
+17. REPORTING API
+Revenue Report
+GET /reports/revenue
+
+Orders Report
+GET /reports/orders
+
+Customer Report
+GET /reports/customers
+
+Export PDF
+GET /reports/export/pdf
+
+Export Excel
+GET /reports/export/excel
+
+18. AUDIT LOG API
+Audit Logs
+GET /audit-logs
+
+Activity Logs
+GET /activity-logs
+
+19. SETTINGS API
+Get Settings
+GET /settings
+
+Update Settings
+PUT /settings
+
+20. WEBHOOK SPECIFICATION
+Midtrans Webhook
+Endpoint
+POST /payments/webhook
+Validation
+signature_key
+order_id
+transaction_status
+gross_amount
+
+OneSignal Webhook
+Endpoint
+POST /notifications/webhook
+Purpose
+Delivery status tracking
+
+21. RATE LIMIT POLICY
+Guest
+60 Request / Minute
+
+Authenticated User
+300 Request / Minute
+
+Admin
+1000 Request / Minute
+
+AI Endpoint
+20 Request / Minute
+
+22. SECURITY SPECIFICATION
+Authentication
+JWT
+
+Authorization
+RBAC
+
+Password
+bcrypt
+
+Transport
+TLS 1.3
+
+API Protection
+CSRF Protection 
+XSS Protection 
+SQL Injection Protection 
+Rate Limiting 
+Audit Logging 
+
+23. OPENAPI STRUCTURE
+openapi: 3.1.0
+
+info:
+  title: Wave Projects Center API
+  version: 1.0.0
+
+servers:
+  - url: https://api.waveprojectscenter.id/api/v1
+
+paths:
+  /auth/login:
+  /orders:
+  /payments:
+  /packages:
+  /prd:
+
+24. POSTMAN COLLECTION STRUCTURE
+Folder:
+Authentication
+
+Users
+
+Roles
+
+Packages
+
+AI
+
+Orders
+
+Files
+
+Payments
+
+PRD
+
+Dashboard
+
+Notifications
+
+Reports
+
+Settings
+
+Audit Logs
+
+25. API ACCEPTANCE CRITERIA
+Performance
+P95 < 500 ms 
+P99 < 2 s 
+Availability
+99.9% 
+Security
+OWASP Passed 
+Testing
+100% Endpoint Tested 
+Documentation
+Swagger Generated 
+Postman Collection Generated 
+
+END OF DOCUMENT
+Dokumen 08 selesai dan sudah cukup sebagai dasar implementasi Laravel Controller, Request Validation, Resource Response, Swagger/OpenAPI Generator, dan Postman Collection.

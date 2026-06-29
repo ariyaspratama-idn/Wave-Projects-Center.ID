@@ -1,0 +1,533 @@
+UI/UX WIREFRAMES & HIGH-FIDELITY PROTOTYPE SPECIFICATION
+
+Wave Projects Center.ID
+Version: 1.0
+
+Document Type: UI/UX Wireframe & Prototype Specification
+Status: Approved for UI Design
+Dependencies:
+PRD v1.0 
+Business Process Document 
+SRS IEEE 29148 
+Technical Design Document 
+Database Design Document 
+API Design Specification 
+UI/UX Design System 
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan:
+Struktur layar (Wireframes) 
+User Flow 
+Screen Behavior 
+High Fidelity Prototype 
+UI States 
+Interaction Rules 
+Responsive Behavior 
+Tujuan:
+Menjadi blueprint visual resmi 
+Menjadi acuan tim UI Designer 
+Menjadi referensi Frontend Developer 
+Menjadi dasar pembuatan Prototype Figma 
+
+2. PROTOTYPE OBJECTIVES
+Target Prototype:
+PO-01
+Memvalidasi user journey
+PO-02
+Mengurangi revisi development
+PO-03
+Menguji usability sebelum coding
+PO-04
+Membuat stakeholder approval
+
+3. USER FLOW MAP
+FLOW 01
+Visitor → AI Chat → Paket → Checkout → Payment → Dashboard
+Landing Page
+     │
+     ▼
+AI Chat Assistant
+     │
+     ▼
+Recommendation Engine
+     │
+     ▼
+Package Detail
+     │
+     ▼
+Checkout
+     │
+     ▼
+Midtrans Payment
+     │
+     ▼
+Customer Dashboard
+
+FLOW 02
+Developer Workflow
+Developer Login
+      │
+      ▼
+Assigned Projects
+      │
+      ▼
+Generated PRD
+      │
+      ▼
+Progress Update
+      │
+      ▼
+Delivery
+
+FLOW 03
+Marketing Workflow
+Marketing Login
+       │
+       ▼
+Orders
+       │
+       ▼
+Payment Verification
+       │
+       ▼
+Customer Communication
+       │
+       ▼
+Release Project
+
+4. INFORMATION ARCHITECTURE
+Wave Projects Center.ID
+│
+├── Landing
+│
+├── Portfolio
+│
+├── Packages
+│
+├── AI Chat
+│
+├── Checkout
+│
+├── Login
+│
+├── Register
+│
+├── Customer Dashboard
+│
+│   ├── Orders
+│   ├── Payments
+│   ├── Notifications
+│   ├── Downloads
+│   └── Profile
+│
+├── Developer Dashboard
+│
+│   ├── Projects
+│   ├── Generated PRD
+│   ├── Notifications
+│   └── Reports
+│
+├── Marketing Dashboard
+│
+│   ├── Orders
+│   ├── Revenue
+│   ├── Leads
+│   └── Notifications
+│
+└── Owner Dashboard
+    ├── Revenue Analytics
+    ├── Growth
+    ├── Customers
+    └── Operational Metrics
+
+5. SCREEN INVENTORY
+Public Pages
+SCR-001
+Landing Page
+SCR-002
+Portfolio
+SCR-003
+Package List
+SCR-004
+Package Detail
+SCR-005
+AI Chat
+SCR-006
+Checkout
+SCR-007
+Payment Success
+SCR-008
+Payment Failed
+SCR-009
+Login
+SCR-010
+Register
+
+Customer Pages
+SCR-101
+Dashboard Home
+SCR-102
+Orders
+SCR-103
+Payments
+SCR-104
+Downloads
+SCR-105
+Notifications
+SCR-106
+Profile
+
+Developer Pages
+SCR-201
+Developer Dashboard
+SCR-202
+Assigned Projects
+SCR-203
+Generated PRD
+SCR-204
+Project Detail
+
+Marketing Pages
+SCR-301
+Marketing Dashboard
+SCR-302
+Orders
+SCR-303
+Revenue
+SCR-304
+Leads
+
+Owner Pages
+SCR-401
+Executive Dashboard
+SCR-402
+Revenue Analytics
+SCR-403
+Growth Analytics
+SCR-404
+Customer Analytics
+
+6. LOW-FIDELITY WIREFRAMES
+SCR-001 Landing Page
++------------------------------------------------+
+| Logo | Menu | Login | CTA                      |
++------------------------------------------------+
+
+| HERO SECTION                                   |
+| Headline                                       |
+| Subheadline                                    |
+| [ Konsultasikan Proyek Anda ]                  |
+| [ Lihat Portfolio ]                            |
++------------------------------------------------+
+
+| FEATURES                                       |
++------------------------------------------------+
+
+| PORTFOLIO                                      |
++------------------------------------------------+
+
+| PACKAGES                                       |
++------------------------------------------------+
+
+| TESTIMONIALS                                   |
++------------------------------------------------+
+
+| FAQ                                            |
++------------------------------------------------+
+
+| CTA                                            |
++------------------------------------------------+
+
+| FOOTER                                         |
++------------------------------------------------+
+
+SCR-005 AI CHAT PAGE
++--------------------------------------+
+| Header                               |
++--------------------------------------+
+
+| Suggested Prompts                    |
+|--------------------------------------|
+
+| Chat Area                            |
+|                                      |
+| User Message                         |
+| AI Message                           |
+|                                      |
+| AI Recommendation Package Card       |
+|                                      |
++--------------------------------------+
+
+| Attachment | Input Message | Send    |
++--------------------------------------+
+
+SCR-006 CHECKOUT PAGE
++--------------------------------------+
+
+| Order Form                           |
+
+| Name                                 |
+| Email                                |
+| WhatsApp                             |
+| Project Description                  |
+| GitHub URL                           |
+| Upload Files                         |
+
++--------------------------------------+
+
+| Package Summary                      |
+
+| Package Name                         |
+| Price                                |
+| Estimated Time                       |
+
++--------------------------------------+
+
+| Payment Summary                      |
+
+| Full Payment                         |
+| DP 30%                               |
+
++--------------------------------------+
+
+| Terms & Agreement                    |
+
+[ Checkout ]
+
++--------------------------------------+
+
+7. HIGH-FIDELITY PROTOTYPE SPECIFICATION
+Landing Page
+Hero Section
+Components:
+Navbar 
+Hero Illustration 
+CTA Primary 
+CTA Secondary 
+Behavior:
+CTA scroll ke AI Chat 
+Smooth Scroll 300ms 
+
+Portfolio Section
+Components:
+Portfolio Card Grid 
+Category Filter 
+Behavior:
+Lazy Loading 
+Infinite Scroll 
+
+Packages Section
+Components:
+Package Cards 
+Compare Button 
+Behavior:
+Expand Details 
+
+8. AI CHAT PROTOTYPE
+Layout
+Desktop
++----------------------------------------------+
+| Sidebar Suggestions                          |
++----------------------------------------------+
+
+| Chat Messages                                |
+|                                               |
+|                                               |
+|                                               |
++----------------------------------------------+
+
+| Upload | Input | Send                        |
++----------------------------------------------+
+
+States
+Empty State
+Apa yang ingin Anda bangun hari ini?
+
+Typing State
+AI sedang menganalisis kebutuhan Anda...
+
+Recommendation State
+Paket Direkomendasikan:
+Fullstack MVP
+Rp 5.000.000
+[ Pilih Paket ]
+
+Error State
+Mohon maaf.
+Terjadi gangguan pada layanan AI.
+
+9. CUSTOMER DASHBOARD WIREFRAMES
+Dashboard Home
++-----------------------------------+
+| Sidebar                           |
++-----------------------------------+
+
+| Statistics Cards                  |
+
+| Total Orders                      |
+| Active Projects                   |
+| Notifications                     |
+
++-----------------------------------+
+
+| Recent Orders                     |
++-----------------------------------+
+
+Orders Page
++-----------------------------------+
+
+| Search                            |
+| Filter                            |
+
++-----------------------------------+
+
+| Orders Table                      |
+
+| Order ID                          |
+| Package                           |
+| Status                            |
+| Payment                           |
+
++-----------------------------------+
+
+10. DEVELOPER DASHBOARD WIREFRAMES
+Assigned Projects
++-----------------------------------+
+
+| Project Cards                     |
+
+| Project Name                      |
+| Deadline                          |
+| Priority                          |
+
+[ Open PRD ]
+
++-----------------------------------+
+
+Generated PRD
++-----------------------------------+
+
+| PRD Viewer                        |
+
+| Generated by AI                   |
+
+| Markdown Preview                  |
+
++-----------------------------------+
+
+11. MARKETING DASHBOARD WIREFRAMES
+Revenue
++-----------------------------------+
+
+| Revenue Card                      |
+| Orders Card                       |
+| Conversion Card                   |
+
++-----------------------------------+
+
+| Revenue Chart                     |
+
++-----------------------------------+
+
+12. OWNER EXECUTIVE DASHBOARD
+KPI Widgets
+Revenue Today
+
+Revenue Monthly
+
+New Customers
+
+Active Projects
+
+Conversion Rate
+
+Customer Satisfaction
+
+Charts
+Revenue Trend
+
+Customer Growth
+
+Project Status
+
+Marketing Funnel
+
+13. RESPONSIVE BEHAVIOR MATRIX
+
+14. INTERACTION SPECIFICATION
+Hover
+Duration:
+150ms
+Scale:
+1.02
+
+Click
+Ripple Effect
+Material Design
+
+Modal
+Animation
+scale(0.95 → 1)
+Duration
+250ms
+
+15. PROTOTYPE NAVIGATION RULES
+Landing → AI Chat
+AI Chat → Package
+Package → Checkout
+Checkout → Midtrans
+Midtrans → Dashboard
+Dashboard → Project Detail
+Developer → PRD
+Marketing → Revenue
+Owner → Analytics
+
+16. DESIGN QA CHECKLIST
+Visual
+✓ Color Consistency
+✓ Typography Consistency
+✓ Design Token Compliance
+✓ Component Reuse
+
+UX
+✓ User Flow Valid
+✓ No Dead End Screen
+✓ CTA Visibility
+✓ Responsive
+
+Accessibility
+✓ Keyboard Navigation
+✓ Focus States
+✓ Screen Reader Labels
+✓ Contrast ≥ 4.5:1
+
+17. FIGMA FILE STRUCTURE
+Wave Projects Center.ID
+
+01 Cover
+
+02 Foundations
+
+03 Design Tokens
+
+04 Components
+
+05 Wireframes
+
+06 High Fidelity
+
+07 Prototypes
+
+08 Developer Handoff
+
+09 Design QA
+
+18. PROTOTYPE ACCEPTANCE CRITERIA
+✓ Semua halaman utama tersedia
+✓ Semua user flow dapat diuji
+✓ Mobile First
+✓ Responsive
+✓ Design System Compliant
+✓ Ready for Usability Testing
+✓ Ready for Frontend Development
+✓ Figma Ready

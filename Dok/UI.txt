@@ -1,0 +1,513 @@
+UI/UX DESIGN SYSTEM & DESIGN SPECIFICATION
+
+Wave Projects Center.ID
+Version: 1.0
+
+Document Type: UI/UX Design System
+Design Standard:
+Material Design 3 
+Apple Human Interface Guidelines 
+WCAG 2.1 AA 
+Atomic Design Methodology 
+Status: Approved For Design & Development
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan seluruh standar desain antarmuka pengguna (UI) dan pengalaman pengguna (UX) yang digunakan pada Wave Projects Center.ID.
+Tujuan:
+Konsistensi visual 
+Kemudahan penggunaan 
+Skalabilitas desain 
+Mempercepat proses development 
+Menjadi dasar Design System Figma 
+
+2. DESIGN PRINCIPLES
+DP-01 Simplicity
+Tampilan sederhana dan fokus pada tujuan utama pengguna.
+
+DP-02 Consistency
+Semua komponen harus memiliki perilaku yang sama.
+
+DP-03 Accessibility
+Dapat digunakan oleh semua pengguna.
+Standar:
+WCAG 2.1 AA
+
+DP-04 Mobile First
+Desain dimulai dari mobile kemudian berkembang ke desktop.
+
+DP-05 Performance First
+Animasi tidak boleh mengganggu performa.
+
+3. BRAND IDENTITY
+Brand Name
+Wave Projects Center.ID
+
+Brand Personality
+Professional
+Modern
+Technology Driven
+Reliable
+Innovative
+
+Brand Keywords
+AI
+Software
+Digital
+Enterprise
+Automation
+
+4. COLOR SYSTEM
+Primary
+#2563EB
+Blue 600
+
+Secondary
+#06B6D4
+Cyan 500
+
+Success
+#16A34A
+
+Warning
+#F59E0B
+
+Danger
+#DC2626
+
+Neutral
+#111827
+#374151
+#6B7280
+#D1D5DB
+#F9FAFB
+
+5. TYPOGRAPHY SYSTEM
+Font Family
+Inter
+Fallback
+sans-serif
+
+Heading
+H1
+48px
+Bold
+
+H2
+36px
+Bold
+
+H3
+30px
+SemiBold
+
+H4
+24px
+SemiBold
+
+H5
+20px
+Medium
+
+H6
+18px
+Medium
+
+Body
+Body Large
+16px
+
+Body Medium
+14px
+
+Body Small
+12px
+
+6. SPACING SYSTEM
+Base Unit
+4px
+Scale
+4
+8
+12
+16
+24
+32
+48
+64
+96
+128
+
+7. GRID SYSTEM
+Desktop
+12 Columns
+
+Tablet
+8 Columns
+
+Mobile
+4 Columns
+
+Container Width
+1280px
+
+8. BORDER RADIUS SYSTEM
+Small
+6px
+Medium
+12px
+Large
+20px
+Extra Large
+32px
+
+9. SHADOW SYSTEM
+Level 1
+0 1px 2px rgba(0,0,0,.05)
+
+Level 2
+0 4px 12px rgba(0,0,0,.08)
+
+Level 3
+0 12px 24px rgba(0,0,0,.12)
+
+10. DESIGN TOKENS
+{
+  "color.primary":"#2563EB",
+  "color.success":"#16A34A",
+  "radius.md":"12px",
+  "spacing.4":"16px",
+  "font.body":"Inter"
+}
+
+11. ICONOGRAPHY
+Library
+Lucide Icons
+
+Icon Size
+16
+20
+24
+32
+
+12. BUTTON SYSTEM
+Primary Button
+Purpose:
+Main CTA
+
+Secondary Button
+Purpose:
+Alternative Action
+
+Ghost Button
+Purpose:
+Low Priority Action
+
+Danger Button
+Purpose:
+Delete Action
+
+Loading State
+Required
+
+Disabled State
+Required
+
+13. FORM DESIGN SYSTEM
+Components
+Input
+Textarea
+Select
+Checkbox
+Radio
+Switch
+Date Picker
+File Upload
+
+Validation States
+Default
+Focus
+Success
+Warning
+Error
+Disabled
+
+14. NAVIGATION SYSTEM
+Primary Navigation
+Top Navbar
+
+Dashboard Navigation
+Sidebar
+
+Mobile Navigation
+Bottom Navigation
+
+Breadcrumb
+Required
+Dashboard Only
+
+15. CARD SYSTEM
+Card Default
+Card Statistic
+Card Package
+Card Portfolio
+Card Notification
+Card Project
+
+16. TABLE SYSTEM
+Features
+Sorting
+Filtering
+Pagination
+Export
+Column Toggle
+
+Responsive Mode
+Horizontal Scroll
+
+17. MODAL SYSTEM
+Sizes
+Small
+Medium
+Large
+Fullscreen
+
+Modal Types
+Confirmation
+Alert
+Form
+Preview
+
+18. LANDING PAGE SPECIFICATION
+Sections
+Hero
+Features
+Portfolio
+Packages
+Testimonials
+FAQ
+CTA
+Footer
+
+Hero CTA
+"Konsultasikan Proyek Anda"
+
+19. AI CHAT PAGE SPECIFICATION
+Components
+Chat Window
+Message Bubble
+Prompt Suggestions
+Typing Indicator
+Attachment Button
+Recommended Package Card
+
+States
+Empty
+Typing
+Success
+Error
+
+20. PACKAGE PAGE SPECIFICATION
+Components
+Package Cards
+Filter
+Search
+Comparison Table
+
+21. CHECKOUT PAGE SPECIFICATION
+Components
+Order Form
+Package Summary
+Payment Summary
+File Upload
+Terms Agreement
+Checkout Button
+
+22. CUSTOMER DASHBOARD
+Modules
+Orders
+Payments
+Notifications
+Downloads
+Profile
+
+23. DEVELOPER DASHBOARD
+Modules
+Assigned Projects
+PRD Queue
+Project Progress
+Notifications
+
+24. MARKETING DASHBOARD
+Modules
+Revenue
+Orders
+Leads
+Conversion
+
+25. OWNER DASHBOARD
+Modules
+Revenue Analytics
+Growth Analytics
+Customer Analytics
+Operational Metrics
+
+26. NOTIFICATION CENTER
+Categories
+Payment
+Project
+System
+Marketing
+
+States
+Unread
+Read
+Archived
+
+27. RESPONSIVE DESIGN RULES
+Mobile
+320px - 767px
+
+Tablet
+768px - 1023px
+
+Desktop
+1024px+
+
+28. ACCESSIBILITY SPECIFICATION
+Standard
+WCAG 2.1 AA
+
+Requirements
+Keyboard Navigation
+Focus Indicators
+Screen Reader Labels
+Alt Text Images
+Color Contrast ≥ 4.5:1
+
+29. ANIMATION GUIDELINES
+Duration
+150ms
+250ms
+300ms
+
+Animation Types
+Fade
+Slide
+Scale
+
+Avoid
+Excessive Motion
+
+30. EMPTY STATES
+No Orders
+No Notifications
+No Payments
+No Search Results
+No PRD
+
+31. ERROR STATES
+404 Page
+500 Page
+Network Error
+Payment Failed
+Upload Failed
+AI Service Error
+
+32. Figma Project Structure
+01 Foundations
+
+02 Design Tokens
+
+03 Components
+
+04 Patterns
+
+05 Landing Page
+
+06 Customer Dashboard
+
+07 Developer Dashboard
+
+08 Marketing Dashboard
+
+09 Owner Dashboard
+
+10 Mobile Views
+
+33. ATOMIC DESIGN STRUCTURE
+Atoms
+Button
+Input
+Badge
+Avatar
+
+Molecules
+Search Bar
+Package Card
+Notification Item
+
+Organisms
+Header
+Sidebar
+Dashboard Widgets
+
+Templates
+Dashboard Layout
+Checkout Layout
+
+Pages
+Landing
+Checkout
+Dashboard
+AI Chat
+
+34. UX SUCCESS METRICS
+Task Completion Rate
+≥ 95%
+
+Checkout Completion
+≥ 90%
+
+Average Checkout Time
+< 3 Minutes
+
+System Usability Scale
+≥ 80
+
+35. DESIGN ACCEPTANCE CRITERIA
+✓ Responsive
+✓ Accessible
+✓ Consistent
+✓ WCAG Compliant
+✓ Mobile First
+✓ Reusable Components
+✓ Figma Ready
+✓ Developer Ready
+
+APPENDIX A
+Recommended Stack
+Design
+Figma
+
+Prototype
+Figma Interactive Prototype
+
+Frontend
+Next.js
+TailwindCSS
+
+Icons
+Lucide
+
+Charts
+Recharts
+
+DOCUMENT APPROVAL
+Prepared By:
+UI/UX Designer
+Reviewed By:
+Product Owner
+Approved By:
+Stakeholders
+Version:
+1.0

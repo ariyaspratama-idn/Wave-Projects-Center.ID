@@ -1,0 +1,694 @@
+TECHNICAL DESIGN DOCUMENT (TDD)
+
+Wave Projects Center.ID
+Version: 1.0
+Document Type: Technical Design Document
+Status: Approved For Development
+Classification: Internal Technical Documentation
+
+1. DOCUMENT PURPOSE
+Dokumen ini menjelaskan desain teknis sistem Wave Projects Center.ID secara menyeluruh mulai dari arsitektur aplikasi, database, infrastruktur cloud, keamanan, observabilitas, hingga strategi deployment.
+Dokumen ini digunakan oleh:
+
+Solution Architect
+
+
+Backend Developer
+
+
+Frontend Developer
+
+
+DevOps Engineer
+
+
+QA Engineer
+
+
+Technical Lead
+
+
+2. SYSTEM OVERVIEW
+Wave Projects Center.ID adalah platform pemesanan jasa pengembangan software berbasis AI yang terdiri dari:
+
+Public Website
+
+
+AI Consultation
+
+
+Checkout System
+
+
+Payment Processing
+
+
+AI PRD Generator
+
+
+Project Dashboard
+
+
+Notification Center
+
+
+Reporting System
+
+
+3. HIGH LEVEL ARCHITECTURE (HLD)
+Architecture Style:
+Service-Oriented Modular Monolith
+Reason:
+
+MVP lebih cepat dibuat
+
+
+Biaya operasional rendah
+
+
+Mudah dikembangkan menjadi microservice
+
+
+Architecture Flow
+Customer Browser
+↓
+Frontend (Next.js)
+↓
+Laravel API Gateway
+↓
+Business Services Layer
+↓
+Database Layer
+↓
+External Services
+
+External Services:
+
+Gemini AI
+
+
+Midtrans
+
+
+Cloudinary
+
+
+OneSignal
+
+
+Sentry
+
+
+TiDB Cloud
+
+
+4. C4 MODEL
+LEVEL 1 — SYSTEM CONTEXT
+Actors
+Customer
+Marketing
+Developer
+Admin
+Owner
+
+External Systems
+Gemini
+Midtrans
+Cloudinary
+OneSignal
+Sentry
+TiDB
+
+System
+Wave Projects Center.ID
+
+LEVEL 2 — CONTAINER DIAGRAM
+Frontend Container
+Technology:
+Next.js
+Responsibilities:
+
+UI Rendering
+
+
+API Communication
+
+
+Authentication Session
+
+
+Backend Container
+Technology:
+Laravel 11
+Responsibilities:
+
+Business Logic
+
+
+Authentication
+
+
+API
+
+
+Queue
+
+
+Database Container
+Technology:
+TiDB Cloud
+Responsibilities:
+
+Data Persistence
+
+
+Transaction Storage
+
+
+Storage Container
+Technology:
+Cloudinary
+Responsibilities:
+
+File Storage
+
+
+Notification Container
+Technology:
+OneSignal
+Responsibilities:
+
+Push Notification
+
+
+5. APPLICATION LAYER ARCHITECTURE
+Presentation Layer
+↓
+Application Layer
+↓
+Domain Layer
+↓
+Infrastructure Layer
+
+Presentation Layer
+Components:
+
+Landing Page
+
+
+Checkout UI
+
+
+Dashboard UI
+
+
+AI Chat UI
+
+
+Application Layer
+Components:
+
+Auth Service
+
+
+Order Service
+
+
+Payment Service
+
+
+Notification Service
+
+
+AI Service
+
+
+Domain Layer
+Entities:
+
+User
+
+
+Order
+
+
+Payment
+
+
+Package
+
+
+GeneratedPRD
+
+
+Infrastructure Layer
+Components:
+
+TiDB
+
+
+Cloudinary
+
+
+Midtrans
+
+
+Gemini
+
+
+OneSignal
+
+
+6. FRONTEND ARCHITECTURE
+Framework
+Next.js 15
+
+Language
+TypeScript
+
+Styling
+TailwindCSS
+
+State Management
+Zustand
+
+API Client
+Axios
+
+Folder Structure
+src/
+app/
+components/
+hooks/
+services/
+stores/
+types/
+utils/
+middleware/
+
+Key Components
+LandingPage
+AIChat
+CheckoutForm
+Dashboard
+NotificationWidget
+
+7. BACKEND ARCHITECTURE
+Framework
+Laravel 11
+
+Language
+PHP 8.3
+
+Architecture Pattern
+Service Repository Pattern
+
+Folder Structure
+app/
+Http/
+Controllers/
+Services/
+Repositories/
+Models/
+Policies/
+Jobs/
+Events/
+Listeners/
+Observers/
+Rules/
+
+Core Services
+AuthService
+PackageService
+OrderService
+PaymentService
+NotificationService
+PRDGeneratorService
+AIService
+
+8. DATABASE ARCHITECTURE
+Database Engine
+TiDB Serverless
+
+Design Principles
+
+ACID Transaction
+
+
+Horizontal Scaling
+
+
+High Availability
+
+
+Main Tables
+users
+roles
+permissions
+packages
+orders
+payments
+attachments
+generated_prds
+notifications
+audit_logs
+settings
+activity_logs
+
+Estimated Relations
+1 User
+↓
+Many Orders
+
+1 Order
+↓
+Many Attachments
+
+1 Order
+↓
+Many Payments
+
+1 Order
+↓
+1 GeneratedPRD
+
+9. AUTHENTICATION ARCHITECTURE
+Method
+JWT
+
+Authentication Flow
+User Login
+↓
+Credential Validation
+↓
+JWT Generation
+↓
+Client Storage
+↓
+Authenticated Request
+↓
+Middleware Validation
+
+Security Controls
+Password Hashing
+Bcrypt
+
+Session Expiration
+24 Hours
+
+Refresh Token
+Supported
+
+10. AI ARCHITECTURE
+Provider
+Google Gemini
+
+Fallback
+OpenRouter
+
+Flow
+Customer Message
+↓
+Prompt Builder
+↓
+Gemini API
+↓
+Response Validation
+↓
+Store Conversation
+↓
+Frontend Response
+
+PRD Generation Flow
+Payment Success
+↓
+Requirement Extraction
+↓
+Prompt Builder
+↓
+Gemini Processing
+↓
+PRD Generation
+↓
+Database Storage
+↓
+Notification
+
+11. PAYMENT ARCHITECTURE
+Provider
+Midtrans Snap
+
+Flow
+Checkout
+↓
+Create Transaction
+↓
+Snap Token
+↓
+Customer Payment
+↓
+Midtrans Callback
+↓
+Signature Validation
+↓
+Update Status
+↓
+Notification
+
+Security Layer
+Webhook Signature
+Idempotency
+Transaction Logging
+
+12. FILE STORAGE ARCHITECTURE
+Provider
+Cloudinary
+
+Method
+Direct Upload
+
+Flow
+Frontend Request Signature
+↓
+Laravel Generate Signature
+↓
+Upload To Cloudinary
+↓
+Store Metadata
+↓
+Attach To Order
+
+Benefits
+
+Serverless Friendly
+
+
+Lower Server Load
+
+
+13. NOTIFICATION ARCHITECTURE
+Provider
+OneSignal
+
+Channels
+Customer
+Developer
+Marketing
+Owner
+
+Events
+Order Created
+Payment Success
+PRD Generated
+Project Delivered
+System Alert
+
+14. QUEUE ARCHITECTURE
+Queue Driver
+Database Queue
+(MVP)
+
+Future
+Redis Queue
+
+Queued Jobs
+GeneratePRDJob
+SendNotificationJob
+GenerateInvoiceJob
+GenerateReportJob
+
+15. OBSERVABILITY ARCHITECTURE
+Monitoring
+Sentry
+
+Metrics
+Error Rate
+API Latency
+Queue Failure
+Payment Failure
+AI Failure
+
+Alert Channels
+Email
+Push Notification
+Dashboard
+
+16. SECURITY ARCHITECTURE
+Security Standard
+OWASP Top 10
+
+Controls
+CSRF Protection
+XSS Protection
+SQL Injection Protection
+Rate Limiting
+Role Validation
+Audit Logging
+Webhook Verification
+
+Encryption
+TLS 1.3
+HTTPS Only
+
+Sensitive Data
+Encrypted At Rest
+Encrypted In Transit
+
+17. DEPLOYMENT ARCHITECTURE
+Frontend
+Vercel
+
+Backend
+Laravel on Vercel
+or
+Laravel Forge
+
+Database
+TiDB Cloud
+
+Storage
+Cloudinary
+
+Notification
+OneSignal
+
+Monitoring
+Sentry
+
+Deployment Flow
+GitHub
+↓
+Pull Request
+↓
+Code Review
+↓
+Merge Main
+↓
+CI/CD
+↓
+Production
+
+18. SCALABILITY DESIGN
+Current Target
+1000 Concurrent Users
+
+Future Target
+10000 Concurrent Users
+
+Scaling Strategy
+Stateless API
+Queue Processing
+CDN Delivery
+Horizontal Database Scaling
+Caching Layer
+
+19. DISASTER RECOVERY PLAN
+Failure Scenario
+Database Failure
+Mitigation
+TiDB HA Cluster
+
+Failure Scenario
+Gemini Down
+Mitigation
+OpenRouter Fallback
+
+Failure Scenario
+Cloudinary Down
+Mitigation
+Retry Queue
+
+Failure Scenario
+Midtrans Down
+Mitigation
+Pending Payment Recovery
+
+Recovery Targets
+RPO
+24 Hours
+
+RTO
+4 Hours
+
+20. TECHNICAL ACCEPTANCE CRITERIA
+API Response
+< 2500 ms
+
+Availability
+99.9%
+
+Payment Success
+98%
+
+Queue Success
+99%
+
+PRD Generation Success
+95%
+
+Security Review
+Passed
+
+Load Test
+Passed
+
+APPENDIX A
+Technology Stack Summary
+Frontend
+Next.js
+TypeScript
+TailwindCSS
+Zustand
+
+Backend
+Laravel 11
+PHP 8.3
+
+Database
+TiDB Cloud
+
+Storage
+Cloudinary
+
+AI
+Gemini
+OpenRouter
+
+Payment
+Midtrans
+
+Notification
+OneSignal
+
+Monitoring
+Sentry
+
+DOCUMENT APPROVAL
+Prepared By:
+Solution Architect
+Reviewed By:
+Lead Developer
+Approved By:
+Product Owner
+Version:
+1.0

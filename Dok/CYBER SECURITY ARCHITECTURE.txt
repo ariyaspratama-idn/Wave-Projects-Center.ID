@@ -1,0 +1,715 @@
+CYBER SECURITY ARCHITECTURE, OWASP ASVS, THREAT MODELING & COMPLIANCE SPECIFICATION
+
+Wave Projects Center.ID
+Version: 1.0
+
+Document Type:
+Enterprise Cyber Security Architecture Specification
+Security Standards:
+OWASP ASVS 4.0.3 
+OWASP Top 10 
+NIST Cybersecurity Framework 
+ISO 27001 
+CIS Controls v8 
+STRIDE Threat Modeling 
+MITRE ATT&CK 
+Zero Trust Architecture 
+UU PDP Indonesia 
+GDPR Readiness Framework 
+
+Status:
+Approved For Security Implementation
+
+Dependencies:
+PRD 
+SRS 
+SAD 
+DevOps Architecture 
+API Architecture 
+Database Design 
+
+1. DOCUMENT PURPOSE
+Dokumen ini mendefinisikan:
+Enterprise Security Architecture 
+Security Controls 
+Threat Modeling 
+Secure Development Lifecycle 
+Compliance Framework 
+Incident Response 
+Tujuan:
+Menjamin keamanan platform 
+Melindungi data pelanggan 
+Mengurangi risiko serangan siber 
+Memenuhi standar compliance 
+
+2. SECURITY VISION
+Mission Statement
+Membangun Wave Projects Center.ID sebagai platform berbasis Zero Trust Security yang aman, terukur, dan memenuhi standar enterprise security modern.
+
+3. SECURITY PRINCIPLES
+SEC-01
+Least Privilege
+Hak akses minimum.
+
+SEC-02
+Defense In Depth
+Lapisan keamanan berlapis.
+
+SEC-03
+Zero Trust
+Never Trust, Always Verify.
+
+SEC-04
+Secure By Default
+Konfigurasi aman secara default.
+
+SEC-05
+Continuous Monitoring
+Monitoring 24/7.
+
+4. ENTERPRISE SECURITY ARCHITECTURE
+Users
+   │
+   ▼
+Cloudflare WAF
+   │
+   ▼
+DDoS Protection
+   │
+   ▼
+API Gateway
+   │
+   ▼
+Authentication Layer
+   │
+   ▼
+Authorization Layer
+   │
+   ▼
+Application Layer
+   │
+   ▼
+Database Layer
+   │
+   ▼
+Encrypted Storage
+
+5. ZERO TRUST ARCHITECTURE
+Core Principles
+Verify Explicitly
+
+Use Least Privilege Access
+
+Assume Breach
+
+Security Layers
+Identity Verification
+
+▼
+
+Device Verification
+
+▼
+
+Access Control
+
+▼
+
+Continuous Monitoring
+
+6. SECURITY ZONES
+Zone 1
+Public Internet
+Risk:
+High
+
+Zone 2
+DMZ Layer
+Risk:
+Medium
+
+Zone 3
+Application Layer
+Risk:
+Medium
+
+Zone 4
+Database Layer
+Risk:
+Critical
+
+Zone 5
+Backup Layer
+Risk:
+Critical
+
+7. IDENTITY & ACCESS MANAGEMENT (IAM)
+Authentication Methods
+Email Password
+
+Google OAuth
+
+GitHub OAuth
+
+Future:
+Microsoft OAuth
+
+Multi-Factor Authentication
+Required:
+Owner
+Marketing
+Developer
+
+Optional:
+Customer
+
+8. ROLE BASED ACCESS CONTROL (RBAC)
+Customer
+View Own Data
+Create Orders
+Download Deliverables
+
+Developer
+Assigned Projects Only
+Update Progress
+Upload Deliverables
+
+Marketing
+Manage Orders
+Manage Leads
+Manage Revenue
+
+Owner
+Full Access
+
+9. ATTRIBUTE BASED ACCESS CONTROL (ABAC)
+Additional Controls:
+Department
+Project Assignment
+Account Status
+Subscription Status
+Environment Access
+
+10. AUTHENTICATION SECURITY
+Password Policy
+Minimum Length
+12 Characters
+
+Requirements
+Uppercase
+Lowercase
+Number
+Special Character
+
+Password Hashing
+Algorithm:
+Argon2id
+
+11. SESSION SECURITY
+Access Token
+JWT
+Lifetime:
+15 Minutes
+
+Refresh Token
+Lifetime:
+30 Days
+
+Token Storage
+HttpOnly Cookie
+
+12. API SECURITY ARCHITECTURE
+API Gateway Protection
+Rate Limiting
+Request Validation
+Authentication
+Authorization
+Logging
+
+API Security Controls
+JWT Validation
+IP Filtering
+Replay Protection
+Request Signing
+
+13. OWASP ASVS COMPLIANCE
+Target Level
+OWASP ASVS Level 2
+
+Domains:
+V1
+Architecture
+
+V2
+Authentication
+
+V3
+Session Management
+
+V4
+Access Control
+
+V5
+Validation
+
+V6
+Cryptography
+
+V7
+Error Handling
+
+V8
+Data Protection
+
+V9
+Communication
+
+V10
+Malicious Code
+
+V11
+Business Logic
+
+V12
+Files & Resources
+
+V13
+API Security
+
+V14
+Configuration
+
+14. OWASP TOP 10 MAPPING
+A01
+Broken Access Control
+Mitigation:
+RBAC
+ABAC
+Ownership Validation
+
+A02
+Cryptographic Failures
+Mitigation:
+AES-256
+TLS 1.3
+Argon2id
+
+A03
+Injection
+Mitigation:
+ORM
+Prepared Statements
+Validation
+
+A04
+Insecure Design
+Mitigation:
+Threat Modeling
+Architecture Review
+
+A05
+Security Misconfiguration
+Mitigation:
+IaC
+Security Baseline
+
+A06
+Vulnerable Components
+Mitigation:
+Dependency Scanning
+
+A07
+Authentication Failures
+Mitigation:
+MFA
+JWT
+Rate Limiting
+
+A08
+Software Integrity Failures
+Mitigation:
+CI/CD Validation
+Signed Releases
+
+A09
+Logging Failures
+Mitigation:
+Audit Logging
+Monitoring
+
+A10
+SSRF
+Mitigation:
+Outbound Allowlist
+
+15. STRIDE THREAT MODELING
+S — Spoofing
+Threat:
+Fake User Identity
+Mitigation:
+MFA
+JWT Validation
+OAuth
+
+T — Tampering
+Threat:
+Data Modification
+Mitigation:
+Integrity Validation
+Audit Logs
+
+R — Repudiation
+Threat:
+User Denies Action
+Mitigation:
+Audit Trail
+Timestamp Logging
+
+I — Information Disclosure
+Threat:
+Data Leakage
+Mitigation:
+Encryption
+RBAC
+
+D — Denial of Service
+Threat:
+Service Unavailable
+Mitigation:
+Cloudflare
+Rate Limiting
+Auto Scaling
+
+E — Elevation of Privilege
+Threat:
+Privilege Escalation
+Mitigation:
+Permission Validation
+ABAC
+RBAC
+
+16. ATTACK SURFACE ANALYSIS
+Public Surface
+Landing Page
+API Endpoint
+Login
+Register
+AI Chat
+Checkout
+
+Internal Surface
+Admin Dashboard
+Developer Dashboard
+Marketing Dashboard
+Owner Dashboard
+
+Third Party Surface
+Payment Gateway
+AI Provider
+Cloud Storage
+Push Notification
+
+17. DATA CLASSIFICATION
+Public
+Marketing Content
+
+Internal
+Operational Reports
+
+Confidential
+Customer Information
+
+Restricted
+Payment Information
+Access Tokens
+Secrets
+
+18. DATA PROTECTION
+Encryption At Rest
+AES-256
+
+Encryption In Transit
+TLS 1.3
+
+Key Rotation
+Every
+90 Days
+
+19. DATABASE SECURITY
+Controls
+Row Level Security
+Backup Encryption
+Database Audit Logging
+IP Restriction
+
+Sensitive Fields
+Email
+Phone Number
+Invoices
+Tokens
+Payment References
+
+20. FILE SECURITY
+Upload Validation
+File Type
+File Size
+Virus Scan
+Checksum
+
+Allowed Files
+PDF
+DOCX
+XLSX
+ZIP
+PNG
+JPG
+
+21. SECURE SDLC
+Phase 1
+Threat Modeling
+
+Phase 2
+Secure Coding
+
+Phase 3
+Security Testing
+
+Phase 4
+Deployment Security
+
+Phase 5
+Monitoring
+
+22. DEVSECOPS ARCHITECTURE
+Developer
+
+▼
+
+Git Push
+
+▼
+
+SAST
+
+▼
+
+Dependency Scan
+
+▼
+
+Secrets Scan
+
+▼
+
+Build
+
+▼
+
+DAST
+
+▼
+
+Deploy
+
+23. SECURITY TESTING STRATEGY
+SAST
+Static Analysis
+
+DAST
+Dynamic Analysis
+
+Penetration Testing
+Quarterly
+
+Red Team Exercise
+Annual
+
+24. LOGGING & AUDIT
+Security Logs
+Login Attempts
+Permission Changes
+Payment Actions
+API Calls
+Admin Actions
+
+Retention
+365 Days
+
+25. SECURITY MONITORING
+Events
+Brute Force Attack
+Account Lockout
+Token Abuse
+API Abuse
+Payment Fraud
+
+Alert Channels
+Email
+Telegram
+Slack
+SMS
+
+26. INCIDENT RESPONSE PLAN (SIRP)
+Phase 1
+Preparation
+
+Phase 2
+Detection
+
+Phase 3
+Containment
+
+Phase 4
+Eradication
+
+Phase 5
+Recovery
+
+Phase 6
+Lessons Learned
+
+27. SECURITY INCIDENT SEVERITY
+Critical
+System Compromise
+
+High
+Data Breach
+
+Medium
+Unauthorized Access
+
+Low
+Suspicious Activity
+
+28. BUSINESS CONTINUITY SECURITY
+Security Backup
+Daily
+
+Security Logs Backup
+Hourly
+
+Security Monitoring
+24/7
+
+29. COMPLIANCE FRAMEWORK
+ISO 27001 Alignment
+Asset Management
+Risk Management
+Access Control
+Logging
+Monitoring
+
+NIST Alignment
+Identify
+Protect
+Detect
+Respond
+Recover
+
+30. UU PDP INDONESIA COMPLIANCE
+Requirements
+Consent Management
+Privacy Policy
+Right To Access
+Right To Correction
+Right To Deletion
+Data Retention
+Data Breach Notification
+
+31. GDPR READINESS
+Rights Supported
+Right To Access
+Right To Rectification
+Right To Erasure
+Right To Portability
+Right To Restrict Processing
+
+32. SECURITY GOVERNANCE
+Security Committee
+CTO
+Lead Engineer
+Security Officer
+Product Owner
+
+Review Schedule
+Monthly
+
+Security Audit
+Quarterly
+
+33. THIRD-PARTY SECURITY REVIEW
+Vendors
+AI Provider
+Payment Gateway
+Cloud Provider
+Notification Provider
+
+Requirements:
+Security Assessment
+Compliance Review
+Contract Review
+
+34. SECURITY KPI
+Critical Vulnerability
+0 Open Issues
+
+MFA Adoption
+100%
+Staff
+
+Incident Response Time
+< 30 Minutes
+
+Vulnerability Remediation
+< 7 Days
+Critical Issues
+
+35. CYBER SECURITY ACCEPTANCE CRITERIA
+✓ OWASP ASVS Level 2
+✓ MFA Enabled
+✓ RBAC Implemented
+✓ Audit Logging Enabled
+✓ Encryption Enabled
+✓ Incident Response Ready
+✓ DevSecOps Ready
+✓ Compliance Ready
+✓ Security Monitoring Active
+✓ Security Documentation Complete
+
+APPENDIX A — SECURITY ROADMAP
+Phase 1 (MVP)
+OWASP ASVS Level 2
+Basic RBAC
+MFA
+WAF
+
+Phase 2
+Advanced ABAC
+Fraud Detection
+SIEM Integration
+
+Phase 3
+Zero Trust Full Implementation
+Security Data Lake
+SOAR Automation
+
+Phase 4
+ISO 27001 Certification
+External Penetration Testing
+
+Phase 5
+Enterprise Security Operations Center (SOC)
+24/7 Security Monitoring
+Threat Intelligence Platform
+
+DOCUMENT APPROVAL
+Prepared By:
+Cyber Security Architect
+Reviewed By:
+Security Officer
+Approved By:
+Stakeholders
+Version:
+1.0
+Status:
+Approved For Security Implementation

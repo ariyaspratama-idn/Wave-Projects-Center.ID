@@ -1,0 +1,433 @@
+PRODUCT BACKLOG & TASK BREAKDOWN DOCUMENT
+Wave Projects Center.ID
+
+Document Information
+
+1. PURPOSE
+Dokumen ini bertujuan mendefinisikan seluruh pekerjaan pengembangan yang berasal dari Product Requirements Document (PRD) dan diterjemahkan menjadi backlog yang dapat dieksekusi oleh tim pengembang.
+Tujuan utama:
+
+Menentukan ruang lingkup pekerjaan.
+
+Menentukan prioritas fitur.
+
+Menentukan urutan pengerjaan.
+
+Menentukan estimasi effort.
+
+Menjadi dasar Sprint Planning.
+
+
+2. PRODUCT EPIC STRUCTURE
+Sistem dibagi menjadi 12 Epic utama:
+EPIC-01 Landing Website
+EPIC-02 Authentication & User Management
+EPIC-03 AI Consultation System
+EPIC-04 Package & Portfolio Management
+EPIC-05 Order & Checkout
+EPIC-06 Payment Gateway Integration
+EPIC-07 Cloudinary Asset Management
+EPIC-08 AI PRD Generator
+EPIC-09 Internal Dashboard
+EPIC-10 Notification Center
+EPIC-11 Reporting & Analytics
+EPIC-12 System Administration
+
+3. PRIORITY MATRIX
+Priority 1 (Critical)
+Harus tersedia pada MVP.
+Priority 2 (High)
+Penting untuk operasional.
+Priority 3 (Medium)
+Peningkatan UX.
+Priority 4 (Low)
+Roadmap berikutnya.
+
+EPIC-01 LANDING WEBSITE
+Tujuan:
+Media promosi utama Wave Projects Center.ID.
+
+US-001
+Sebagai pengunjung
+Saya ingin melihat profil perusahaan
+Agar mengetahui layanan yang tersedia.
+
+Priority: P1
+Story Point: 3
+Acceptance Criteria:
+
+Profil perusahaan tampil.
+
+Responsif mobile.
+
+SEO friendly.
+
+
+US-002
+Sebagai pengunjung
+Saya ingin melihat daftar layanan
+Agar mengetahui harga dan fitur.
+
+Priority: P1
+Story Point: 5
+Acceptance Criteria:
+
+Data paket dari database.
+
+Harga tampil otomatis.
+
+Fitur paket ditampilkan.
+
+
+US-003
+Sebagai pengunjung
+Saya ingin melihat portofolio
+Agar mengetahui kualitas pekerjaan.
+
+Priority: P1
+Story Point: 5
+Acceptance Criteria:
+
+Gallery tampil.
+
+Link demo tersedia.
+
+Filter kategori tersedia.
+
+
+Task Breakdown
+FE-001 Hero Section
+FE-002 Portfolio Section
+FE-003 Pricing Section
+FE-004 FAQ Section
+FE-005 Contact Section
+BE-001 API Packages
+BE-002 API Portfolio
+QA-001 Landing Testing
+
+EPIC-02 AUTHENTICATION
+US-004
+Sebagai pengguna
+Saya ingin login
+Agar dapat mengakses dashboard.
+
+Priority: P1
+Story Point: 5
+Acceptance Criteria:
+
+Login berhasil.
+
+Password terenkripsi.
+
+Session tersimpan.
+
+
+US-005
+Sebagai admin
+Saya ingin mengelola role
+Agar hak akses terkontrol.
+
+Priority: P1
+Story Point: 8
+Acceptance Criteria:
+
+RBAC aktif.
+
+Role terpisah.
+
+Permission granular.
+
+
+Task Breakdown
+BE-010 Login API
+BE-011 Register API
+BE-012 Logout API
+BE-013 RBAC Middleware
+DB-001 Users Table
+DB-002 Roles Table
+DB-003 Permissions Table
+QA-010 Auth Testing
+
+EPIC-03 AI CONSULTATION
+US-006
+Sebagai pelanggan
+Saya ingin berdiskusi dengan AI
+Agar mendapat rekomendasi solusi.
+
+Priority: P1
+Story Point: 13
+Acceptance Criteria:
+
+AI merespons.
+
+AI memahami konteks.
+
+AI merekomendasikan paket.
+
+
+US-007
+Sebagai pelanggan
+Saya ingin mendapatkan estimasi proyek
+Agar mengetahui kebutuhan biaya.
+
+Priority: P1
+Story Point: 8
+Acceptance Criteria:
+
+AI menampilkan estimasi.
+
+AI memberikan alasan estimasi.
+
+
+Task Breakdown
+AI-001 Gemini Integration
+AI-002 OpenRouter Fallback
+AI-003 Conversation Storage
+AI-004 Prompt Engineering
+AI-005 Package Recommendation Engine
+QA-020 AI Testing
+
+EPIC-04 PACKAGE MANAGEMENT
+US-008
+Sebagai admin
+Saya ingin mengelola paket layanan
+Agar harga selalu up to date.
+
+Priority: P1
+Story Point: 8
+Acceptance Criteria:
+
+CRUD paket.
+
+Upload icon.
+
+Status aktif/nonaktif.
+
+
+
+Task Breakdown
+BE-020 Package CRUD
+DB-010 Packages Table
+FE-020 Package Management UI
+QA-030 Package Testing
+
+EPIC-05 ORDER & CHECKOUT
+US-009
+Sebagai pelanggan
+Saya ingin membuat pesanan
+Agar proyek dapat diproses
+.
+Priority: P1
+Story Point:13
+Acceptance Criteria:
+
+Form valid.
+
+Data tersimpan.
+
+Order Number otomatis.
+
+
+US-010
+Sebagai pelanggan
+Saya ingin memilih pembayaran DP atau Lunas
+Agar fleksibel dalam pembayaran.
+
+Priority: P1
+Story Point: 8
+Acceptance Criteria:
+
+DP 30%.
+
+Full Payment.
+
+Total otomatis dihitung.
+
+
+Task Breakdown
+BE-030 Checkout API
+BE-031 Order Number Generator
+BE-032 Validation Layer
+DB-020 Orders Table
+QA-040 Checkout Testing
+
+EPIC-06 PAYMENT GATEWAY
+US-011
+Sebagai sistem
+Saya ingin menerima callback Midtrans
+Agar status pembayaran otomatis.
+Priority: P1
+Story Point: 13
+Acceptance Criteria:
+
+Signature valid.
+
+Status berubah otomatis.
+
+Anti duplicate webhook.
+
+
+Task Breakdown
+PAY-001 Midtrans SDK
+PAY-002 Webhook Handler
+PAY-003 Signature Validation
+PAY-004 Idempotency Layer
+PAY-005 Payment Logs
+QA-050 Payment Testing
+
+EPIC-07 CLOUDINARY
+US-012
+Sebagai pengguna
+Saya ingin mengunggah file
+Agar kebutuhan proyek dapat dilampirkan.
+
+Priority: P1
+Story Point: 8
+Acceptance Criteria:
+
+Upload berhasil.
+
+Direct Upload.
+
+Tidak melalui backend.
+
+
+Task Breakdown
+MED-001 Upload Signature API
+MED-002 Direct Upload
+MED-003 Attachment Database
+QA-060 Upload Testing
+
+EPIC-08 AI PRD GENERATOR
+US-013
+Sebagai developer
+Saya ingin menerima PRD otomatis
+Agar pekerjaan dapat langsung dimulai.
+
+Priority: P1
+Story Point: 21
+Acceptance Criteria:
+
+PRD otomatis terbentuk.
+
+Format markdown.
+
+Masuk dashboard.
+
+
+Task Breakdown
+AI-010 Prompt Builder
+AI-011 PRD Generator
+AI-012 Queue Integration
+AI-013 Storage Generated PRD
+QA-070 PRD Testing
+
+EPIC-09 DASHBOARD
+US-014
+Sebagai developer
+Saya ingin melihat antrian pekerjaan.
+
+Priority: P1
+Story Point: 13
+
+US-015
+Sebagai marketing
+Saya ingin melihat transaksi.
+
+Priority:P1
+Story Point:8
+
+US-016
+Sebagai owner
+Saya ingin melihat statistik bisnis.
+
+Priority: P1
+Story Point: 13
+
+Task Breakdown
+DASH-001 Developer Dashboard
+DASH-002 Marketing Dashboard
+DASH-003 Owner Dashboard
+DASH-004 Analytics Widget
+QA-080 Dashboard Testing
+
+EPIC-10 NOTIFICATION CENTER
+US-017
+Sebagai admin
+Saya ingin menerima notifikasi real-time.
+Priority: P1
+Story Point: 8
+
+Task Breakdown
+NOTIF-001 OneSignal SDK
+NOTIF-002 Marketing Channel
+NOTIF-003 Developer Channel
+NOTIF-004 Push Service
+QA-090 Notification Testing
+
+EPIC-11 REPORTING & ANALYTICS
+US-018
+Sebagai owner
+Saya ingin melihat laporan pendapatan.
+Priority: P2
+Story Point: 13
+
+Task Breakdown
+REP-001 Revenue Report
+REP-002 Monthly Report
+REP-003 Order Report
+REP-004 Export PDF
+REP-005 Export Excel
+QA-100 Reporting Testing
+
+EPIC-12 SYSTEM ADMINISTRATION
+US-019
+Sebagai super admin
+Saya ingin mengatur konfigurasi sistem.
+Priority: P2
+Story Point: 13
+
+Task Breakdown
+SYS-001 Settings Module
+SYS-002 API Keys Management
+SYS-003 Maintenance Mode
+SYS-004 Audit Logs
+QA-110 System Testing
+
+4. MVP RELEASE SCOPE
+Release 1.0
+Included:
+✓ Landing Website
+✓ Authentication
+✓ AI Chat
+✓ Package Management
+✓ Checkout
+✓ Midtrans
+✓ Cloudinary
+✓ AI PRD Generator
+✓ Dashboard
+✓ Notification
+Excluded:
+✗ SaaS Multi Tenant
+✗ Native Mobile App
+✗ Smart Routing
+✗ Team Auto Assignment
+
+5. TOTAL ESTIMATION
+Total User Stories: 19
+Total Story Points: 188
+Estimated Sprint: 8 Sprint
+Estimated Duration: 16 Weeks
+Estimated Team Size:
+1 Product Owner
+1 UI/UX Designer
+2 Frontend Developers
+2 Backend Developers
+1 QA Engineer
+1 DevOps Engineer
+
+DOCUMENT APPROVAL
+Prepared By: Ariyas Pratama Ramadhan
+Reviewed By: Ariyas Pratama Ramadhan
+Approved By: Ariyas Pratama Ramadhan
+Version: 1.0
