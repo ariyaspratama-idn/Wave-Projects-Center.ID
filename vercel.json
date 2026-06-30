@@ -8,7 +8,7 @@
             }
         },
         {
-            "src": "backend/api/index.php",
+            "src": "backend/index.php",
             "use": "vercel-php@0.7.3"
         }
     ],
