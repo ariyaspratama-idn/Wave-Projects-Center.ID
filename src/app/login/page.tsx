@@ -10,6 +10,8 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const [showPassword, setShowPassword] = useState(false);
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -62,16 +64,23 @@ export default function LoginPage() {
                             placeholder="anda@email.com"
                         />
                     </div>
-                    <div>
+                    <div className="relative">
                         <label className="block text-xs text-gray-400 mb-1.5">Password</label>
                         <input
                             required
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50"
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 pr-10 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50"
                             placeholder="••••••••"
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-[28px] text-gray-400 hover:text-white"
+                        >
+                            {showPassword ? "👁‍🗨" : "👁"}
+                        </button>
                     </div>
 
                     {error && (
