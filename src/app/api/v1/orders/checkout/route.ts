@@ -4,7 +4,7 @@ import pool from '@/lib/db';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { package_id, agency_name, agency_type, request_note, user_id } = body;
+        const { package_id, client_name, client_email, client_whatsapp, project_purpose, payment_choice, github_url } = body;
 
         if (!package_id) return NextResponse.json({ success: false, message: 'Package ID required' }, { status: 400 });
 
@@ -12,12 +12,14 @@ export async function POST(req: Request) {
         if (!pkgs.length) return NextResponse.json({ success: false, message: 'Invalid package' }, { status: 400 });
 
         const price = pkgs[0].price;
-        const totalAmount = price * 0.3; // 30% Down Payment logic preserved
+        const totalAmount = payment_choice === 'DP_30' ? price * 0.3 : price;
+
+        const orderNumber = `WAVE-${Date.now()}`;
 
         const [orderResult]: any = await pool.query(
-            `INSERT INTO orders (user_id, package_id, agency_name, agency_type, request_note, status, total_amount, payment_status, created_at, updated_at) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-            [user_id || 1, package_id, agency_name || '', agency_type || '', request_note || '', 'pending', totalAmount, 'unpaid']
+            `INSERT INTO orders (package_id, client_name, client_email, client_whatsapp, project_purpose, payment_choice, github_url, order_number, status, total_amount, payment_status, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+            [package_id, client_name || '', client_email || '', client_whatsapp || '', project_purpose || '', payment_choice || 'FULL', github_url || '', orderNumber, 'pending', totalAmount, 'unpaid']
         );
 
         const orderId = orderResult.insertId;
@@ -36,8 +38,8 @@ export async function POST(req: Request) {
                 body: JSON.stringify({
                     app_id: ONESIGNAL_APP_ID,
                     included_segments: ['Active Users', 'Admins'],
-                    headings: { en: 'New Order Received! 🚀' },
-                    contents: { en: `Agency ${agency_name || 'Client'} has checked out Package #${package_id}.` }
+                    headings: { en: 'Pesanan Baru Masuk! 🚀' },
+                    contents: { en: `Klien ${client_name || 'Tanpa Nama'} (${client_whatsapp}) telah memesan Paket #${package_id}.` }
                 })
             }).catch(() => null);
         }
@@ -46,9 +48,9 @@ export async function POST(req: Request) {
             success: true,
             message: 'Order created successfully natively on Next.js',
             data: {
-                payment_url: `https://app.sandbox.midtrans.com/snap/v2/vtweb/mock_${Math.random()}`,
+                order_number: orderNumber,
+                snap_token: `mock_snap_${Math.random()}`,
                 order_id: orderId,
-                total_dp: totalAmount
             }
         });
     } catch (e: any) {
