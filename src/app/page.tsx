@@ -173,7 +173,7 @@ function Packages() {
               )}
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{p.tag}</span>
               <h3 className="text-2xl font-bold mt-2">{p.name}</h3>
-              <p className="text-3xl font-extrabold gradient-text mt-3 mb-2">{p.price}</p>
+              <p className="text-3xl font-extrabold gradient-text mt-3 mb-2">Rp {p.price.toLocaleString("id-ID")}</p>
               <p className="text-sm text-gray-400 mb-6 leading-relaxed flex-1">{p.desc}</p>
               <ul className="space-y-2 mb-8">
                 {p.features?.map((f: string, j: number) => (
