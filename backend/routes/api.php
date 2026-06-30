@@ -37,17 +37,13 @@ Route::prefix('v1')->group(function () {
             Route::post('/admin/users/create', [\App\Http\Controllers\Api\V1\AdminController::class, 'createUser']);
         });
     });
+
+    Route::get('/migrate-now', function () {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
+            return response()->json(['success' => true, 'output' => \Illuminate\Support\Facades\Artisan::output()]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
+    });
 });
-
-$migrateClosure = function () {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
-        return response()->json(['success' => true, 'output' => \Illuminate\Support\Facades\Artisan::output()]);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'error' => $e->getMessage()]);
-    }
-};
-
-Route::get('/migrate-now', $migrateClosure);
-Route::get('/backend/api/migrate-now', $migrateClosure);
-Route::get('/api/backend/api/migrate-now', $migrateClosure);
