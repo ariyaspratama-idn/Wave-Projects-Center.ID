@@ -1,6 +1,4 @@
 <?php
-echo json_encode(["status" => "PHP ALIVE"]);
-exit;
 
 require __DIR__ . '/vendor/autoload.php';
 $app = require_once __DIR__ . '/bootstrap/app.php';
