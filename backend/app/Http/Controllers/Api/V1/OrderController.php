@@ -33,7 +33,7 @@ class OrderController extends Controller
             'client_email' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i'],
             'client_whatsapp' => ['required', 'string', 'regex:/^(?:\+62|62|0)8[1-9][0-9]{6,10}$/'],
             'project_purpose' => 'required|string',
-            'package_id' => 'required',
+            'package_id' => 'required|numeric|exists:packages,id',
             'payment_choice' => 'required|string',
             'github_url' => 'nullable|url',
         ]);
@@ -42,20 +42,21 @@ class OrderController extends Controller
         $snapToken = 'simulated-snap-token-laravel-' . uniqid();
         $orderNumber = 'WAVE-' . date('Y') . '-' . rand(1000, 9999);
 
-        // Find package id from string to integer ID based on migration structure
-        // But since the frontend uses string 'id' for package_id like 'pkg_fullstack_mvp' 
-        // We will just insert it as numeric if possible, or we might need to query the package name.
-        // Wait, TiDB packages table has increments ID. The frontend sends string 'package_id'.
-        // So let's look up the package by name or tag to get the ID, or fallback to 1.
-        $package = \App\Models\Package::first();
+        $package = \App\Models\Package::find($validated['package_id']);
+
+        // Kalkulasi Mock Midtrans yang Presisi
+        $paymentChoice = $validated['payment_choice'];
+        $amountToPay = $paymentChoice === 'DP_30' ? $package->price * 0.3 : $package->price;
+        $snapToken = 'snap-mock-' . strtolower($paymentChoice) . '-rp' . number_format($amountToPay, 0, '', '') . '-' . uniqid();
 
         $order = \App\Models\Order::create([
             'client_name' => $validated['client_name'],
             'whatsapp' => $validated['client_whatsapp'],
             'project_name' => $validated['project_purpose'],
             'github_url' => $validated['github_url'] ?? null,
-            'package_id' => $package ? $package->id : 1,
+            'package_id' => $package->id,
             'snap_token' => $snapToken
+
         ]);
 
         $attachment = $request->input('attachment');

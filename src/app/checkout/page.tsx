@@ -11,8 +11,9 @@ export default function CheckoutPage() {
         fetch("/api/v1/packages")
             .then(res => res.json())
             .then(data => {
-                if (data.success && data.data) {
+                if (data.success && data.data && data.data.length > 0) {
                     setPACKAGES(data.data);
+                    setForm(prev => ({ ...prev, package_id: data.data[0].id }));
                 }
                 setLoadingPkgs(false);
             })
@@ -24,7 +25,7 @@ export default function CheckoutPage() {
         client_email: "",
         client_whatsapp: "",
         project_purpose: "",
-        package_id: "pkg_fullstack_mvp",
+        package_id: 0,
         github_url: "",
         payment_choice: "DP_30" as "DP_30" | "FULL",
     });
@@ -179,22 +180,27 @@ export default function CheckoutPage() {
                         />
                     </div>
                     <div>
-                        <label className="block text-xs text-gray-400 mb-1.5">Email *</label>
+                        <label className="block text-xs text-gray-400 mb-1.5">Email (Wajib Gmail aktif) *</label>
                         <input
                             required
                             type="email"
+                            pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+                            title="Hanya menerima alamat @gmail.com"
                             value={form.client_email}
                             onChange={(e) => setForm({ ...form, client_email: e.target.value })}
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50"
-                            placeholder="ariyas@example.com"
+                            placeholder="ariyas@gmail.com"
                         />
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-xs text-gray-400 mb-1.5">WhatsApp *</label>
+                    <label className="block text-xs text-gray-400 mb-1.5">WhatsApp (Nomor Indonesia Aktif) *</label>
                     <input
                         required
+                        type="text"
+                        pattern="^(?:\+62|62|0)8[1-9][0-9]{6,10}$"
+                        title="Masukkan nomor WA Indonesia yang valid (contoh: 0812... atau 62812...)"
                         value={form.client_whatsapp}
                         onChange={(e) => setForm({ ...form, client_whatsapp: e.target.value })}
                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-primary/50"

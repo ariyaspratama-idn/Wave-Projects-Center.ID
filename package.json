@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "docx": "^9.7.1",
     "jiti": "^2.7.0",
     "next": "16.2.9",
     "react": "19.2.4",
@@ -23,5 +24,18 @@
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
+  "main": "generate_prd.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ariyaspratama-idn/Wave-Projects-Center.ID.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ariyaspratama-idn/Wave-Projects-Center.ID/issues"
+  },
+  "homepage": "https://github.com/ariyaspratama-idn/Wave-Projects-Center.ID#readme"
 }

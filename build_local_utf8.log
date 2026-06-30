@@ -1,0 +1,504 @@
+﻿
+> frontend@0.1.0 build
+> next build
+
+node.exe : ΓÜá `eslint` 
+configuration in 
+next.config.ts is no longer 
+supported. See more info 
+here: https://nextjs.org/docs
+/app/api-reference/cli/next#n
+ext-lint-options
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpeci    fied: (ΓÜá 
+`eslin    t` co...xt-lint-o  
+  ptions:String) []    , 
+RemoteException
+    + FullyQualifiedE    
+rrorId : NativeCo    
+mmandError
+ 
+ΓÜá Invalid next.config.ts 
+options detected: 
+ΓÜá     Unrecognized key(s) 
+in object: 'eslint'
+ΓÜá See more info here: https
+://nextjs.org/docs/messages/i
+nvalid-next-config
+Γû▓ Next.js 16.2.9 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build 
+failed with 10 errors:
+./src/app/chat/page.tsx
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/chat/page.tsx 
+[Client Component Browser]
+    ./src/app/chat/page.tsx 
+[Server Component]
+
+  Client Component SSR:
+    ./src/app/chat/page.tsx 
+[Client Component SSR]
+    ./src/app/chat/page.tsx 
+[Server Component]
+
+
+./src/app/checkout/page.tsx
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+Import traces:
+  Client Component Browser:
+    
+./src/app/checkout/page.tsx 
+[Client Component Browser]
+    
+./src/app/checkout/page.tsx 
+[Server Component]
+
+  Client Component SSR:
+    
+./src/app/checkout/page.tsx 
+[Client Component SSR]
+    
+./src/app/checkout/page.tsx 
+[Server Component]
+
+
+./src/app/dashboard/layout.ts
+x
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/layou
+t.tsx [Client Component 
+Browser]
+    ./src/app/dashboard/layou
+t.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/layou
+t.tsx [Client Component SSR]
+    ./src/app/dashboard/layou
+t.tsx [Server Component]
+
+
+./src/app/dashboard/orders/pa
+ge.tsx
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/order
+s/page.tsx [Client Component 
+Browser]
+    ./src/app/dashboard/order
+s/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/order
+s/page.tsx [Client Component 
+SSR]
+    ./src/app/dashboard/order
+s/page.tsx [Server Component]
+
+
+./src/app/dashboard/page.tsx
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+Import traces:
+  Client Component Browser:
+    
+./src/app/dashboard/page.tsx 
+[Client Component Browser]
+    
+./src/app/dashboard/page.tsx 
+[Server Component]
+
+  Client Component SSR:
+    
+./src/app/dashboard/page.tsx 
+[Client Component SSR]
+    
+./src/app/dashboard/page.tsx 
+[Server Component]
+
+
+./src/app/dashboard/users/pag
+e.tsx
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/dashboard/users
+/page.tsx [Client Component 
+Browser]
+    ./src/app/dashboard/users
+/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/dashboard/users
+/page.tsx [Client Component 
+SSR]
+    ./src/app/dashboard/users
+/page.tsx [Server Component]
+
+
+./src/app/favicon.ico--route-
+entry.js
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+
+./src/app/layout.tsx
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+
+./src/app/login/page.tsx
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/login/page.tsx 
+[Client Component Browser]
+    ./src/app/login/page.tsx 
+[Server Component]
+
+  Client Component SSR:
+    ./src/app/login/page.tsx 
+[Client Component SSR]
+    ./src/app/login/page.tsx 
+[Server Component]
+
+
+./src/app/page.tsx
+Specified module format 
+(CommonJs) is not matching 
+the module format of the 
+source code (EcmaScript 
+Modules)
+The CommonJs module format 
+was specified in the 
+package.json that is 
+affecting this source file 
+or by using an special 
+extension, but Ecmascript 
+import/export syntax is used 
+in the source code.
+The module was automatically 
+converted to an EcmaScript 
+module, but that is in 
+conflict with the specified 
+module format. Either change 
+the "type" field in the 
+package.json or replace 
+EcmaScript import/export 
+syntax with CommonJs syntas 
+in the source file.
+In some cases EcmaScript 
+import/export syntax is 
+added by an transform and 
+isn't actually part of the 
+source code. In these cases 
+revisit transformation 
+options to inject the 
+correct syntax.
+
+Import traces:
+  Client Component Browser:
+    ./src/app/page.tsx 
+[Client Component Browser]
+    ./src/app/page.tsx 
+[Server Component]
+
+  Client Component SSR:
+    ./src/app/page.tsx 
+[Client Component SSR]
+    ./src/app/page.tsx 
+[Server Component]
+
+
+    at ignore-listed frames

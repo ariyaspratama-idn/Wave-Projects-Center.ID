@@ -2,9 +2,21 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Wave Projects Center.ID — Software House & AI Consultation",
+  title: "Wave Projects ID | Jasa Pembuatan Website & Aplikasi MVP",
   description:
-    "Platform pemesanan jasa pembuatan Web & APK terintegrasi AI. Konsultasi, pesan, bayar, dan terima proyek dalam satu ekosistem.",
+    "Wave Projects membantu merealisasikan ide bisnis Anda menjadi aplikasi, WMS, dan website siap pakai dengan integrasi AI, sistem pembayaran instan, dan performa tinggi.",
+  keywords: "Wave Projects, Wave Projects ID, WPID, Jasa Pembuatan Website, Bikin Aplikasi MVP, Laravel Developer Indonesia",
+  openGraph: {
+    title: "Wave Projects ID | Software House & Digital Agency",
+    description: "Konsultasikan kebutuhan sistem Anda dengan AI Architect kami dan dapatkan PRD instan secara gratis.",
+    url: "https://waveprojects.id",
+    type: "website",
+    images: [
+      {
+        url: "https://waveprojects.id/assets/img/og-image-stealth.png",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

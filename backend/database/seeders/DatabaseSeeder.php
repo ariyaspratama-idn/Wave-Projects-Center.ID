@@ -12,29 +12,38 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 4 Paket Ekonomis khusus Ekosistem Kampus (Serba di bawah 500k)
         $pkgs = [
             [
                 "tag" => "Starter",
-                "name" => "Landing Page",
-                "price" => 1500000,
-                "desc" => "Website company profile satu halaman, responsif, cepat, dan SEO friendly.",
-                "features" => ["Desain Custom", "Responsive Mobile", "Form Kontak", "SEO Dasar", "Deploy Vercel"],
+                "name" => "CV & Portofolio Digital",
+                "price" => 149000,
+                "desc" => "Website portofolio personal dan CV digital interaktif untuk melamar kerja/magang. Responsif dan SEO friendly.",
+                "features" => ["Desain Custom", "Responsive Mobile", "Tombol Download CV", "Link Chat WhatsApp", "Deploy Vercel"],
                 "popular" => false,
             ],
             [
-                "tag" => "Popular",
-                "name" => "Fullstack MVP",
-                "price" => 5000000,
-                "desc" => "Aplikasi web lengkap dengan backend API, database, dan admin panel terintegrasi.",
-                "features" => ["Analisis AI", "Admin Panel", "TiDB Database", "Midtrans Payment", "PWA Support", "Cloudinary Storage"],
+                "tag" => "PKM",
+                "name" => "Landing Page Kelompok",
+                "price" => 249000,
+                "desc" => "Website landing page produk kreatif khusus kelompok mahasiswa untuk kebutuhan nilai mata kuliah atau juri PKM.",
+                "features" => ["Desain Produk Custom", "Integrasi Form WA", "Cloudinary Storage", "Google Analytics", "PWA Support"],
+                "popular" => false,
+            ],
+            [
+                "tag" => "Best Seller",
+                "name" => "Web Profile KP",
+                "price" => 349000,
+                "desc" => "Sistem informasi profile sekolah/instansi dinamis + Admin Panel lengkap untuk syarat kelulusan Kerja Praktek.",
+                "features" => ["Admin Panel CMS", "Multi-page Layout", "TiDB Database", "Form Hubungi Kami", "Sitemap & SEO"],
                 "popular" => true,
             ],
             [
-                "tag" => "Enterprise",
-                "name" => "Custom Portal",
-                "price" => 15000000,
-                "desc" => "Sistem skala besar dengan multi-role dashboard, AI automation, dan arsitektur cloud-native.",
-                "features" => ["Custom Architecture", "Multi-Role RBAC", "AI PRD Generator", "OneSignal Push", "K6 Load Testing", "SLA 99.9%"],
+                "tag" => "Ultimate",
+                "name" => "Fullstack Web Terima Jadi",
+                "price" => 499000,
+                "desc" => "Aplikasi sistem CRUD fullstack siap pakai untuk bahan demo UAS atau Tugas Akhir. Terima beres langsung live.",
+                "features" => ["Sistem CRUD Lengkap", "Dashboard Admin Panel", "Koneksi TiDB Cloud", "Link Live Vercel", "Dokumentasi Alur Aplikasi"],
                 "popular" => false,
             ],
         ];
