@@ -40,7 +40,30 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($pkgs as $p) {
-            \App\Models\Package::create($p);
+            \App\Models\Package::firstOrCreate(['slug' => \Illuminate\Support\Str::slug($p['name'])], $p);
+        }
+
+        // Seed Roles
+        $roles = ['Super Admin', 'Admin', 'Marketing', 'Developer', 'Customer'];
+        foreach ($roles as $r) {
+            \App\Models\Role::firstOrCreate(['name' => $r], ['description' => $r . ' Role']);
+        }
+
+        // Create Super Admin User
+        $superAdmin = \App\Models\User::firstOrCreate(
+            ['email' => 'superadmin@gmail.com'],
+            [
+                'name' => 'Wave Super Admin',
+                'uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'phone' => '081234567890',
+                'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
+                'status' => 'active'
+            ]
+        );
+
+        $saRole = \App\Models\Role::where('name', 'Super Admin')->first();
+        if ($saRole && !$superAdmin->roles->contains($saRole->id)) {
+            $superAdmin->roles()->attach($saRole->id);
         }
     }
 }

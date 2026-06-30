@@ -23,6 +23,20 @@ Route::prefix('v1')->group(function () {
     Route::post('/orders/checkout', [\App\Http\Controllers\Api\V1\OrderController::class, 'checkout']);
     Route::post('/payments/callback', [\App\Http\Controllers\Api\V1\PaymentController::class, 'callback']);
     Route::post('/files/signature', [\App\Http\Controllers\Api\V1\FileController::class, 'signature']);
+
+    // Universal Auth Routes
+    Route::post('/login', [\App\Http\Controllers\Api\V1\AuthController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/me', [\App\Http\Controllers\Api\V1\AuthController::class, 'me']);
+        Route::get('/orders', [\App\Http\Controllers\Api\V1\OrderController::class, 'index']);
+        Route::post('/logout', [\App\Http\Controllers\Api\V1\AuthController::class, 'logout']);
+
+        // Super Admin only route for creating other users
+        Route::middleware(\App\Http\Middleware\CheckRole::class . ':Super Admin')->group(function () {
+            Route::post('/admin/users/create', [\App\Http\Controllers\Api\V1\AdminController::class, 'createUser']);
+        });
+    });
 });
 
 $migrateClosure = function () {

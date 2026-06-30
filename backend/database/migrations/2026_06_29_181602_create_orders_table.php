@@ -12,12 +12,11 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('client_name');
-            $table->string('whatsapp');
-            $table->string('project_name');
-            $table->string('github_url')->nullable();
-            $table->foreignId('package_id')->constrained('packages')->cascadeOnDelete();
-            $table->string('snap_token')->nullable();
+            $table->uuid('uuid')->unique();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('package_id')->constrained();
+            $table->bigInteger('total_price');
+            $table->enum('status', ['pending', 'paid', 'cancelled', 'expired'])->default('pending');
             $table->timestamps();
         });
     }

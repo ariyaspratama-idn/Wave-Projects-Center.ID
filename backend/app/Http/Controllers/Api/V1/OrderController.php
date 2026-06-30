@@ -7,12 +7,31 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    public function index(Request $request)
+    {
+        $user = $request->user()->load('roles');
+        $isAdmin = $user->roles->contains(function ($role) {
+            return in_array($role->name, ['Super Admin', 'Admin', 'Developer']);
+        });
+
+        if ($isAdmin) {
+            $orders = \App\Models\Order::latest()->get();
+        } else {
+            $orders = \App\Models\Order::where('user_id', $user->id)->latest()->get();
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $orders
+        ]);
+    }
+
     public function checkout(Request $request)
     {
         $validated = $request->validate([
             'client_name' => 'required|string',
-            'client_email' => 'required|email',
-            'client_whatsapp' => 'required|string',
+            'client_email' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/i'],
+            'client_whatsapp' => ['required', 'string', 'regex:/^(?:\+62|62|0)8[1-9][0-9]{6,10}$/'],
             'project_purpose' => 'required|string',
             'package_id' => 'required',
             'payment_choice' => 'required|string',
