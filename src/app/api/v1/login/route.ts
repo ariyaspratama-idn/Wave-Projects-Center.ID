@@ -40,7 +40,7 @@ export async function POST(req: Request) {
                     id: user.id,
                     name: user.name,
                     email: user.email,
-                    role: user.role
+                    roles: [{ name: user.role === 'super_admin' ? 'Super Admin' : user.role }]
                 }
             }
         });

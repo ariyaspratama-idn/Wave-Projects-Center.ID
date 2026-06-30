@@ -23,7 +23,10 @@ export async function GET(req: Request) {
 
         return NextResponse.json({
             success: true,
-            data: user
+            data: {
+                ...user,
+                roles: [{ name: user.role === 'super_admin' ? 'Super Admin' : user.role }]
+            }
         });
     } catch (e: any) {
         return NextResponse.json({ success: false, message: 'Token invalid or expired' }, { status: 401 });
