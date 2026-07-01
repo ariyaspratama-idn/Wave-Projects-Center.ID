@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 
 /* ───── Navbar ───── */
-function Navbar() {
+function Navbar({ settings }: { settings: any }) {
   const [open, setOpen] = useState(false);
   return (
     <nav className="fixed top-0 w-full z-50 glass">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <Link href="/" className="text-xl font-extrabold tracking-tight">
-          <span className="gradient-text">Wave</span>{" "}
-          <span className="text-white/80">Projects</span>
+          <span className="gradient-text">{settings?.agency_name?.split(' ')[0] || 'Wave'}</span>{" "}
+          <span className="text-white/80">{settings?.agency_name?.split(' ').slice(1).join(' ') || 'Projects'}</span>
         </Link>
         <div className="hidden md:flex items-center gap-8">
           <Link href="#packages" className="text-sm text-gray-300 hover:text-white transition">Paket</Link>
@@ -38,7 +38,7 @@ function Navbar() {
 }
 
 /* ───── Hero ───── */
-function Hero() {
+function Hero({ settings }: { settings: any }) {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Background gradients */}
@@ -49,10 +49,17 @@ function Hero() {
       </div>
 
       <div className="relative max-w-5xl mx-auto px-4 text-center">
-        <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8 text-xs text-gray-400">
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          Powered by AI — Gemini 1.5 Flash
-        </div>
+        {settings?.promo_banner_text ? (
+          <div className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary/20 to-purple-500/20 border border-purple-500/30 rounded-full px-5 py-2 mb-8 text-xs font-semibold text-white cursor-pointer hover:border-purple-500/50 transition-all glow-blue">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            {settings.promo_banner_text}
+          </div>
+        ) : (
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8 text-xs text-gray-400">
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            Powered by AI — Gemini 1.5 Flash
+          </div>
+        )}
 
         <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6">
           Bangun Software <br />
@@ -60,8 +67,7 @@ function Hero() {
         </h1>
 
         <p className="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-          Platform all-in-one untuk konsultasi AI, pemesanan, pembayaran, hingga
-          serah terima proyek web &amp; aplikasi. Satu ekosistem. Tanpa ribet.
+          {settings?.hero_subtitle || 'Platform all-in-one untuk konsultasi AI, pemesanan, pembayaran, hingga serah terima proyek web & aplikasi. Satu ekosistem. Tanpa ribet.'}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -296,11 +302,21 @@ function Portfolio() {
 
 /* ───── Main Page ───── */
 export default function Home() {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/v1/settings")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) setSettings(data.data);
+      })
+  }, []);
+
   return (
     <>
-      <Navbar />
+      <Navbar settings={settings} />
       <main className="flex-1">
-        <Hero />
+        <Hero settings={settings} />
         <Features />
         <Portfolio />
         <Packages />

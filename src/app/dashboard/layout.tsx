@@ -85,6 +85,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <Link href="/dashboard/prd" className="block text-gray-300 hover:text-white bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-all font-semibold">
                                     ✨ Generate PRD
                                 </Link>
+                                <Link href="/dashboard/packages" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
+                                    Manajemen Paket
+                                </Link>
+                                <Link href="/dashboard/settings" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
+                                    Pengaturan Agensi
+                                </Link>
                             </>
                         )}
                         <Link href="/dashboard/orders" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
