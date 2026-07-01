@@ -7,7 +7,7 @@ export default function PortfolioCMS() {
     const [portfolios, setPortfolios] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const [form, setForm] = useState({ title: '', description: '', live_link: '', image_url: '' });
+    const [form, setForm] = useState({ title: '', description: '', live_link: '', image: null as File | null });
     const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
@@ -23,21 +23,26 @@ export default function PortfolioCMS() {
         e.preventDefault();
         setUploading(true);
 
+        const formData = new FormData();
+        formData.append("title", form.title);
+        formData.append("description", form.description);
+        formData.append("live_link", form.live_link);
+        if (form.image) formData.append("image", form.image);
+
         const token = localStorage.getItem("wave_token");
         const res = await fetch("/api/v1/admin/portfolios", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(form)
+            body: formData
         });
 
         const data = await res.json();
         if (data.success) {
-            setPortfolios([{ ...form, id: Math.random() }, ...portfolios]);
-            setForm({ title: '', description: '', live_link: '', image_url: '' });
-            alert("Portfolio berhasil ditambahkan!");
+            fetch("/api/v1/portfolios").then(res => res.json()).then(d => { if (d.success) setPortfolios(d.data); });
+            setForm({ title: '', description: '', live_link: '', image: null });
+            alert("Portfolio berhasil ditambahkan dan gambar disinkronisasi ke Cloudinary!");
         } else {
             alert("Gagal: " + data.error);
         }
@@ -63,8 +68,9 @@ export default function PortfolioCMS() {
                             <textarea required rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white" />
                         </div>
                         <div>
-                            <label className="text-xs text-gray-400 block mb-1">URL Cover / Banner</label>
-                            <input required type="url" placeholder="https://res.cloudinary.com/..." value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white" />
+                            <label className="text-xs text-blue-400 font-bold block mb-1">Unggah Cover / Banner</label>
+                            <input required type="file" accept="image/*" onChange={e => setForm({ ...form, image: e.target.files?.[0] || null })} className="w-full bg-blue-900/10 border border-blue-500/30 rounded-xl px-3 py-2 text-sm text-gray-300" />
+                            <p className="text-[10px] text-gray-500 mt-1">Otomatis Ter-Upload ke Server Cloudinary</p>
                         </div>
                         <div>
                             <label className="text-xs text-gray-400 block mb-1">Link Live / Demo</label>
