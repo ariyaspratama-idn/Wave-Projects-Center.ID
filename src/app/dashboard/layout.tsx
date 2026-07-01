@@ -71,10 +71,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <Link href="/dashboard" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
                             Beranda Dashboard
                         </Link>
-                        {isSuperAdmin && (
-                            <Link href="/dashboard/users" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
-                                Manajemen Tim
-                            </Link>
+                        {roleName !== 'Customer' && (
+                            <>
+                                <Link href="/dashboard/users" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
+                                    Manajemen Tim
+                                </Link>
+                                <Link href="/dashboard/portfolios" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
+                                    Manajemen Portfolio
+                                </Link>
+                                <Link href="/dashboard/chat" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all relative">
+                                    Live Chat Panel <span className="absolute right-3 top-2.5 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                </Link>
+                            </>
                         )}
                         <Link href="/dashboard/orders" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
                             Pesanan Anda
@@ -101,6 +109,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </header>
                 {children}
             </main>
-        </div>
+        </div >
     );
 }

@@ -38,12 +38,29 @@ export default function ChatPage() {
         setMessages((prev) => [...prev, { role: "user", content: msg }]);
         setLoading(true);
 
-        // Simulate AI response (will be replaced with Gemini API later)
-        await new Promise((r) => setTimeout(r, 1500));
-
-        const aiReply = generateMockReply(msg);
-        setMessages((prev) => [...prev, { role: "ai", content: aiReply }]);
-        setLoading(false);
+        try {
+            const token = localStorage.getItem("wave_chat_session");
+            const res = await fetch("/api/v1/chat/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: msg,
+                    session_token: token,
+                    customer_name: "Public Guest (Web)"
+                })
+            });
+            const data = await res.json();
+            if (data.success && data.data) {
+                localStorage.setItem("wave_chat_session", data.data.session_token);
+                setMessages((prev) => [...prev, { role: "ai", content: data.data.reply }]);
+            } else {
+                setMessages((prev) => [...prev, { role: "ai", content: "Maaf, sistem layanan sedang sibuk." }]);
+            }
+        } catch (e) {
+            setMessages((prev) => [...prev, { role: "ai", content: "Koneksi ke server gagal. Coba lagi nanti." }]);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -67,8 +84,8 @@ export default function ChatPage() {
                     <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div
                             className={`max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed ${m.role === "user"
-                                    ? "bg-primary text-white rounded-br-md"
-                                    : "glass text-gray-200 rounded-bl-md"
+                                ? "bg-primary text-white rounded-br-md"
+                                : "glass text-gray-200 rounded-bl-md"
                                 }`}
                         >
                             {m.content}

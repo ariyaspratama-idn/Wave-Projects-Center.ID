@@ -247,6 +247,53 @@ function Footer() {
   );
 }
 
+/* ───── Portfolio ───── */
+function Portfolio() {
+  const [items, setItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/portfolios")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) setItems(data.data);
+      });
+  }, []);
+
+  if (items.length === 0) return null;
+
+  return (
+    <section id="portfolio" className="py-24 px-4 bg-white/5">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
+          Hasil Karya <span className="gradient-text">Terbaik</span>
+        </h2>
+        <p className="text-gray-500 text-center max-w-xl mx-auto mb-16">
+          Beberapa proyek software dan sistem yang telah kami selesaikan dengan sukses menggunakan tech stack modern terbaru.
+        </p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((p, i) => (
+            <div key={i} className="glass rounded-2xl overflow-hidden group hover:border-primary/50 transition-all">
+              <div className="h-48 bg-white/10 relative overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+              <div className="p-6">
+                <h3 className="text-lg font-bold mb-2">{p.title}</h3>
+                <p className="text-sm text-gray-400 mb-4 line-clamp-3 leading-relaxed">{p.description}</p>
+                {p.live_link && (
+                  <a href={p.live_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-light transition-colors">
+                    Lihat Live Demo <span>&rarr;</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ───── Main Page ───── */
 export default function Home() {
   return (
@@ -255,6 +302,7 @@ export default function Home() {
       <main className="flex-1">
         <Hero />
         <Features />
+        <Portfolio />
         <Packages />
         <CTA />
       </main>
