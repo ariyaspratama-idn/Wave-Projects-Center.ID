@@ -31,13 +31,17 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         // Fetch Webhooks Deployments
         const [deployments]: any = await pool.query("SELECT * FROM project_deployments WHERE order_id = ? ORDER BY created_at DESC", [orderId]);
 
+        // Fetch Developers for Assignment
+        const [developers]: any = await pool.query("SELECT id, name, github_username FROM users WHERE role_id = 2");
+
         return NextResponse.json({
             success: true,
             data: {
                 order: orders[0],
                 brief: briefs[0] || null,
                 kanban: tasks,
-                deployments: deployments
+                deployments: deployments,
+                developers: developers
             }
         });
 

@@ -49,6 +49,17 @@ export default function OrderExecutiveDetail() {
         fetchExecutiveData(); // reload
     };
 
+    const handleAssignDeveloper = async (userId: number) => {
+        const token = localStorage.getItem("wave_token");
+        await fetch(`/api/v1/admin/orders/${orderId}/assign`, {
+            method: 'POST',
+            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ assignedTo: userId || null })
+        });
+        alert('Tugas berhasil didelegasikan!');
+        fetchExecutiveData(); // reload
+    };
+
     if (loading) return <p className="text-gray-500 py-10">Mempersiapkan Executive Dashboard...</p>;
     if (!data) return <p className="text-red-500 py-10 font-bold">Akses ditolak atau Data ID tidak ditemukan.</p>;
 
@@ -59,13 +70,20 @@ export default function OrderExecutiveDetail() {
                     <h1 className="text-3xl font-extrabold gradient-text">Executive Dashboard: #{orderId.padStart(4, '0')}</h1>
                     <p className="text-sm text-gray-400 mt-2">Klien: {data.order.client_name} | Paket: {data.order.package_name}</p>
                 </div>
-                <div className="flex gap-2">
-                    <button onClick={() => { navigator.clipboard.writeText(window.location.origin + '/brief/' + orderId); alert('Link Form Brief berhasil dicopy!'); }} className="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-lg font-semibold text-white transition-all text-sm">
-                        📋 Copy Form Brief Link
-                    </button>
-                    <Link href="/dashboard/orders" className="text-sm border border-white/10 hover:bg-white/5 px-4 py-2 rounded-lg transition-all text-gray-300">
-                        &larr; Kembali
-                    </Link>
+                <div className="flex gap-2 text-right">
+                    <div className="flex flex-col text-sm border border-white/10 p-2 rounded-xl bg-white/5">
+                        <label className="text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-wider">👷‍♂️ Tugaskan / Dispatch</label>
+                        <select
+                            value={data.order.assigned_to || ''}
+                            onChange={(e) => handleAssignDeveloper(Number(e.target.value))}
+                            className="bg-transparent text-white font-bold outline-none cursor-pointer"
+                        >
+                            <option value="" className="text-black">-- Pilih Developer --</option>
+                            {data.developers?.map((d: any) => (
+                                <option key={d.id} value={d.id} className="text-black">{d.name} (@{d.github_username})</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -74,7 +92,7 @@ export default function OrderExecutiveDetail() {
                 {/* LEFT PANEL: KANBAN & BRIEF */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="glass p-6 rounded-2xl border border-white/10 shadow-xl">
-                        <div className="flex justify-between items-center mb-6">
+                        <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
                             <h2 className="text-xl font-bold flex items-center gap-2"><span className="text-2xl">⚡</span> Technical Kanban Board (AI PRD)</h2>
                             <button
                                 onClick={handleGenerateAiKanban}
@@ -99,7 +117,14 @@ export default function OrderExecutiveDetail() {
                                     <div className="space-y-3">
                                         {data.kanban?.filter((t: any) => t.status === col).map((task: any) => (
                                             <div key={task.id} className="bg-white/5 border border-white/10 rounded-lg p-3 group relative hover:border-primary/50 transition-all">
-                                                <h4 className="text-sm font-semibold mb-1 leading-tight">{task.title}</h4>
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <h4 className="text-sm font-semibold leading-tight">{task.title}</h4>
+                                                    {task.task_code && (
+                                                        <span className="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono border border-blue-500/30 whitespace-nowrap ml-2">
+                                                            {task.task_code}
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <p className="text-[10px] text-gray-400 leading-relaxed mb-3">{task.description}</p>
 
                                                 <div className="flex gap-1">

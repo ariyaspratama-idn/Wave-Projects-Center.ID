@@ -90,17 +90,27 @@ export default function UsersManagementPage() {
                             </select>
                         </div>
                     </div>
-                    <div>
-                        <label className="block text-xs text-gray-400 mb-1.5">Email Akses (@gmail.com wajib)</label>
-                        <input required type="email" pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white" placeholder="email@gmail.com" />
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs text-gray-400 mb-1.5">Email Akses (@gmail.com wajib)</label>
+                            <input required type="email" pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white" placeholder="email@gmail.com" />
+                        </div>
+                        {form.role === 'Developer' && (
+                            <div>
+                                <label className="block text-xs text-blue-400 font-bold mb-1.5">Akun Github (Wajib utk Webhook)</label>
+                                <input required={form.role === 'Developer'} value={(form as any).github_username || ''} onChange={e => setForm({ ...form, github_username: e.target.value } as any)} className="w-full bg-blue-900/20 border border-blue-500/50 rounded-xl px-4 py-2 text-sm text-white focus:border-blue-400 outline-none" placeholder="Misal: torvalds" />
+                            </div>
+                        )}
                     </div>
-                    <div>
-                        <label className="block text-xs text-gray-400 mb-1.5">No WhatsApp</label>
-                        <input required pattern="^(?:\+62|62|0)8[1-9][0-9]{6,10}$" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white" placeholder="0812..." />
-                    </div>
-                    <div>
-                        <label className="block text-xs text-gray-400 mb-1.5">Password Awal</label>
-                        <input required minLength={6} type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white" placeholder="••••••••" />
+                    <div className="grid md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label className="block text-xs text-gray-400 mb-1.5">No WhatsApp</label>
+                            <input required pattern="^(?:\+62|62|0)8[1-9][0-9]{6,10}$" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white" placeholder="0812..." />
+                        </div>
+                        <div>
+                            <label className="block text-xs text-gray-400 mb-1.5">Password Awal</label>
+                            <input required minLength={6} type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm text-white" placeholder="••••••••" />
+                        </div>
                     </div>
 
                     <button type="submit" disabled={loading} className="mt-4 bg-primary hover:bg-primary-light text-white font-semibold py-2 px-6 rounded-lg text-sm transition-all disabled:opacity-50">

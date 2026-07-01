@@ -27,8 +27,34 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: true, message: 'No commits in push.' });
         }
 
-        const message = `Commit: ${latestCommit.message} by ${latestCommit.author?.name}`;
+        let message = `Commit: ${latestCommit.message} by ${latestCommit.author?.username || latestCommit.author?.name}`;
         const url = latestCommit.url;
+
+        // Trace the Regex
+        const githubUsername = latestCommit.author?.username || latestCommit.author?.name;
+        const taskRegex = /TASK-\d+-\d+/i;
+        const match = taskRegex.exec(latestCommit.message);
+
+        if (match && githubUsername) {
+            const taskCode = match[0].toUpperCase();
+
+            // Check Authorization Database 
+            const [tasks]: any = await pool.query(`
+                SELECT k.id 
+                FROM kanban_tasks k 
+                JOIN orders o ON o.id = k.order_id 
+                JOIN users u ON u.id = o.assigned_to 
+                WHERE k.task_code = ? AND u.github_username = ?
+            `, [taskCode, githubUsername]);
+
+            if (tasks.length > 0) {
+                // Terminate The Task
+                await pool.query("UPDATE kanban_tasks SET status = 'DONE' WHERE id = ?", [tasks[0].id]);
+                message += ` | Webhook Auto-Pilot: Berhasil menutup tiket ${taskCode} secara otomatis!`;
+            } else {
+                message += ` | Webhook Warning: Tiket ${taskCode} ditemukan di commit, namun user @${githubUsername} tidak punya otorisasi memutasinya.`;
+            }
+        }
 
         await pool.query(
             "INSERT INTO project_deployments (order_id, platform, message, status, url) VALUES (?, 'GITHUB', ?, 'PUSHED', ?)",
