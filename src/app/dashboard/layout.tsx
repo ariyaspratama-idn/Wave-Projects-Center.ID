@@ -67,35 +67,52 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div>
                     <h2 className="text-xl font-bold gradient-text mb-8">Wave Center</h2>
 
-                    <nav className="space-y-2">
-                        <Link href="/dashboard" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
-                            Beranda Dashboard
+                    <nav className="space-y-1">
+                        <Link href="/dashboard" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all text-sm font-medium">
+                            <span className="opacity-70 mr-2">📊</span> Beranda Dashboard
                         </Link>
-                        {roleName !== 'Customer' && (
+
+                        {(roleName === "Super Admin" || roleName === "Customer Service") && (
+                            <Link href="/dashboard/chat" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all relative text-sm font-medium">
+                                <span className="opacity-70 mr-2">💬</span> Live Chat Panel <span className="absolute right-3 top-3.5 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                            </Link>
+                        )}
+
+                        <Link href="/dashboard/orders" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all text-sm font-medium">
+                            <span className="opacity-70 mr-2">📦</span> {roleName === "Customer" ? "Pesanan Anda" : "Manajemen Pesanan"}
+                        </Link>
+
+                        {(roleName === "Super Admin" || roleName === "Admin Keuangan") && (
+                            <Link href="/dashboard/finance" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all text-sm font-medium">
+                                <span className="opacity-70 mr-2">💰</span> Manajemen Keuangan
+                            </Link>
+                        )}
+
+                        {roleName === "Super Admin" && (
                             <>
-                                <Link href="/dashboard/users" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
-                                    Manajemen Tim
+                                <Link href="/dashboard/prd" className="block text-gray-300 hover:text-white bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 px-4 py-3 rounded-lg transition-all font-semibold my-2 text-sm">
+                                    <span className="opacity-90 mr-2">✨</span> Generate PRD
                                 </Link>
-                                <Link href="/dashboard/portfolios" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
-                                    Manajemen Portfolio
+
+                                <Link href="/dashboard/team" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all text-sm font-medium border-t border-white/5 mt-2 pt-4">
+                                    <span className="opacity-70 mr-2">👥</span> Manajemen Tim
                                 </Link>
-                                <Link href="/dashboard/chat" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all relative">
-                                    Live Chat Panel <span className="absolute right-3 top-2.5 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                                </Link>
-                                <Link href="/dashboard/prd" className="block text-gray-300 hover:text-white bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-all font-semibold">
-                                    ✨ Generate PRD
-                                </Link>
-                                <Link href="/dashboard/packages" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
-                                    Manajemen Paket
-                                </Link>
-                                <Link href="/dashboard/settings" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
-                                    Pengaturan Agensi
+
+                                <div className="space-y-1">
+                                    <div className="px-4 py-2 mt-2 text-xs font-bold text-gray-500 uppercase tracking-widest">Manajemen Master</div>
+                                    <Link href="/dashboard/packages" className="block text-gray-400 hover:text-white pl-8 pr-4 py-2 rounded-lg transition-all text-sm">
+                                        Pengaturan Paket
+                                    </Link>
+                                    <Link href="/dashboard/portfolios" className="block text-gray-400 hover:text-white pl-8 pr-4 py-2 rounded-lg transition-all text-sm">
+                                        Data Portfolio
+                                    </Link>
+                                </div>
+
+                                <Link href="/dashboard/settings" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all text-sm font-medium mt-4 border-t border-white/5 pt-4">
+                                    <span className="opacity-70 mr-2">⚙️</span> Pengaturan Agensi
                                 </Link>
                             </>
                         )}
-                        <Link href="/dashboard/orders" className="block text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition-all">
-                            Pesanan Anda
-                        </Link>
                     </nav>
                 </div>
 
