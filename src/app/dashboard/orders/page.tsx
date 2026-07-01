@@ -79,7 +79,10 @@ export default function OrderTracking() {
                                         <p className="text-gray-400 text-sm">Klien: {o.user_name} ({o.user_email})</p>
 
                                         {isInternal && (
-                                            <div className="flex gap-2 mt-4">
+                                            <div className="flex flex-wrap gap-2 mt-4">
+                                                <a href={`/dashboard/orders/${o.id}`} className="text-[10px] bg-primary hover:bg-primary-light border border-primary/50 px-3 py-1.5 rounded-md font-semibold text-white transition-all glow-blue">
+                                                    🚀 Masuk Executive Panel (AI & Kanban)
+                                                </a>
                                                 <a href={`/dashboard/orders/${o.id}/invoice`} target="_blank" className="text-[10px] bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-md font-semibold text-white transition-all">
                                                     📄 Cetak Invoice (Faktur)
                                                 </a>
