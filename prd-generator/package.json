@@ -1,0 +1,16 @@
+{
+  "name": "prd-generator",
+  "version": "1.0.0",
+  "description": "AI-powered PRD generator — menerjemahkan permintaan customer yang ambigu menjadi dokumen PRD Word (.docx) terstruktur.",
+  "main": "index.js",
+  "scripts": {
+    "example": "node example.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.107.0",
+    "docx": "^9.7.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
