@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import pool from '@/lib/db';
-import Anthropic from '@anthropic-ai/sdk';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
     try {
@@ -19,11 +19,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
         const brief = briefs[0];
 
-        // Call Anthropic AI
-        const anthropic = new Anthropic({
-            apiKey: process.env.ANTHROPIC_API_KEY,
-        });
-
+        // Call Google Gemini Flash API (native fetch — zero SDK overhead)
         const prompt = `
         You are an expert System Architect. Review the following Client Brief and extract a comprehensive technical Kanban Board checklist.
         Break down the project into tiny, actionable technical tasks for a Solo-Developer.
@@ -38,14 +34,26 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         Ensure it is exactly a valid JSON array.
         `;
 
-        const msg = await anthropic.messages.create({
-            model: "claude-3-haiku-20240307",
-            max_tokens: 3000,
-            system: "You are an AI that ONLY outputs raw, minified valid JSON. No markdown wrappings.",
-            messages: [{ role: "user", content: prompt }]
-        });
+        const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        temperature: 0.2,
+                        maxOutputTokens: 4096,
+                    },
+                    systemInstruction: {
+                        parts: [{ text: "You are an AI that ONLY outputs raw, minified valid JSON arrays. Never use markdown code blocks or any wrapping." }]
+                    }
+                })
+            }
+        );
 
-        const rawJsonText = msg.content[0].type === 'text' ? msg.content[0].text : '[]';
+        const geminiData = await geminiRes.json();
+        const rawJsonText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
 
         let taskArray = [];
         try {
