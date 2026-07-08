@@ -50,6 +50,20 @@ export async function POST(req: Request) {
                 pkgsText = "Saat ini paket belum tersedia di sistem. (Namun Anda tetap bisa menanyakan kebutuhan secara kustom)";
             }
 
+            // Context injection 2: Fetch active RAG Knowledge Base rules
+            let ragText = "";
+            try {
+                const [rules]: any = await pool.query('SELECT content FROM ai_knowledge_base WHERE is_active = 1');
+                if (rules && rules.length > 0) {
+                    ragText = "\n\nDOKUMEN SOP & BEST PRACTICES TERBARU (WAJIB DIPATUHI):\n";
+                    rules.forEach((r: any, idx: number) => {
+                        ragText += `${idx + 1}. ${r.content}\n`;
+                    });
+                }
+            } catch (knowledgeErr) {
+                console.error("Knowledge base table missing or error:", knowledgeErr);
+            }
+
             const prompt = `Anda adalah AI Consultant bernama "Nova" di Wave Projects Center.ID. 
             Misi & Slogan Perusahaan: "Bangun Software Impian Anda. Platform all-in-one untuk konsultasi AI, pemesanan, pembayaran, hingga serah terima proyek web & aplikasi. Satu ekosistem. Tanpa ribet."
             
@@ -60,6 +74,8 @@ export async function POST(req: Request) {
             
             Daftar Layanan/Paket yang Wave Projects sediakan saat ini:
             ${pkgsText}
+            ${ragText}
+
             
             ATURAN KETAT UNTUK NOVA (WAJIB DIPATUHI):
             1. ANTI-HALUSINASI: Jangan pernah mengarang, merekomendasikan, atau menjanjikan paket, fitur, maupun harga di luar "Daftar Layanan/Paket" di atas.
