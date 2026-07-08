@@ -22,8 +22,7 @@
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "recharts": "^3.9.1",
-    "sib-api-v3-sdk": "^8.5.0"
+    "recharts": "^3.9.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

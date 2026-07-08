@@ -1,20 +1,32 @@
-import * as SibApiV3Sdk from 'sib-api-v3-sdk';
-
 export const sendEmail = async (toEmail: string, toName: string, subject: string, htmlContent: string) => {
     try {
-        const defaultClient = SibApiV3Sdk.ApiClient.instance;
-        const apiKey = defaultClient.authentications['api-key'];
-        apiKey.apiKey = process.env.BREVO_API_KEY;
+        const apiKey = process.env.BREVO_API_KEY;
 
-        const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-        const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+        if (!apiKey) {
+            throw new Error("BREVO_API_KEY is not defined");
+        }
 
-        sendSmtpEmail.subject = subject;
-        sendSmtpEmail.htmlContent = htmlContent;
-        sendSmtpEmail.sender = { "name": "Wave Projects Center", "email": "admin@waveprojects.id" };
-        sendSmtpEmail.to = [{ "email": toEmail, "name": toName }];
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: {
+                'accept': 'application/json',
+                'api-key': apiKey,
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                sender: { name: "Wave Projects Center", email: "admin@waveprojects.id" },
+                to: [{ email: toEmail, name: toName }],
+                subject: subject,
+                htmlContent: htmlContent
+            })
+        });
 
-        const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to send email via Brevo REST API");
+        }
+
         console.log("Email Sent Successfully. Message ID: ", data.messageId);
         return { success: true, messageId: data.messageId };
     } catch (error: any) {
