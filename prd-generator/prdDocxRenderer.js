@@ -1,24 +1,7 @@
 /**
  * prdDocxRenderer.js
  * ------------------------------------------------------------------
- * Renders a complete PRD data object into a .docx Buffer, visually
- * matching the original "Template PRD Universal Lintas Divisi".
- *
- * Input shape (see generatePRD.js for how this is assembled):
- *   {
- *     // known facts (from your own system / intake form — NOT from AI)
- *     prdId, companyName, projectName, clientName, contact, channel,
- *     dateCreated, dateReceived, version, status, projectType,
- *     priority, deadline, preparedBy, approvedBy, rawCustomerRequest,
- *
- *     // AI-drafted content (matches prdSchema.js exactly)
- *     interpretation, goals, raci, roleRequirements, timeline, risks,
- *     suggestedAttachments,
- *   }
- *
- * Sign-off and revision history are intentionally rendered as BLANK
- * fillable sections (same as the original template) since those are
- * human inputs (real signatures/approval dates), never AI-generated.
+ * Renders the new Global Standard PRD structure into a .docx Buffer.
  */
 
 const {
@@ -28,7 +11,6 @@ const {
   PageNumber, PageBreak, TabStopType, TabStopPosition,
 } = require("docx");
 
-// ---------- CONSTANTS ----------
 const FONT = "Arial";
 const NAVY = "1F4E79";
 const BLUE = "2E75B6";
@@ -38,19 +20,16 @@ const STRIPE = "F2F6FC";
 const BLACK = "000000";
 const WHITE = "FFFFFF";
 
-const PAGE_W = 11906; // A4
+const PAGE_W = 11906;
 const PAGE_H = 16838;
 const MARGIN = 1440;
-const CONTENT_W = PAGE_W - MARGIN * 2; // 9026
-
-const ROLE_COLORS = { dev: "1F4E79", admin: "538135", keuangan: "BF8F00", cs: "C55A11", owner: "7030A0" };
+const CONTENT_W = PAGE_W - MARGIN * 2;
 
 const FALLBACK = "[belum diisi]";
 const EMPTY_NOTE = "(Tidak ada / tidak relevan untuk permintaan ini)";
 
 const fmt = (v) => (v === undefined || v === null ? FALLBACK : String(v));
 
-// ---------- LOW-LEVEL HELPERS ----------
 function run(text, opts = {}) {
   return new TextRun({
     text: text === undefined || text === null ? "" : String(text),
@@ -77,14 +56,6 @@ function heading2(text) {
   return new Paragraph({ heading: HeadingLevel.HEADING_2, children: [run(text)] });
 }
 
-function roleBadge(label, color) {
-  return new Paragraph({
-    spacing: { before: 0, after: 160 },
-    border: { bottom: { style: BorderStyle.SINGLE, size: 4, color, space: 4 } },
-    children: [run(`UNTUK: ${label.toUpperCase()}`, { bold: true, color, size: 19 })],
-  });
-}
-
 function bulletItem(text, opts = {}) {
   return new Paragraph({
     numbering: { reference: "bullets", level: 0 },
@@ -100,8 +71,6 @@ function fieldLabel(text) {
   });
 }
 
-// Renders a label + a list of AI-drafted bullet items (real content, normal weight).
-// Falls back to a grey italic "tidak ada" note when the array is empty.
 function fieldBlockList(label, items) {
   const out = [fieldLabel(label)];
   if (!items || items.length === 0) {
@@ -112,7 +81,6 @@ function fieldBlockList(label, items) {
   return out;
 }
 
-// Renders a label + a single block of AI-drafted prose text.
 function fieldBlockText(label, text) {
   return [fieldLabel(label), para(fmt(text), { color: BLACK, size: 22 })];
 }
@@ -129,7 +97,6 @@ function tocItem(text, level = 0) {
   });
 }
 
-// ---------- TABLE HELPERS ----------
 function tableCell(text, { width, bold = false, color = BLACK, fill, align = AlignmentType.LEFT, size = 19 }) {
   const border = { style: BorderStyle.SINGLE, size: 1, color: LIGHT_LINE };
   const borders = { top: border, bottom: border, left: border, right: border };
@@ -205,7 +172,6 @@ function noteBox(text) {
   });
 }
 
-// Long free-text block (verbatim customer request) inside a bordered box.
 function textBox(text) {
   const lines = String(text || "")
     .split(/\n+/)
@@ -236,28 +202,29 @@ function textBox(text) {
   });
 }
 
-const raciCols = ["Full Stack Dev", "Admin", "Adm. Keuangan", "Adm. CS", "Super Admin"];
+const raciCols = ["Dev", "Admin", "Admin Keuangan", "Admin CS", "Super Admin"];
 
-/**
- * @param {object} prdData - merged known-facts + AI output, see file header
- * @returns {Promise<Buffer>}
- */
 async function renderPRDToDocx(prdData) {
   const d = prdData || {};
-  const interp = d.interpretation || {};
-  const goals = d.goals || {};
-  const raci = d.raci || [];
-  const rr = d.roleRequirements || {};
-  const dev = rr.dev || {};
-  const admin = rr.admin || {};
-  const finance = rr.finance || {};
-  const cs = rr.cs || {};
-  const owner = rr.owner || {};
+  const intro = d.introduction || {};
+  const outcomes = d.expectedOutcomes || {};
+  const personas = d.personas || [];
+  const funcs = d.functionalRequirements || [];
+  const nonfuncs = d.nonFunctionalRequirements || {};
+  const df = d.dataFlow || [];
+  const outOfScope = d.outOfScope || [];
+  const assumptions = d.assumptions || [];
+  const cross = d.crossFunctionalOperations || {};
+  const raci = cross.raci || [];
+  const cAdmin = cross.admin || {};
+  const cFinance = cross.finance || {};
+  const cCS = cross.cs || {};
+  const cOwner = cross.owner || {};
   const timeline = d.timeline || [];
   const risks = d.risks || [];
   const attachments = d.suggestedAttachments || [];
 
-  const companyName = d.companyName || "[Nama Perusahaan / Brand Anda]";
+  const companyName = d.companyName || "Wave Projects Center.ID";
   const dateCreated = d.dateCreated || new Date().toLocaleDateString("id-ID");
 
   const children = [];
@@ -275,63 +242,47 @@ async function renderPRDToDocx(prdData) {
       ["Nama Proyek / Pesanan", d.projectName],
       ["Klien / Customer", d.clientName],
       ["Tanggal Dibuat", dateCreated],
-      ["Versi Dokumen", d.version || "v1.0 (Draf AI)"],
-      ["Status Dokumen", d.status || "Draft \u2014 menunggu review tim"],
-      ["Disusun Oleh", d.preparedBy || "AI Assistant (draf otomatis)"],
+      ["Versi Dokumen", d.version || "v1.0 (Standar Industri)"],
+      ["Status Dokumen", d.status || "Draft \u2014 menunggu persetujuan"],
+      ["Disusun Oleh", d.preparedBy || "AI System Architect"],
       ["Disetujui Oleh", d.approvedBy],
     ]),
     new Paragraph({ spacing: { before: 400 }, children: [] }),
-    noteBox(
-      "Dokumen ini adalah DRAF yang dihasilkan otomatis oleh AI berdasarkan permintaan customer. Seluruh isi \u2014 terutama estimasi biaya, tanggal, dan asumsi pada Bagian 3 \u2014 wajib direview dan dikonfirmasi oleh tim terkait sebelum digunakan sebagai acuan kerja final."
-    ),
-    new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 400 }, children: [run("Dokumen Internal \u2014 Bersifat Rahasia", { size: 18, italics: true, color: GREY_TEXT })] }),
+    noteBox("Dokumen ini mengikuti standar pengembangan perangkat lunak (Global Standard SW Engineering). Dihasilkan secara otomatis namun memuat logika dan arsitektur spesifik yang mengikat."),
     pageBreak()
   );
 
   // ============ DAFTAR ISI ============
   children.push(
     heading1("Daftar Isi"),
-    para("Gunakan daftar berikut sebagai peta navigasi dokumen. Anda juga dapat membuka panel Navigasi (View > Navigation Pane) di Microsoft Word untuk berpindah antar bagian dengan lebih cepat.", { italics: true, color: GREY_TEXT, size: 20 }),
-    new Paragraph({ spacing: { before: 100 }, children: [] }),
-    tocItem("Bagian 1: Informasi Proyek / Pesanan"),
-    tocItem("Bagian 2: Permintaan Asli dari Customer (Verbatim)"),
-    tocItem("Bagian 3: Interpretasi & Klarifikasi Kebutuhan"),
-    tocItem("Bagian 4: Tujuan & Kriteria Keberhasilan"),
-    tocItem("Bagian 5: Matriks Tanggung Jawab (RACI)"),
-    tocItem("Bagian 6: Kebutuhan Detail per Bagian / Divisi"),
-    tocItem("6.1  Untuk Full Stack Developer / Tim Teknis", 1),
-    tocItem("6.2  Untuk Admin (Operasional Umum)", 1),
-    tocItem("6.3  Untuk Admin Keuangan", 1),
-    tocItem("6.4  Untuk Admin Customer Service", 1),
-    tocItem("6.5  Untuk Super Admin / Pemilik", 1),
-    tocItem("Bagian 7: Timeline & Milestone"),
-    tocItem("Bagian 8: Risiko & Ketergantungan"),
-    tocItem("Bagian 9: Lampiran"),
-    tocItem("Bagian 10: Persetujuan (Sign-Off)"),
-    tocItem("Bagian 11: Riwayat Revisi"),
+    tocItem("1. Pendahuluan & Latar Belakang"),
+    tocItem("2. Permintaan Asli Customer"),
+    tocItem("3. Target & Ekspektasi Hasil"),
+    tocItem("4. Profil Pengguna (Personas)"),
+    tocItem("5. Kebutuhan Fungsional (Core Engine)"),
+    tocItem("6. Kebutuhan Non-Fungsional & Arsitektur"),
+    tocItem("7. Alur Data (Data Flow)"),
+    tocItem("8. Batasan Proyek & Asumsi (Out of Scope)"),
+    tocItem("9. Operasional Lintas Divisi"),
+    tocItem("10. Timeline & Risiko"),
+    tocItem("11. Persetujuan & Tanda Tangan"),
     pageBreak()
   );
 
   // ============ BAGIAN 1 ============
   children.push(
-    heading1("Bagian 1: Informasi Proyek / Pesanan"),
-    formTable([
-      ["Nama Klien / Customer", d.clientName],
-      ["Kontak (No. HP / Email)", d.contact],
-      ["Channel Permintaan Masuk", d.channel],
-      ["Tanggal Permintaan Diterima", d.dateReceived],
-      ["Jenis Proyek / Produk / Layanan", d.projectType],
-      ["Tingkat Prioritas", d.priority],
-      ["Tenggat Waktu yang Diminta Klien", d.deadline],
-    ])
+    heading1("1. Pendahuluan & Latar Belakang (The \"Why\")"),
+    ...fieldBlockText("Latar Belakang Proyek", intro.background),
+    ...fieldBlockList("Masalah Pengguna & Kebutuhan Pasar", intro.userProblems),
+    ...fieldBlockText("Model Bisnis & Skema Harga", intro.businessModel)
   );
 
   // ============ BAGIAN 2 ============
   children.push(
-    heading1("Bagian 2: Permintaan Asli dari Customer (Verbatim)"),
-    fieldLabel("Isi Permintaan Customer (apa adanya):"),
+    heading1("2. Permintaan Asli dari Customer (Verbatim)"),
+    fieldLabel("Isi Permintaan:"),
     textBox(d.rawCustomerRequest),
-    fieldLabel("Lampiran dari Customer:"),
+    fieldLabel("Dokumen/Lampiran:"),
     ...(d.customerAttachments && d.customerAttachments.length
       ? d.customerAttachments.map((a) => bulletItem(fmt(a)))
       : [bulletItem(EMPTY_NOTE, { italics: true, color: GREY_TEXT })])
@@ -339,158 +290,122 @@ async function renderPRDToDocx(prdData) {
 
   // ============ BAGIAN 3 ============
   children.push(
-    heading1("Bagian 3: Interpretasi & Klarifikasi Kebutuhan"),
-    para("Bagian ini adalah hasil terjemahan AI atas permintaan customer pada Bagian 2. WAJIB direview oleh tim sebelum dieksekusi \u2014 khususnya bagian asumsi dan pertanyaan klarifikasi di bawah."),
-    ...fieldBlockText("Pemahaman Tim terhadap Permintaan", interp.teamUnderstanding),
-    ...fieldBlockList("Asumsi yang Diambil (perlu dikonfirmasi)", interp.assumptions),
-    ...fieldBlockList("Pertanyaan yang Perlu Diklarifikasi ke Customer", interp.clarifyingQuestions),
-    ...fieldBlockList("Termasuk dalam Cakupan Pekerjaan (In-Scope)", interp.inScope),
-    ...fieldBlockList("TIDAK Termasuk dalam Cakupan Pekerjaan (Out-of-Scope)", interp.outOfScope)
+    heading1("3. Hasil yang Diharapkan & Metrik Utama"),
+    ...fieldBlockList("Estimasi Hasil Dampak", outcomes.impactEstimates),
+    ...fieldBlockList("Metrik Kesuksesan (Key Metrics)", outcomes.keyMetrics)
   );
 
   // ============ BAGIAN 4 ============
   children.push(
-    heading1("Bagian 4: Tujuan & Kriteria Keberhasilan"),
-    ...fieldBlockText("Tujuan Bisnis / Tujuan Proyek", goals.businessGoal),
-    ...fieldBlockList("Indikator Keberhasilan (Success Metrics / KPI)", goals.successMetrics),
-    ...fieldBlockText("Definisi \u201cSelesai\u201d (Definition of Done)", goals.definitionOfDone)
+    heading1("4. Profil Pengguna (Personas)"),
+    dataTable(
+      ["Peran / Aktor", "Karakter & Tanggung Jawab", "Tujuan Utama (Objective)"],
+      personas.map(p => [p.role, p.description, p.objective]),
+      [2500, 3500, 3026]
+    ),
+    new Paragraph({ spacing: { after: 200 } })
   );
 
-  // ============ BAGIAN 5: RACI ============
+  // ============ BAGIAN 5 ============
   children.push(
-    heading1("Bagian 5: Matriks Tanggung Jawab (RACI)"),
-    para("Matriks ini memetakan siapa mengerjakan apa di setiap tahapan, agar tidak ada pekerjaan yang terlewat atau dikerjakan ganda."),
-    dataTable(
-      ["Aktivitas / Deliverable", ...raciCols],
-      raci.map((r) => [r.activity, r.dev, r.admin, r.finance, r.cs, r.owner]),
-      [3026, 1200, 1200, 1200, 1200, 1200],
-      { headerAlign: AlignmentType.CENTER, cellAlign: [AlignmentType.LEFT, AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.CENTER] }
-    ),
-    new Paragraph({
-      spacing: { before: 160 },
-      children: [
-        run("Keterangan: ", { bold: true, size: 19 }),
-        run("R = Responsible (pelaksana) \u2022 A = Accountable (penanggung jawab akhir) \u2022 C = Consulted (dikonsultasikan) \u2022 I = Informed (diinformasikan)", { size: 19, color: GREY_TEXT }),
-      ],
-    }),
-    pageBreak()
+    heading1("5. Kebutuhan Fungsional (Core Engine Requirements)"),
+    para("Di bawah ini adalah penjelasan modul-modul skala besar beserta logika dan aturan sistem."),
+    ...(funcs.map(f => {
+      const b1 = fieldBlockText(`Modul/Epic: ${f.epicName}`, f.description);
+      const b2 = fieldBlockList("Aturan Validasi:", f.validationRules);
+      return [...b1, ...b2, new Paragraph({ spacing: { after: 200 } })];
+    }).flat())
   );
 
   // ============ BAGIAN 6 ============
   children.push(
-    heading1("Bagian 6: Kebutuhan Detail per Bagian / Divisi"),
-    para("Setiap sub-bagian di bawah ini ditujukan untuk satu peran spesifik dan dapat langsung didistribusikan tanpa perlu membaca detail yang bukan tanggung jawabnya.")
+    heading1("6. Kebutuhan Non-Fungsional & Arsitektur"),
+    ...fieldBlockText("Filosofi Arsitektur (Technical Direction)", nonfuncs.architecturePhilosophy),
+    ...fieldBlockList("Performa & Beban Sistem", nonfuncs.performance),
+    ...fieldBlockList("Keamanan Jaringan & Data", nonfuncs.security),
+    ...fieldBlockList("Tampilan (UI/UX)", nonfuncs.uiux)
   );
 
+  // ============ BAGIAN 7 ============
   children.push(
-    heading2("6.1  Untuk Full Stack Developer / Tim Teknis"),
-    roleBadge("Full Stack Developer / Tim Teknis", ROLE_COLORS.dev),
-    ...fieldBlockList("Kebutuhan Fungsional (Functional Requirements)", dev.functionalRequirements),
-    ...fieldBlockList("Kebutuhan Non-Fungsional (performa, keamanan, skalabilitas)", dev.nonFunctionalRequirements),
-    ...fieldBlockText("Platform & Tech Stack (saran awal)", dev.techStackNotes),
-    ...fieldBlockList("Integrasi Pihak Ketiga", dev.integrations),
-    ...fieldBlockText("Alur Pengguna (User Flow)", dev.userFlow),
-    ...fieldBlockText("Batasan Teknis (Technical Constraints)", dev.constraints),
-    ...fieldBlockList("Kriteria Penerimaan Teknis (Acceptance Criteria)", dev.acceptanceCriteria),
-    pageBreak()
-  );
-
-  children.push(
-    heading2("6.2  Untuk Admin (Operasional Umum)"),
-    roleBadge("Admin (Operasional)", ROLE_COLORS.admin),
-    ...fieldBlockList("Rincian Tugas & Timeline Internal", admin.tasks),
-    ...fieldBlockList("Sumber Daya yang Dibutuhkan", admin.resources),
-    ...fieldBlockList("Koordinasi Antar Tim yang Diperlukan", admin.coordination),
-    ...fieldBlockList("Dokumentasi / Pelaporan yang Harus Disiapkan", admin.documentation),
-    pageBreak()
-  );
-
-  children.push(
-    heading2("6.3  Untuk Admin Keuangan"),
-    roleBadge("Admin Keuangan", ROLE_COLORS.keuangan),
-    ...fieldBlockText("Estimasi Biaya / Anggaran Proyek (draf awal \u2014 wajib divalidasi)", finance.budgetEstimateNotes),
-    ...fieldBlockText("Saran Termin Pembayaran", finance.paymentTermsSuggestion),
-    ...fieldBlockList("Rincian Item Tagihan / Invoice", finance.invoiceItems),
-    ...fieldBlockText("Status Pembayaran", finance.paymentStatus),
-    ...fieldBlockText("Catatan Pajak / Legal", finance.taxNotes),
-    pageBreak()
-  );
-
-  children.push(
-    heading2("6.4  Untuk Admin Customer Service"),
-    roleBadge("Admin Customer Service", ROLE_COLORS.cs),
-    ...fieldBlockText("Rencana & Channel Komunikasi dengan Customer", cs.communicationPlan),
-    ...fieldBlockText("Frekuensi Update yang Dijanjikan ke Customer", cs.updateFrequency),
-    ...fieldBlockList("Ekspektasi Customer yang Perlu Dikelola", cs.customerExpectations),
-    ...fieldBlockText("Prosedur Eskalasi Jika Ada Komplain / Masalah", cs.escalationProcedure),
-    ...fieldBlockList("Pertanyaan yang Mungkin Diajukan Customer (FAQ Antisipatif)", cs.faq),
-    pageBreak()
-  );
-
-  children.push(
-    heading2("6.5  Untuk Super Admin / Pemilik"),
-    roleBadge("Super Admin / Pemilik", ROLE_COLORS.owner),
-    ...fieldBlockText("Keselarasan dengan Strategi / Arah Bisnis", owner.strategicAlignment),
-    ...fieldBlockText("Penilaian Risiko & Tingkat Urgensi", owner.riskAssessment),
-    ...fieldBlockText("Persetujuan Anggaran & Alokasi Sumber Daya yang Diminta", owner.budgetApproval),
-    ...fieldBlockText("Keputusan Akhir & Catatan Khusus", owner.finalDecisionNotes),
-    pageBreak()
-  );
-
-  // ============ BAGIAN 7: TIMELINE ============
-  children.push(
-    heading1("Bagian 7: Timeline & Milestone"),
+    heading1("7. Alur Data Utama (Data Flow)"),
     dataTable(
-      ["Milestone / Tahapan", "Penanggung Jawab", "Target Waktu", "Status"],
-      timeline.map((t) => [t.milestone, t.pic, t.targetDateNote, t.status]),
-      [3526, 2400, 1700, 1400]
-    )
+      ["Langkah", "Deskripsi Proses Berjalannya Data"],
+      df.map(d => [d.stepOrder, d.description]),
+      [1500, 7526]
+    ),
+    pageBreak()
   );
 
-  // ============ BAGIAN 8: RISIKO ============
+  // ============ BAGIAN 8 ============
   children.push(
-    heading1("Bagian 8: Risiko & Ketergantungan"),
+    heading1("8. Batasan Luar Ruang Lingkup (Out of Scope) & Asumsi"),
+    ...fieldBlockList("Batasan Proyek (Hanya in-scope yang dikerjakan)", outOfScope),
+    ...fieldBlockList("Asumsi & Ketergantungan", assumptions)
+  );
+
+  // ============ BAGIAN 9 ============
+  children.push(
+    heading1("9. Koordinasi & Operasional Lintas Divisi (Internal)"),
+    heading2("9.1 Matriks RACI"),
     dataTable(
-      ["Risiko / Hambatan", "Dampak", "Rencana Mitigasi", "PIC"],
-      risks.map((r) => [r.risk, r.impact, r.mitigation, r.pic]),
+      ["Aktivitas / Deliverable", ...raciCols],
+      raci.map(r => [r.activity, r.dev, r.admin, r.finance, r.cs, r.owner]),
+      [3026, 1200, 1200, 1200, 1200, 1200],
+      { headerAlign: AlignmentType.CENTER, cellAlign: [AlignmentType.LEFT, AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.CENTER, AlignmentType.CENTER] }
+    ),
+    heading2("9.2 Operasional Admin"),
+    ...fieldBlockList("Tugas: ", cAdmin.tasks),
+    ...fieldBlockList("Resouces/Kebutuhan: ", cAdmin.resources),
+    heading2("9.3 Skema Keuangan (Draf Kasar)"),
+    ...fieldBlockText("Estimasi Biaya: ", cFinance.budgetEstimateNotes),
+    ...fieldBlockText("Termin Pembayaran: ", cFinance.paymentTermsSuggestion),
+    ...fieldBlockList("Tagihan/Item Invoice: ", cFinance.invoiceItems),
+    heading2("9.4 Pendekatan Customer Service"),
+    ...fieldBlockText("Rencana Komunikasi: ", cCS.communicationPlan),
+    ...fieldBlockList("Manajemen Ekspektasi: ", cCS.customerExpectations),
+    ...fieldBlockList("FAQ: ", cCS.faq),
+    heading2("9.5 Strategic Owner / Super Admin"),
+    ...fieldBlockText("Keselarasan Arah Bisnis: ", cOwner.strategicAlignment),
+    ...fieldBlockText("Penilaian Risiko Pemilik: ", cOwner.riskAssessment),
+    ...fieldBlockText("Catatan Keputusan: ", cOwner.decisionNotes),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 10 ============
+  children.push(
+    heading1("10. Timeline & Risiko Proyek"),
+    heading2("Timeline & Target Kerangka Waktu"),
+    dataTable(
+      ["Milestone", "Penanggung Jawab (PIC)", "Target Waktu"],
+      timeline.map(t => [t.milestone, t.pic, t.targetDateNote]),
+      [4026, 3000, 2000]
+    ),
+    heading2("Manajemen Risiko"),
+    dataTable(
+      ["Risiko", "Dampak", "Mitigasi", "PIC"],
+      risks.map(r => [r.risk, r.impact, r.mitigation, r.pic]),
       [2526, 2000, 3000, 1500]
     )
   );
 
-  // ============ BAGIAN 9: LAMPIRAN ============
+  // ============ BAGIAN 11 ============
   children.push(
-    heading1("Bagian 9: Lampiran"),
-    para("Dokumen, tautan, atau referensi pendukung yang relevan dengan proyek/pesanan ini (saran awal dari AI, lengkapi sesuai kebutuhan)."),
-    ...(attachments.length ? attachments.map((a) => bulletItem(fmt(a))) : [bulletItem(EMPTY_NOTE, { italics: true, color: GREY_TEXT })]),
-    pageBreak()
-  );
-
-  // ============ BAGIAN 10: PERSETUJUAN (selalu kosong - diisi manusia) ============
-  children.push(
-    heading1("Bagian 10: Persetujuan (Sign-Off)"),
-    para("Dokumen ini dianggap berlaku sebagai acuan kerja bersama setelah seluruh pihak berikut menandatangani persetujuan."),
+    heading1("11. Persetujuan & Lembar Pengesahan (Sign-Off)"),
+    para("Dokumen ini dianggap berlaku sebagai kontrak pengerjaan internal setelah seluruh form ini disetujui."),
     dataTable(
-      ["Jabatan / Peran", "Nama", "Tanda Tangan", "Tanggal"],
+      ["Jabatan / Peran", "Nama", "Tanda Tangan", "Tanggal Persetujuan"],
       [
         ["Full Stack Developer", "[Nama]", "", "[tgl]"],
         ["Admin", "[Nama]", "", "[tgl]"],
         ["Admin Keuangan", "[Nama]", "", "[tgl]"],
         ["Admin Customer Service", "[Nama]", "", "[tgl]"],
         ["Super Admin / Pemilik", "[Nama]", "", "[tgl]"],
+        ["Customer (Klien)", d.clientName || "[Nama/Instansi]", "", "[tgl]"],
       ],
       [2826, 2300, 2200, 1700]
     ),
     pageBreak()
-  );
-
-  // ============ BAGIAN 11: REVISI (selalu mulai dari draf AI) ============
-  children.push(
-    heading1("Bagian 11: Riwayat Revisi"),
-    dataTable(
-      ["Versi", "Tanggal", "Diubah Oleh", "Deskripsi Perubahan"],
-      [["v1.0", dateCreated, d.preparedBy || "AI Assistant", "Draf otomatis dibuat dari permintaan customer"]],
-      [1200, 1600, 2226, 4000]
-    )
   );
 
   // ---------- DOCUMENT ASSEMBLY ----------
@@ -518,12 +433,7 @@ async function renderPRDToDocx(prdData) {
           reference: "bullets",
           levels: [
             { level: 0, format: LevelFormat.BULLET, text: "\u2022", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 540, hanging: 270 } } } },
-            { level: 1, format: LevelFormat.BULLET, text: "\u2013", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 1080, hanging: 270 } } } },
           ],
-        },
-        {
-          reference: "numbers",
-          levels: [{ level: 0, format: LevelFormat.DECIMAL, text: "%1.", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 540, hanging: 270 } } } }],
         },
       ],
     },
@@ -547,7 +457,7 @@ async function renderPRDToDocx(prdData) {
               new Paragraph({
                 tabStops: [{ type: TabStopType.RIGHT, position: TabStopPosition.MAX }],
                 children: [
-                  run("Draf Otomatis AI \u2014 Wajib Direview", { size: 16, color: GREY_TEXT }),
+                  run("Wave Projects Center - Standar Global Software PRD", { size: 16, color: GREY_TEXT }),
                   new TextRun({ text: "\tHalaman ", font: FONT, size: 16, color: GREY_TEXT }),
                   new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 16, color: GREY_TEXT }),
                   new TextRun({ text: " / ", font: FONT, size: 16, color: GREY_TEXT }),

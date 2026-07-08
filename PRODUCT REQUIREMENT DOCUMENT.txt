@@ -1,0 +1,173 @@
+PRODUCT REQUIREMENT DOCUMENT
+(PRD)
+Pembangunan Infrastruktur Server Mandiri (Self-Hosted), Website Profil, dan Sistem Penerimaan Peserta Didik Baru (PPDB) 
+Klien / Instansi	:  Pondok Pesantren Moderen Darel Azhar
+Pemilik Produk / Developer & System Architect 	:  Ariyas Pratama Ramadhan
+Peran 	: Full-Stack Developer, System Administrator & Project Manager (Single Technical Implementer)
+Tanggal Penyusunan	:  06 Juli 2026
+Versi Dokumen	:  v1.0 — Draft PRD
+Dokumen Acuan	:  Product Requirement Document (PRD).
+Model Arsitektur	:  Self-Hosted On-Premise Server.
+Status	: Draft — Menunggu Persetujuan Klien
+
+
+
+
+
+
+
+Shipit Modified Industrial PRD Template — Disusun oleh Ariyas Pratama R.
+
+1. Riwayat Perubahan & Dokumen Terkait
+1.1 Changelog Proyek
+Tanggal	Versi	Deskripsi Perubahan	Penulis
+06/07/2026	v1.0	Inisiasi dokumen PRD; pemetaan kebutuhan infrastruktur server, website profil, dan sistem PPDB Online dengan prinsip arsitektur self-hosted first.	Ariyas Pratama R.
+
+1.2 Dokumen Terkait
+●Dokumen Rencana Anggaran Biaya (RAB): RAB Pembangunan Server & Sistem Digital Ponpes.
+●Link Repositori Kode (Git): 
+●Link Prototipe Desain (UI/UX Wireframe):
+●Dokumen Arsitektur Teknis : 
+2. Pendahuluan & Latar Belakang (The "Why")
+2.1 Pengantar
+Pondok Pesantren Darel Azhar membutuhkan transformasi digital menyeluruh yang mencakup tiga lapisan utama: (1) infrastruktur server produksi mandiri yang dibangun di atas satu unit PC yang telah disediakan, (2) website profil resmi sebagai etalase informasi publik, dan (3) sistem Penerimaan Peserta Didik Baru (PPDB) Online untuk menggantikan proses pendaftaran manual berbasis kertas. Seluruh rangkaian pekerjaan — mulai dari instalasi hypervisor, hardening keamanan jaringan, pengembangan aplikasi, hingga pendampingan saat go-live — dikerjakan langsung oleh satu Developer/PM (Ariyas Pratama Ramadhan) sebagai single point of accountability teknis dari awal hingga akhir proyek.
+2.2 Masalah Pengguna & Kebutuhan Pasar
+●Proses pendaftaran santri baru (PPDB) masih dilakukan secara manual/berbasis formulir kertas, sehingga rawan dokumen hilang, rekap data lambat, dan sulit dipantau panitia secara real-time.
+●Ponpes belum memiliki kanal informasi digital resmi (profil, program pendidikan, galeri kegiatan) yang mudah diakses calon wali santri dari luar daerah, sehingga menghambat jangkauan promosi dan penerimaan santri baru.
+●Ketergantungan pada layanan cloud pihak ketiga berbayar (hosting aplikasi, database as a service, layanan email transaksional, push notification, object storage) berpotensi menimbulkan biaya berulang (recurring cost) yang membebani anggaran operasional ponpes dalam jangka panjang.
+●Ponpes belum memiliki server produksi milik sendiri, sehingga seluruh data penting (dokumen pendaftaran, database santri) berisiko tersebar di berbagai layanan pihak ketiga tanpa kendali penuh atas kedaulatan data (data sovereignty).
+
+2.3 Model Bisnis & Skema Harga Opsional
+Proyek ini menggunakan skema Jasa Pengerjaan Satu Kali (One-Time Development Fee) sebagaimana dirinci pada dokumen RAB terpisah, bukan skema SaaS berlangganan bulanan. Karena seluruh stack yang digunakan bersifat open-source dan self-hosted, tidak ada biaya lisensi maupun langganan software yang bersifat berkelanjutan kecuali biaya operasional dasar (listrik, internet dan domain) yang memang sudah menjadi kebutuhan rutin ponpes.
+Add-on modul mandiri yang dapat diajukan secara terpisah di luar ruang lingkup utama:
+●Integrasi payment gateway untuk pembayaran her-registrasi/biaya pendaftaran secara daring.
+●Integrasi WhatsApp Business API/Click-to-Chat untuk kanal notifikasi tambahan.
+●Paket maintenance & monitoring server bulanan pasca-masa garansi.
+3. Hasil yang Diharapkan & Metrik Utama
+3.1 Estimasi Hasil Dampak
+●Mengurangi waktu rekap dan verifikasi berkas pendaftaran santri baru — dari yang semula memakan waktu berhari-hari secara manual menjadi hitungan menit melalui dashboard admin PPDB.
+●Menekan biaya recurring layanan cloud pihak ketiga (hosting, database, email, storage) hingga mendekati nol, karena seluruh komponen inti berjalan self-hosted di atas server milik ponpes sendiri.
+●Meningkatkan jangkauan promosi ponpes melalui website profil yang dapat diakses publik 24/7 dengan waktu muat halaman di bawah 2 (dua) detik.
+●Memastikan seluruh data santri dan dokumen pendaftaran tersimpan penuh di bawah kendali ponpes (data sovereignty), didukung mekanisme backup terjadwal otomatis.
+3.2 Metrik Kesuksesan (Key Metrics)
+●Uptime Server: target ketersediaan server minimal 99% per bulan, di luar jadwal maintenance terjadwal yang diinformasikan sebelumnya.
+●Adopsi Pengguna: jumlah pendaftar yang berhasil menyelesaikan seluruh alur PPDB Online secara mandiri tanpa bantuan tatap muka panitia.
+●Efisiensi Proses Admin: rata-rata waktu verifikasi satu berkas pendaftaran oleh panitia PPDB dibandingkan proses manual sebelumnya.
+●Keandalan Backup: persentase keberhasilan job backup terjadwal (target 100% sukses tanpa intervensi manual).
+
+
+
+
+
+
+4. Profil Pengguna (Personas)
+Daftar pengguna (aktor) yang akan memegang dan mengoperasikan sistem ini beserta batasan hak aksesnya:
+Nama Peran / Aktor	Deskripsi Karakter & Tanggung Jawab	Tujuan Utama Penggunaan Sistem
+Super Admin (Pimpinan/Pengasuh Ponpes)	Pemegang kendali penuh atas seluruh sistem, termasuk akses tertinggi ke server dan data rekap.	Memantau statistik pendaftaran santri baru dan status kesehatan (health) infrastruktur server secara berkala.
+Staf Admin Website (Operator CMS)	Staf ponpes yang ditugaskan mengelola konten publik sehari-hari.	Menambah/mengubah berita, agenda kegiatan, dan galeri foto tanpa perlu bantuan developer.
+Panitia PPDB	Tim yang ditugaskan menangani proses seleksi santri baru setiap tahun ajaran.	Melakukan verifikasi berkas, memfilter status pendaftar, dan mengekspor rekap data ke Excel.
+Calon Wali Santri / Pendaftar	Orang tua/wali yang mendaftarkan calon santri secara daring dari perangkat pribadi.	Mengisi formulir pendaftaran multi-langkah, mengunggah dokumen persyaratan, dan mencetak bukti pendaftaran.
+Sistem Otomatis (Background Jobs)	Aktor latar belakang: cron job backup, job notifikasi status, job pembuatan PDF kartu pendaftaran.	Menjalankan tugas berulang secara terjadwal tanpa intervensi manusia demi menjaga konsistensi data dan keamanan.
+5. Kebutuhan Fungsional (Core Engine Requirements)
+Bagian ini menjabarkan daftar fitur utama skala besar (Epic Level) beserta logika alur data secara runut, disusun mengikuti tahapan fase pengerjaan proyek.
+5.1 Modul Infrastruktur & Virtualisasi Server
+Deskripsi Fitur
+Sistem wajib menyediakan lapisan virtualisasi berbasis Proxmox VE sebagai hypervisor utama di atas PC yang telah disediakan klien, dengan pembagian Virtual Machine (VM) / LXC Container terpisah untuk masing-masing peran (web server, database, reverse proxy, storage) guna mengisolasi beban kerja dan mempermudah proses pemulihan bila terjadi kegagalan pada salah satu komponen.
+Aturan Validasi
+●Setiap VM/Container wajib memiliki alokasi resource (CPU/RAM/Disk) yang terisolasi dan tidak boleh saling mengganggu (resource contention) performa layanan lain.
+●Konfigurasi jaringan internal antar-VM/Container wajib disegmentasi (VLAN/bridge terpisah) sesuai fungsi layanan.
+
+
+
+
+
+
+5.2 Modul Media Penyimpanan, Object Storage & Backup
+Alur Berjalannya Data
+1.TrueNAS dikonfigurasi sebagai storage pool utama, menyediakan volume terpisah untuk data VM, database, dan dokumen unggahan.
+2.Seluruh aset media publik (foto galeri, dokumen unggahan PPDB) disimpan melalui MinIO — object storage self-hosted yang kompatibel dengan protokol S3 — berjalan sebagai container Docker, menggantikan sepenuhnya ketergantungan pada layanan cloud storage pihak ketiga.
+3.Job backup terjadwal (Cron) menyalin snapshot database dan volume penting secara berkala ke external drive/cloud storage sekunder sebagai lapisan disaster recovery tambahan.
+4.Sistem Pembatalan Darurat: bila terjadi kegagalan saat proses backup berjalan, job wajib mencatat log kegagalan dan mengulang percobaan (retry) pada siklus berikutnya tanpa menimpa (overwrite) snapshot valid sebelumnya.
+5.3 Modul Keamanan Jaringan & Akses Jarak Jauh
+Deskripsi Fitur
+Sistem wajib menerapkan firewall dan hardening pada level OS (Ubuntu Server) maupun level container (Docker), dengan prinsip least privilege access.
+●Tailscale (mesh VPN) dikonfigurasi sebagai satu-satunya jalur akses manajemen jarak jauh (SSH, dashboard admin internal) — tidak ada port administratif yang diekspos langsung ke internet publik.
+●Cloudflare Tunnel digunakan semata sebagai gerbang aman (DNS proxy, SSL/TLS, WAF, proteksi DDoS dasar) agar layanan publik (website, formulir PPDB) dapat diakses secara global tanpa mengekspos IP asli server maupun membutuhkan IP publik statis.
+Aturan Validasi
+●Seluruh akses masuk (inbound) selain melalui Cloudflare Tunnel dan Tailscale wajib ditolak secara default (deny-by-default firewall policy).
+5.4 Modul Website Profil & CMS
+Deskripsi Fitur
+Sistem menyediakan halaman publik: Beranda, Profil/Sejarah, Visi-Misi, Program/Unit Pendidikan, Ustadz/Pengasuh, Galeri, Berita, dan Kontak — seluruhnya responsif di perangkat mobile maupun desktop — serta CMS/admin panel sederhana agar staf ponpes dapat memperbarui berita dan konten secara mandiri tanpa keterlibatan developer.
+Aturan Validasi
+●Setiap konten yang dipublikasikan staf wajib melalui tahap draft sebelum tayang publik (preview before publish), untuk mencegah kesalahan input tampil langsung ke pengunjung.
+●Setiap ID konten (berita, agenda, galeri) wajib bersifat unik global dan tidak boleh duplikat dalam database.
+
+
+
+5.5 Modul Pendaftaran Online (PPDB) — Alur Data
+Alur Berjalannya Data
+1.Calon wali santri ataupun Calon walisantri
+2.Calon wali santri mengisi formulir pendaftaran multi-langkah (biodata santri, data orang tua/wali, riwayat sekolah, pilihan program) melalui antarmuka frontend.
+3.Sistem melakukan validasi kelengkapan data di backend (contoh: seluruh field wajib terisi sebelum dapat melanjutkan ke tahap unggah dokumen).
+4.Dokumen persyaratan (Kartu Keluarga, Akta Kelahiran, Ijazah/Rapor, Pas Foto) diunggah dan divalidasi format/ukurannya, kemudian disimpan pada object storage self-hosted (MinIO).
+5.Melakuakn ujian online pendaftaran masuk mel;alui meidai platfom Whatshapp yang telah di integrasikan di dalam sistem PPDB.
+6.Menunggu pelunasan seluruh biyaya dan pendaftaran awal daoaleh pihak calon santri / Wali murid 
+7.Jika seluruh tahap lolos validasi, data pendaftar disimpan ke database utama (PostgreSQL/MySQL) dan status pendaftaran diperbarui menjadi "Menunggu Verifikasi".
+8.Sistem Pembatalan Darurat (Database Transaction Rollback): bila terjadi kegagalan jaringan atau crash di tengah proses penyimpanan data multi-tahap, seluruh rangkaian transaksi wajib dibatalkan murni pada detik itu juga untuk mencegah data pendaftar yang korup atau tidak lengkap tersimpan.
+5.6 Modul Notifikasi Otomatis & Dokumen Digital
+Deskripsi Fitur
+Sistem wajib mengirimkan notifikasi status pendaftaran secara otomatis kepada pendaftar melalui mail server self-hosted (mis. Postfix/Mailu dengan konfigurasi SPF, DKIM, dan DMARC pada domain ponpes sendiri) sebagai pengganti penuh layanan email transaksional pihak ketiga. Notifikasi tambahan berbasis push (bila diperlukan) menggunakan layanan self-hosted seperti ntfy atau implementasi Web Push API mandiri, bukan layanan push notification pihak ketiga berbayar.
+Panitia PPDB dapat mencetak kartu/bukti pendaftaran secara otomatis dalam format PDF langsung melalui panel admin.
+Aturan Validasi
+●Setiap perubahan status pendaftaran (Diterima/Ditolak/Menunggu Verifikasi) wajib memicu satu kali pengiriman notifikasi, dengan log pengiriman tersimpan untuk keperluan audit.
+5.7 Modul Deployment & Go-Live
+Deskripsi Fitur
+Seluruh sistem (website profil & PPDB) dikemas dalam container Docker beserta Docker Compose, dan dideploy langsung ke server produksi milik ponpes — bukan ke layanan Platform-as-a-Service pihak ketiga. Domain utama ponpes (contoh: .ponpes.id / .sch.id) dipointing ke Cloudflare untuk keperluan DNS dan SSL/TLS.
+Aturan Validasi
+●Sebelum go-live, wajib dilakukan load test dasar dan pengecekan keamanan (basic security check) untuk memastikan sistem stabil menghadapi lonjakan akses pada periode pendaftaran dibuka.
+6. Kebutuhan Non-Fungsional & Ekspektasi Tampilan
+6.1 Performa & Batasan Infrastruktur
+●Beban Maksimal (Peak Load): sistem PPDB harus mampu menangani stres pengujian hingga minimal 200–500 request per menit saat periode puncak pendaftaran (disesuaikan lebih lanjut dengan hasil analisis kapasitas hardware yang tersedia).
+●Kecepatan Halaman (Latency): durasi pemuatan halaman utama website profil tidak boleh melebihi batas toleransi 2 (dua) detik pada koneksi standar, dengan aset statis disajikan melalui Cloudflare CDN.
+●Ketersediaan (Availability): target uptime server minimal 99% per bulan, di luar jadwal maintenance terjadwal yang diinformasikan sebelumnya kepada pihak ponpes.
+6.2 Keamanan
+●Seluruh komunikasi publik wajib terenkripsi (HTTPS/SSL-TLS) melalui sertifikat yang dikelola Cloudflare.
+●Firewall pada level OS maupun container mengikuti prinsip deny-by-default; hanya jalur yang diperlukan (mis. via Cloudflare Tunnel dan Tailscale) yang dibuka.
+●Backup terjadwal wajib berjalan otomatis minimal 1 (satu) kali per hari, dengan masa retensi minimal 7 hari (dapat disesuaikan mengikuti kapasitas storage yang tersedia).
+6.3 Pedoman Tampilan Kulit Luar (UI/UX)
+●Tema Estetika: desain minimalis profesional yang mencerminkan identitas kelembagaan ponpes, dengan palet warna yang dapat disesuaikan terhadap identitas visual/logo resmi ponpes, serta responsif penuh di perangkat mobile maupun desktop.
+●Format Penyajian Data: seluruh tabel rekap PPDB pada panel admin menggunakan format tanggal dan penomoran standar Indonesia, dilengkapi opsi ekspor data ke Excel.
+7. Filosofi Arsitektur: Self-Hosted First
+Prinsip utama arsitektur pada proyek ini adalah SELF-HOSTED FIRST: seluruh komponen inti sistem — mulai dari hypervisor, basis data, object storage, mail server, notifikasi, hingga reverse proxy/SSL — dijalankan sepenuhnya secara lokal di atas server milik ponpes sendiri, bukan bergantung pada layanan cloud berbayar pihak ketiga. Tabel berikut merangkum penggantian setiap kebutuhan fungsi dengan komponen self-hosted yang setara:
+Fungsi	Pendekatan Umum di Pasar	Pengganti Self-Hosted yang Digunakan	Catatan
+Hosting Aplikasi Web	Platform hosting cloud pihak ketiga (PaaS)	Docker Container (Next.js/Node.js) di atas Ubuntu Server + Nginx Proxy Manager	Berjalan penuh di server ponpes; tidak ada biaya hosting bulanan berulang.
+Basis Data (Database)	Database as a Service pihak ketiga	PostgreSQL/MySQL dalam container Docker + persistent volume TrueNAS	Data sepenuhnya berada di bawah kendali dan kepemilikan ponpes.
+Object/Asset Storage	Layanan cloud media management pihak ketiga	MinIO — object storage self-hosted, kompatibel S3	Menyimpan galeri foto & dokumen PPDB tanpa kuota/biaya pihak ketiga.
+Email Transaksional	Layanan pengiriman email pihak ketiga	Mail server self-hosted (Postfix/Mailu) dengan SPF/DKIM/DMARC pada domain ponpes	Notifikasi status pendaftaran tetap terkirim andal tanpa biaya per-email.
+Push Notification	Layanan push notification pihak ketiga	ntfy (self-hosted pub-sub notification) / Web Push API mandiri	Menghindari ketergantungan kuota gratis layanan pihak ketiga yang terbatas.
+DNS, SSL/TLS, CDN & WAF	—	Cloudflare (dipertahankan, tier gratis)	Satu-satunya layanan eksternal yang dipertahankan, berfungsi sebagai gerbang aman — bukan hosting aplikasi/data.
+Akses & Manajemen.	VPN komersial berbayar	Tailscale (mesh VPN, tier gratis)	Akses manajemen server yang aman tanpa memerlukan IP publik statis.
+
+Catatan: Cloudflare tetap dipertahankan sebatas layanan DNS proxy/Tunnel gratis (bukan hosting aplikasi maupun penyimpanan data), karena berfungsi sebagai gerbang aman agar IP asli server tidak terekspos langsung ke internet — sekaligus memungkinkan seluruh sistem tetap dapat diakses secara global dan umum meskipun berjalan 100% dari server lokal milik ponpes.
+8. Batasan Ruang Lingkup Proyek (Out of Scope)
+Gunakan bagian ini sebagai pembatas ruang lingkup yang telah disepakati bersama, agar tidak terjadi penambahan pekerjaan di luar kontrak awal tanpa kesepakatan tambahan. Pengembangan sistem pada fase versi saat ini TIDAK MENCAKUP:
+●Integrasi payment gateway untuk pembayaran her-registrasi/SPP (tersedia sebagai add-on opsional terpisah sesuai RAB).
+●Integrasi WhatsApp Business API resmi untuk notifikasi (tersedia sebagai add-on opsional terpisah sesuai RAB).
+●Konektivitas fisik perangkat keras eksternal, seperti mesin EDC bank pihak ketiga atau pemindai biometrik sidik jari.
+●Aplikasi mobile native (Android/iOS) — fokus pengembangan saat ini murni berbasis web yang responsif.
+●Migrasi data historis pendaftaran santri dari sistem manual/kertas ke database digital (dapat diajukan sebagai fase tambahan bila dibutuhkan).
+●Pengadaan/pembelian unit hardware tambahan (RAM, SSD, UPS) — bersifat kondisional dan hanya diperlukan bila spesifikasi PC eksisting belum mencukupi (lihat dokumen RAB bagian Kebutuhan Perangkat Keras Tambahan).
+Segala bentuk permintaan penambahan fitur di luar batasan ini akan dimasukkan ke dalam kontrak pengembangan fase berikutnya, di luar kesepakatan awal proyek ini.
+9. Asumsi & Ketergantungan
+●Spesifikasi PC yang akan dijadikan server diasumsikan mendukung virtualisasi (Intel VT-x/AMD-V) dengan kapasitas RAM/storage yang mencukupi untuk menjalankan Proxmox, beberapa VM/LXC, dan TrueNAS secara bersamaan.
+●Koneksi internet di lokasi penempatan server diasumsikan tersedia dan stabil untuk keperluan Cloudflare Tunnel/Tailscale, sehingga server dapat diakses secara publik tanpa memerlukan IP publik statis.
+●Pihak ponpes bertanggung jawab menyediakan unit hardware PC beserta lokasi penempatan (ruang server) yang layak — mencakup ventilasi dan catu daya listrik yang stabil.
+●Seluruh perangkat lunak yang digunakan berbasis open-source/gratis (Proxmox, Docker, TrueNAS, PostgreSQL/MySQL, MinIO, Nginx Proxy Manager, dll), sehingga tidak ada biaya lisensi tambahan di luar biaya jasa pengerjaan pada dokumen RAB.
+●Rincian estimasi biaya, termin pembayaran, dan ketentuan garansi layanan purna jual mengacu sepenuhnya pada dokumen Rencana Anggaran Biaya (RAB) yang disusun terpisah dari dokumen PRD ini.
+10. Garansi & Ketentuan Layanan Purna Jual (Ringkasan)
+●Garansi bug/error pada modul yang dikerjakan berlaku 30 (tiga puluh) hari kalender sejak tanggal go-live, tanpa biaya tambahan.
+●Revisi tampilan dibatasi maksimal 2 (dua) kali revisi mayor per modul, sesuai kesepakatan awal; revisi di luar itu dikenakan biaya tambahan sesuai kontrak fase berikutnya.
+●Maintenance rutin (monitoring server, update keamanan berkala) di luar masa garansi dapat diajukan sebagai paket terpisah/bulanan bila dibutuhkan.
+Catatan: Rincian lengkap mengenai nominal anggaran, termin pembayaran, dan ketentuan garansi tercantum secara menyeluruh pada dokumen Rencana Anggaran Biaya (RAB) yang menyertai dokumen PRD ini.
+
+— Akhir Dokumen —
