@@ -37,17 +37,38 @@ export async function POST(req: Request) {
         // 3. Generate AI Response
         let aiText = "Terima kasih atas pesannya! Mohon tunggu sebentar, konsultan kami akan segera menganalisisnya.";
         try {
-            // Context injection for AI Consultant behavior (Mock behavior if key invalid)
-            const prompt = `Anda adalah AI Consultant di Wave Projects Center.ID. 
-            Tugas Anda: merekomendasikan layanan pembuatan software/web dan harga.
+            // Context injection: Fetch all available packages from DB to provide accurate recommendations
+            const [pkgs]: any = await pool.query('SELECT name, `desc`, price, code FROM packages WHERE is_active = 1');
+            let pkgsText = "Berikut adalah paket layanan Wave Projects Center beserta harga dan fiturnya:\n";
+            if (pkgs && pkgs.length > 0) {
+                pkgs.forEach((p: any) => {
+                    let feats = [];
+                    try { feats = Array.isArray(p.code) ? p.code : JSON.parse(p.code); } catch (e) { }
+                    pkgsText += `- ${p.name}: Rp${Number(p.price).toLocaleString('id-ID')}\n  Deskripsi: ${p.desc}\n  Fitur: ${(feats || []).join(', ')}\n`;
+                });
+            } else {
+                pkgsText = "Saat ini paket belum tersedia di sistem. (Namun Anda tetap bisa menanyakan kebutuhan secara kustom)";
+            }
+
+            const prompt = `Anda adalah AI Consultant di Wave Projects Center.ID. Nama Anda adalah "Nova". 
+            Tugas Anda: merespons pertanyaan pelanggan, merekomendasikan layanan pembuatan software/web/aplikasi yang tersedia, dan memberitahu harga/paket yang sesuai kebutuhan mereka secara profesional.
+            
+            ${pkgsText}
+            
+            ATURAN PENTING:
+            1. Jika pertanyaan atau permintaan pelanggan bisa diselesaikan dengan informasi paket di atas, jawablah dengan detail paket yang cocok (sebutkan nama paket dan harganya agar spesifik).
+            2. JANGAN langsung menyuruh pelanggan menunggu admin kecuali mereka menanyakan hal spesifik/pembahasan teknis di luar paket atau secara langsung meminta bertemu admin.
+            3. Tanggapi dengan bahasa Indonesia yang natural, ramah, meyakinkan, namun terstruktur (gunakan poin-poin/bullet point jika memberikan rincian).
+            4. Pesan customer tidak selalu pertanyaan, kadang hanya salam (respon dengan salam balik dan tawaran paket).
+            
             Pesan customer: "${message}" 
-            Jawab singkat dan ramah (max 3 kalimat).`;
+            Jawaban Anda:`;
 
             const result = await model.generateContent(prompt);
             aiText = result.response.text();
 
         } catch (genErr) {
-            console.error("Gemini fallback triggered");
+            console.error("Gemini fallback triggered", genErr);
         }
 
         // 4. Save AI Response
