@@ -12,10 +12,12 @@ export async function GET(req: Request) {
         const decoded: any = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
 
         let query = `
-            SELECT o.*, u.name as user_name, u.email as user_email, p.name as package_name 
+            SELECT o.*, u.name as user_name, u.email as user_email, p.name as package_name, dev.name as developer_name
             FROM orders o
             LEFT JOIN users u ON o.user_id = u.id
             LEFT JOIN packages p ON o.package_id = p.id
+            LEFT JOIN projects pr ON pr.order_id = o.id
+            LEFT JOIN users dev ON pr.developer_id = dev.id
         `;
         let params: any[] = [];
 

@@ -53,6 +53,23 @@ export default function OrderTracking() {
         fetchOrders();
     };
 
+    const handleAutoAssign = async (orderId: number) => {
+        if (!confirm("Bagi tugas secara otomatis menggunakan AI Workload Balancer?")) return;
+        const token = localStorage.getItem("wave_token");
+        const res = await fetch("/api/v1/admin/projects/auto-assign", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ orderId })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(`✅ Proyek otomatis dialihkan ke: ${data.data.developer_name} (Beban Aktif: ${data.data.active_load} proyek)`);
+            fetchOrders();
+        } else {
+            alert(`Gagal: ${data.error}`);
+        }
+    };
+
     if (!user) return <p>Loading...</p>;
     const roleName = user.roles && user.roles.length > 0 ? user.roles[0].name : "Customer";
     const isInternal = roleName !== "Customer";
@@ -77,6 +94,14 @@ export default function OrderTracking() {
                                         <div className="text-xs bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full inline-block font-semibold mb-2">Order ID: #{o.id.toString().padStart(4, '0')}</div>
                                         <h3 className="text-xl font-bold">{o.package_name || 'Paket Kustom'}</h3>
                                         <p className="text-gray-400 text-sm">Klien: {o.user_name} ({o.user_email})</p>
+
+                                        {isInternal && (
+                                            <div className="mt-3">
+                                                <span className="text-xs bg-slate-800 text-gray-300 px-3 py-1.5 rounded-md border border-slate-700">
+                                                    👨‍💻 Assignee: <strong className={o.developer_name ? "text-emerald-400" : "text-yellow-400"}>{o.developer_name || 'Menunggu Penugasan (Auto-Assign)'}</strong>
+                                                </span>
+                                            </div>
+                                        )}
 
                                         {isInternal && (
                                             <div className="flex flex-wrap gap-2 mt-4">
@@ -134,7 +159,7 @@ export default function OrderTracking() {
                                 {isInternal && (
                                     <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-white/5">
                                         {/* Status Pusher Controller */}
-                                        <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                                        <div className="bg-white/5 rounded-xl p-4 border border-white/10 space-y-3">
                                             <h4 className="font-bold text-sm mb-4">Kendali Operasional Proyek</h4>
                                             {currentStageIdx < STAGES.length - 1 ? (
                                                 <button onClick={() => handleUpdateStatus(o.id, STAGES[currentStageIdx + 1])} className="w-full bg-primary hover:bg-primary-light text-white font-bold py-3 rounded-xl transition-all">
@@ -143,6 +168,13 @@ export default function OrderTracking() {
                                             ) : (
                                                 <div className="text-green-400 font-bold text-center bg-green-500/10 p-3 rounded-xl">Proyek telah selesai (Maintenance Active)</div>
                                             )}
+
+                                            <button
+                                                onClick={() => handleAutoAssign(o.id)}
+                                                className="w-full bg-[#1e293b] hover:bg-[#334155] border border-blue-500/30 text-blue-300 font-bold py-2 rounded-xl transition-all shadow-[0_0_10px_rgba(59,130,246,0.1)] text-xs mt-2"
+                                            >
+                                                🤖 Auto-Assign Developer (Workload Balancer)
+                                            </button>
                                         </div>
 
                                         {/* Internal Team Notes (Mini Chat) */}
