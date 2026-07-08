@@ -1,31 +1,57 @@
 import { NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
 import pool from '@/lib/db';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
+export async function GET() {
+    try {
+        const [rows]: any = await pool.query("SELECT setting_key, setting_value FROM system_settings WHERE setting_key IN ('contact_info', 'social_media')");
+
+        let settings: any = {
+            contact_info: { whatsapp: '085156618435', email: 'a.pramadhan.id@gmail.com', address: '' },
+            social_media: { instagram: '', facebook: '', linkedin: '' }
+        };
+
+        if (rows && rows.length > 0) {
+            rows.forEach((row: any) => {
+                try {
+                    const parsed = typeof row.setting_value === 'string' ? JSON.parse(row.setting_value) : row.setting_value;
+                    if (row.setting_key === 'contact_info') {
+                        settings.contact_info = { ...settings.contact_info, ...parsed };
+                    } else if (row.setting_key === 'social_media') {
+                        settings.social_media = { ...settings.social_media, ...parsed };
+                    }
+                } catch (e) { }
+            });
+        }
+
+        return NextResponse.json({ success: true, data: settings });
+    } catch (e: any) {
+        return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    }
+}
 
 export async function POST(req: Request) {
     try {
-        const authHeader = req.headers.get('authorization');
-        if (!authHeader) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-        jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+        const body = await req.json();
 
-        const body = await req.json(); // { settings: { hero_subtitle: "...", ... } }
-        const { settings } = body;
-
-        if (!settings || typeof settings !== 'object') {
-            return NextResponse.json({ success: false, error: 'Invalid settings payload' }, { status: 400 });
-        }
-
-        // Mass update or insert
-        for (const [key, value] of Object.entries(settings)) {
+        if (body.contact_info) {
             await pool.query(
-                "INSERT INTO agency_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?",
-                [key, value, value]
+                `INSERT INTO system_settings (setting_key, setting_value, description) 
+                 VALUES (?, ?, ?) 
+                 ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()`,
+                ['contact_info', JSON.stringify(body.contact_info), 'Kontak utama perusahaan', JSON.stringify(body.contact_info)]
             );
         }
 
-        return NextResponse.json({ success: true, message: 'Settings saved successfully' });
+        if (body.social_media) {
+            await pool.query(
+                `INSERT INTO system_settings (setting_key, setting_value, description) 
+                 VALUES (?, ?, ?) 
+                 ON DUPLICATE KEY UPDATE setting_value = ?, updated_at = NOW()`,
+                ['social_media', JSON.stringify(body.social_media), 'Media sosial perusahaan', JSON.stringify(body.social_media)]
+            );
+        }
+
+        return NextResponse.json({ success: true, message: 'Settings updated successfully' });
     } catch (e: any) {
         return NextResponse.json({ success: false, error: e.message }, { status: 500 });
     }

@@ -123,18 +123,50 @@ export default function CheckoutPage() {
                             </span>
                         </div>
                         <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Snap Token</span>
-                            <span className="font-mono text-xs text-gray-300 truncate ml-4">
-                                {result.snap_token}
+                            <span className="text-gray-500">Status Pembayaran</span>
+                            <span className="font-mono text-xs text-yellow-400 font-bold ml-4">
+                                MENUNGGU TRANSFER
                             </span>
                         </div>
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-sm pt-2 border-t border-white/10">
                             <span className="text-gray-500">Total Bayar</span>
                             <span className="font-bold text-green-400">
                                 Rp {totalPayment.toLocaleString("id-ID")}
                             </span>
                         </div>
                     </div>
+
+                    <div className="bg-primary/10 border border-primary/30 rounded-xl p-4 text-left space-y-3 mb-6">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                            <p className="text-sm text-white font-semibold">Instruksi Pembayaran Manual</p>
+                        </div>
+                        <p className="text-xs text-gray-400 leading-relaxed">
+                            Payment gateway otomatis kami sedang dalam tahap verifikasi KYC. Silakan lakukan transfer antar bank ke rekening BNI berkut ini:
+                        </p>
+                        <div className="bg-black/30 p-3.5 rounded-lg flex flex-col gap-2 border border-white/5">
+                            <div>
+                                <span className="text-xs text-gray-500 block mb-0.5">Bank Tujuan:</span>
+                                <span className="font-bold text-white text-sm">BNI (Taplus)</span>
+                            </div>
+                            <div>
+                                <span className="text-xs text-gray-500 block mb-0.5">Nomor Rekening:</span>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-mono font-bold text-lg text-primary tracking-wide">
+                                        2090596078
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <span className="text-xs text-gray-500 block mb-0.5">Atas Nama:</span>
+                                <span className="font-bold text-white text-sm">ARIYAS PRATAMA RAMADHAN</span>
+                            </div>
+                        </div>
+                        <p className="text-xs text-yellow-500/90 italic leading-relaxed pt-1">
+                            *PENTING: Jangan lupa screenshot/simpan bukti transfer dan berikan ke CS/Admin Wave Projects beserta Nomor Order Anda via WhatsApp.
+                        </p>
+                    </div>
+
                     <Link
                         href="/"
                         className="inline-block bg-primary hover:bg-primary-light text-white font-semibold px-8 py-3 rounded-full transition-all glow-blue text-sm"
