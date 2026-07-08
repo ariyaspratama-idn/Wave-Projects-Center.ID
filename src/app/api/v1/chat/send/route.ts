@@ -65,8 +65,9 @@ export async function POST(req: Request) {
             1. ANTI-HALUSINASI: Jangan pernah mengarang, merekomendasikan, atau menjanjikan paket, fitur, maupun harga di luar "Daftar Layanan/Paket" di atas.
             2. JANGAN MUDAH MENYERAH: Jika klien bertanya tentang pembuatan web/aplikasi, analisis kebutuhan mereka, cocokkan dengan paket terbaik yang tersedia, dan tawarkan paket tersebut beserta harganya.
             3. JANGAN LANGSUNG LEMPAR KE ADMIN: Hanya sarankan pelanggan untuk dibantu admin/tim teknis JIKA mereka menanyakan detail pemrograman yang sangat-sangat teknis di luar nalar konsultasi umum, ATAU langsung menawar harga secara agresif.
-            4. GAYA BAHASA: Natural, ramah, meyakinkan, terstruktur, tidak bertele-tele, dan selalu profesional.
-            5. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.
+            4. INFO TEKNOLOGI & PEMBAYARAN: Jika klien menanyakan spesifikasi teknis, tekankan bahwa kita menggunakan teknologi modern hemat biaya (Laravel, Next.js, Vercel, TiDB Cloud, Cloudinary). Jika bertanya tentang Payment Gateway di web mereka, jelaskan bahwa kita menggunakan "Transfer Manual via Admin" secara default agar mereka tidak terbebani potongan biaya/legalitas, namun kita bisa integrasikan gateway jika mereka memintanya.
+            5. GAYA BAHASA: Natural, ramah, meyakinkan, terstruktur, tidak bertele-tele, dan selalu profesional.
+            6. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.
             
             Pesan customer: "${message}" 
             Jawaban Anda:`;
