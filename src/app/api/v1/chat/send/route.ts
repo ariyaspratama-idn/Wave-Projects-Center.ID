@@ -35,16 +35,17 @@ export async function POST(req: Request) {
         );
 
         // 3. Generate AI Response
+        let contactText = "WhatsApp: 085156618435 | Email: a.pramadhan.id@gmail.com";
         let aiText = "Terima kasih atas pesannya! Mohon tunggu sebentar, konsultan kami akan segera menganalisisnya.";
         try {
             // Context injection: Fetch all available packages from DB to provide accurate recommendations
-            const [pkgs]: any = await pool.query('SELECT name, `desc`, price, code FROM packages WHERE is_active = 1');
+            const [pkgs]: any = await pool.query("SELECT name, price, code FROM packages WHERE is_active = 1");
             let pkgsText = "Berikut adalah paket layanan Wave Projects Center beserta harga dan fiturnya:\n";
             if (pkgs && pkgs.length > 0) {
                 pkgs.forEach((p: any) => {
                     let feats = [];
                     try { feats = Array.isArray(p.code) ? p.code : JSON.parse(p.code); } catch (e) { }
-                    pkgsText += `- ${p.name}: Rp${Number(p.price).toLocaleString('id-ID')}\n  Deskripsi: ${p.desc}\n  Fitur: ${(feats || []).join(', ')}\n`;
+                    pkgsText += `- ${p.name}: Rp${Number(p.price).toLocaleString('id-ID')}\n  Fitur: ${(feats || []).join(', ')}\n`;
                 });
             } else {
                 pkgsText = "Saat ini paket belum tersedia di sistem. (Namun Anda tetap bisa menanyakan kebutuhan secara kustom)";
@@ -65,7 +66,6 @@ export async function POST(req: Request) {
             }
 
             // Context injection 3: Fetch dynamic company contacts
-            let contactText = "WhatsApp: 085156618435 | Email: a.pramadhan.id@gmail.com";
             try {
                 const [settings]: any = await pool.query("SELECT setting_value FROM system_settings WHERE setting_key = 'contact_info'");
                 if (settings && settings.length > 0) {
@@ -103,8 +103,9 @@ export async function POST(req: Request) {
             const result = await model.generateContent(prompt);
             aiText = result.response.text();
 
-        } catch (genErr) {
+        } catch (genErr: any) {
             console.error("Gemini fallback triggered", genErr);
+            aiText = `Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
         }
 
         // 4. Save AI Response

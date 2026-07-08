@@ -3,6 +3,16 @@ import pool from '@/lib/db';
 
 export async function GET() {
     try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS system_settings (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                setting_key VARCHAR(100) UNIQUE NOT NULL,
+                setting_value JSON NOT NULL,
+                description TEXT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
         const [rows]: any = await pool.query("SELECT setting_key, setting_value FROM system_settings WHERE setting_key IN ('contact_info', 'social_media')");
 
         let settings: any = {
