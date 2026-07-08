@@ -1,0 +1,78 @@
+import { NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// Relative path to the original generator scripts
+const { SYSTEM_PROMPT, buildUserPrompt } = require('../../../../../../../prd-generator/prdPrompt');
+const { prdAiOutputSchema } = require('../../../../../../../prd-generator/prdSchema');
+const { renderPRDToDocx } = require('../../../../../../../prd-generator/prdDocxRenderer');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // use PRO for PRD
+
+export async function POST(req: Request) {
+    try {
+        const authHeader = req.headers.get('authorization');
+        if (!authHeader) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+        jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+
+        const body = await req.json();
+        const { rawChatHistory, customPrice, projectName, clientName } = body;
+
+        if (!rawChatHistory) {
+            return NextResponse.json({ success: false, error: 'Chat history is required' }, { status: 400 });
+        }
+
+        // 1. Compile User Prompt
+        const baseContext = {
+            projectName: projectName || "Custom Offline Project",
+            clientName: clientName || "Offline Client",
+            projectType: "Custom Development",
+            priority: "Tinggi",
+            rawCustomerRequest: rawChatHistory + `\n\n[ADMIN NOTE: HARGA KESEPAKATAN FINAL RP ${customPrice || 'Silakan diisi di dokumen'}]`
+        };
+
+        const userPrompt = buildUserPrompt(baseContext);
+
+        // 2. Setup Gemini Generation Config with Schema
+        const generationConfig = {
+            temperature: 0.2, // low temp for consistency
+            responseMimeType: "application/json",
+            responseSchema: prdAiOutputSchema,
+        };
+
+        // 3. Call AI
+        const result = await model.generateContent({
+            contents: [
+                { role: "user", parts: [{ text: userPrompt }] }
+            ],
+            systemInstruction: { role: 'system', parts: [{ text: SYSTEM_PROMPT }] },
+            generationConfig
+        });
+
+        const jsonResp = result.response.text();
+        const prdData = JSON.parse(jsonResp);
+
+        // Map Admin Inputs directly into the AI output before rendering
+        prdData.projectName = baseContext.projectName;
+        prdData.clientName = baseContext.clientName;
+        prdData.prdId = `PRD-CUSTOM-${Date.now()}`;
+
+        // Ensure Finance section holds the custom price if the AI didn't catch it
+        if (!prdData.crossFunctionalOperations) prdData.crossFunctionalOperations = {};
+        if (!prdData.crossFunctionalOperations.finance) prdData.crossFunctionalOperations.finance = {};
+        prdData.crossFunctionalOperations.finance.budgetEstimateNotes = `Harga Kesepakatan Final: Rp ${customPrice || 'TBA'} (ditambahkan manual oleh Admin). ` + (prdData.crossFunctionalOperations.finance.budgetEstimateNotes || '');
+
+        // 4. Render DOCX Buffer
+        const docxBuffer = await renderPRDToDocx(prdData);
+
+        // 5. Build standard Base64 response
+        const base64Docx = docxBuffer.toString('base64');
+        return NextResponse.json({ success: true, fileName: `${prdData.prdId}.docx`, base64: base64Docx });
+
+    } catch (e: any) {
+        console.error("PRD Generator Error:", e);
+        return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    }
+}
