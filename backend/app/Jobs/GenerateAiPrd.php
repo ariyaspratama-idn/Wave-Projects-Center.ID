@@ -48,7 +48,7 @@ class GenerateAiPrd implements ShouldQueue
         } catch (Exception $e) {
             // Fallback AI: Gemini
             try {
-                $response = Prism::using('gemini', 'gemini-1.5-pro')
+                $response = Prism::using('gemini', 'gemini-2.5-pro')
                     ->generateText()
                     ->withSystemMessage($systemPrompt)
                     ->withPrompt($chatHistory)();
