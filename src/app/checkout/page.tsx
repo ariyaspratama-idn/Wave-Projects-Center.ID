@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 export default function CheckoutPage() {
     const [PACKAGES, setPACKAGES] = useState<any[]>([]);
     const [loadingPkgs, setLoadingPkgs] = useState(true);
+    const [isLocked, setIsLocked] = useState(false);
 
     useEffect(() => {
         fetch("/api/v1/packages")
@@ -17,9 +18,15 @@ export default function CheckoutPage() {
                     // Check if package_id was passed from AI Chat CTA
                     const query = new URLSearchParams(window.location.search);
                     const queryPkgId = parseInt(query.get("package_id") || "0");
+                    const hasChatSession = query.has("chat_session");
                     const matchedPkg = data.data.find((p: any) => p.id === queryPkgId);
 
-                    setForm(prev => ({ ...prev, package_id: matchedPkg ? matchedPkg.id : data.data[0].id }));
+                    if (matchedPkg) {
+                        if (hasChatSession) setIsLocked(true);
+                        setForm(prev => ({ ...prev, package_id: matchedPkg.id }));
+                    } else {
+                        setForm(prev => ({ ...prev, package_id: data.data[0].id }));
+                    }
                 }
                 setLoadingPkgs(false);
             })
@@ -254,11 +261,14 @@ export default function CheckoutPage() {
                             <button
                                 type="button"
                                 key={p.id}
+                                disabled={isLocked && form.package_id !== p.id}
                                 onClick={() => setForm({ ...form, package_id: p.id })}
                                 className={`rounded-xl p-4 text-left transition-all text-sm ${form.package_id === p.id
                                     ? "bg-primary/20 border border-primary/50"
-                                    : "bg-white/5 border border-white/10 hover:border-white/20"
-                                    }`}
+                                    : isLocked
+                                        ? "bg-[#0a0f1e]/50 border border-white/5 opacity-50 cursor-not-allowed hidden sm:block"
+                                        : "bg-white/5 border border-white/10 hover:border-white/20"
+                                    } ${isLocked && form.package_id !== p.id ? 'hidden sm:block' : ''}`}
                             >
                                 <span className="font-semibold block">{p.name}</span>
                                 <span className="text-xs text-gray-400 mt-1 block">
