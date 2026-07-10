@@ -34,6 +34,11 @@ export default function ChatPage() {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    // Ensure session starts fresh when they refresh the browser, since the UI visual state also starts fresh
+    useEffect(() => {
+        localStorage.removeItem("wave_chat_session");
+    }, []);
+
     async function handleSend(text?: string) {
         const msg = text || input;
         if (!msg.trim()) return;
