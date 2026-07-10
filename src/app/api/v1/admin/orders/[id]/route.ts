@@ -32,7 +32,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         const [deployments]: any = await pool.query("SELECT * FROM project_deployments WHERE order_id = ? ORDER BY created_at DESC", [orderId]);
 
         // Fetch Developers for Assignment
-        const [developers]: any = await pool.query("SELECT id, name, github_username FROM users WHERE role_id = 2");
+        const [developers]: any = await pool.query(`
+            SELECT u.id, u.name, u.github_username 
+            FROM users u 
+            INNER JOIN user_roles ur ON ur.user_id = u.id 
+            WHERE ur.role_id = 2
+        `);
+
+        // Fetch Attachments (Payment Proofs)
+        const [attachments]: any = await pool.query("SELECT * FROM attachments WHERE order_id = ? ORDER BY created_at DESC", [orderId]);
 
         return NextResponse.json({
             success: true,
@@ -41,7 +49,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
                 brief: briefs[0] || null,
                 kanban: tasks,
                 deployments: deployments,
-                developers: developers
+                developers: developers,
+                attachments: attachments
             }
         });
 

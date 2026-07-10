@@ -90,6 +90,19 @@ export async function POST(req: Request) {
             [orderId, status, notes || 'Updated via ERP Dashboard']
         );
 
+        // 3. AUTO-PILOT AI Hook (Generate PRD/Kanban automatically on payment verification)
+        if (status === 'Down Payment') {
+            try {
+                const baseUrl = req.url.split('/api/')[0];
+                fetch(`${baseUrl}/api/v1/admin/orders/${orderId}/kanban-ai`, {
+                    method: 'POST',
+                    headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' }
+                }).catch(e => console.error("AutoPilot Engine Error (non-blocking):", e));
+            } catch (err) {
+                console.error("AutoPilot dispatcher error:", err);
+            }
+        }
+
         // 3. Brevo Auto-Email Trigger (fire & forget for key milestones)
         if (STATUS_EMAIL_MAP[status]) {
             try {

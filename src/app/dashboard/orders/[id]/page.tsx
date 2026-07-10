@@ -69,6 +69,16 @@ export default function OrderExecutiveDetail() {
                 <div>
                     <h1 className="text-3xl font-extrabold gradient-text">Executive Dashboard: #{orderId.padStart(4, '0')}</h1>
                     <p className="text-sm text-gray-400 mt-2">Klien: {data.order.client_name} | Paket: {data.order.package_name}</p>
+
+                    {data.attachments && data.attachments.length > 0 && (
+                        <div className="mt-3 flex gap-2">
+                            {data.attachments.map((att: any) => (
+                                <a key={att.id} href={att.secure_url} target="_blank" className="text-xs bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-lg border border-blue-500/40 hover:bg-blue-500/30 flex items-center gap-1 transition-all">
+                                    📎 Bukti Pembayaran ({new Date(att.created_at).toLocaleDateString()})
+                                </a>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <div className="flex gap-2 text-right">
                     <div className="flex flex-col text-sm border border-white/10 p-2 rounded-xl bg-white/5">
