@@ -54,11 +54,12 @@ export async function POST(req: Request) {
             });
         }
 
+        let activeToken = session_token;
         if (!sessionId) {
-            const newToken = session_token || `CHAT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            activeToken = session_token || `CHAT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             const [result]: any = await pool.query(
                 "INSERT INTO chat_sessions (session_token, customer_name) VALUES (?, ?)",
-                [newToken, customer_name || 'Guest']
+                [activeToken, customer_name || 'Guest']
             );
             sessionId = result.insertId;
         }
@@ -185,7 +186,7 @@ export async function POST(req: Request) {
         return NextResponse.json({
             success: true,
             data: {
-                session_token: session_token || `CHAT-${sessionId}`, // Give back token if it was new
+                session_token: activeToken, // Accurately return the token stored in DB
                 reply: aiText
             }
         });
