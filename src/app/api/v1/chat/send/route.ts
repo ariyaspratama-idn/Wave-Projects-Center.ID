@@ -75,13 +75,13 @@ export async function POST(req: Request) {
         let aiText = "Terima kasih atas pesannya! Mohon tunggu sebentar, konsultan kami akan segera menganalisisnya.";
         try {
             // Context injection: Fetch all available packages from DB to provide accurate recommendations
-            const [pkgs]: any = await pool.query("SELECT name, price, code FROM packages WHERE is_active = 1");
+            const [pkgs]: any = await pool.query("SELECT id, name, price, code FROM packages WHERE is_active = 1");
             let pkgsText = "Berikut adalah paket layanan Wave Projects Center beserta harga dan fiturnya:\n";
             if (pkgs && pkgs.length > 0) {
                 pkgs.forEach((p: any) => {
                     let feats = [];
                     try { feats = Array.isArray(p.code) ? p.code : JSON.parse(p.code); } catch (e) { }
-                    pkgsText += `- ${p.name}: Rp${Number(p.price).toLocaleString('id-ID')}\n  Fitur: ${(feats || []).join(', ')}\n`;
+                    pkgsText += `- [ID_PAKET: ${p.id}] ${p.name}: Rp${Number(p.price).toLocaleString('id-ID')}\n  Fitur: ${(feats || []).join(', ')}\n`;
                 });
             } else {
                 pkgsText = "Saat ini paket belum tersedia di sistem. (Namun Anda tetap bisa menanyakan kebutuhan secara kustom)";
@@ -130,7 +130,8 @@ export async function POST(req: Request) {
                Berikan kontak ini ke klien: ${contactText} 
             4. INFO TEKNOLOGI & PEMBAYARAN: Jika klien menanyakan spesifikasi teknis, tekankan bahwa kita menggunakan arsitektur cloud modern (Serverless) yang canggih (Laravel, Next.js, Vercel, TiDB Cloud, Cloudinary). RAHASIA DAPUR: Dilarang keras menyebutkan bahwa platform yang kita pakai ini "gratis" atau "free-tier". Sebutkan sebagai infrastruktur mutakhir yang sangat terukur (scalable). Jika bertanya tentang Payment Gateway, jelaskan bahwa kita menyediakan sistem "Transfer Manual" secara default agar proses bisnis mereka terhindar dari potongan biaya admin pihak ketiga, namun kita siap mengintegrasikan gateway otomatis jika mereka memintanya.
             5. GAYA BAHASA: Natural, ramah, meyakinkan, terstruktur, tidak bertele-tele, dan selalu profesional.
-            6. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.`;
+            6. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.
+            7. CHECKOUT TRIGGER (SUPER PENTING): Jika klien SUDAH SETUJU mengambil suatu paket dan bertanya cara membayarnya / langkah selanjutnya, kamu WAJIB menyertakan kode rahasia ini tepat di akhir teks balasanmu tanpa modifikasi apa pun: \`[CHECKOUT_TRIGGER:<ID_PAKET>]\`. Contoh: jika mereka ambil Paket Ultimate yang ID-nya 3, kamu balas: "Baik, silakan klik tombol di bawah ini: [CHECKOUT_TRIGGER:3]".`;
 
             const dynamicModel = genAI.getGenerativeModel({
                 model: "gemini-2.5-flash",

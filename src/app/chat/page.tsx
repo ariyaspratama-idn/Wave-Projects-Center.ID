@@ -98,18 +98,34 @@ export default function ChatPage() {
 
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4 max-w-3xl w-full mx-auto">
-                {messages.map((m, i) => (
-                    <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                        <div
-                            className={`max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed ${m.role === "user"
-                                ? "bg-primary text-white rounded-br-md"
-                                : "glass text-gray-200 rounded-bl-md"
-                                }`}
-                        >
-                            {m.content}
+                {messages.map((m, i) => {
+                    const hasTrigger = m.content.match(/\[CHECKOUT_TRIGGER:(\d+)\]/);
+                    let displayContent = m.content;
+                    if (hasTrigger) {
+                        displayContent = m.content.replace(hasTrigger[0], "");
+                    }
+
+                    return (
+                        <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                            <div
+                                className={`max-w-[85%] rounded-2xl px-5 py-3 text-sm leading-relaxed flex flex-col gap-3 ${m.role === "user"
+                                    ? "bg-primary text-white rounded-br-md"
+                                    : "glass text-gray-200 rounded-bl-md"
+                                    }`}
+                            >
+                                <div className="whitespace-pre-wrap">{displayContent}</div>
+                                {hasTrigger && (
+                                    <Link
+                                        href={`/checkout?package_id=${hasTrigger[1]}`}
+                                        className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-4 rounded-xl text-center transition-all glow-blue mt-2 border border-blue-400/50"
+                                    >
+                                        💳 Buat Pesanan & Bayar Sekarang
+                                    </Link>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
 
                 {loading && (
                     <div className="flex justify-start">

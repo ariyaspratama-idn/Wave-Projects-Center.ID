@@ -13,7 +13,13 @@ export default function CheckoutPage() {
             .then(data => {
                 if (data.success && data.data && data.data.length > 0) {
                     setPACKAGES(data.data);
-                    setForm(prev => ({ ...prev, package_id: data.data[0].id }));
+
+                    // Check if package_id was passed from AI Chat CTA
+                    const query = new URLSearchParams(window.location.search);
+                    const queryPkgId = parseInt(query.get("package_id") || "0");
+                    const matchedPkg = data.data.find((p: any) => p.id === queryPkgId);
+
+                    setForm(prev => ({ ...prev, package_id: matchedPkg ? matchedPkg.id : data.data[0].id }));
                 }
                 setLoadingPkgs(false);
             })
