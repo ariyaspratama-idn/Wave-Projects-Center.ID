@@ -147,7 +147,10 @@ export default function CheckoutPage() {
                 body: formData,
             });
 
-            if (!uploadRes.ok) throw new Error("Gagal mengunggah file ke Cloudinary");
+            if (!uploadRes.ok) {
+                const errData = await uploadRes.json();
+                throw new Error(errData.error?.message || "Gagal mengunggah file ke Cloudinary");
+            }
 
             const uploadData = await uploadRes.json();
 
