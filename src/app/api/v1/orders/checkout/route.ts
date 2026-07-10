@@ -69,9 +69,9 @@ Jika menolak, gunakan format teks AWALAN: "REJECT: <pesan ramah Anda di sini>"`;
             const [sessionRows]: any = await pool.query("SELECT id FROM chat_sessions WHERE session_token = ?", [body.chat_session]);
             if (sessionRows.length > 0) {
                 const sessionId = sessionRows[0].id;
-                const [chatRows]: any = await pool.query("SELECT sender, content FROM chat_messages WHERE chat_session_id = ? ORDER BY id ASC", [sessionId]);
+                const [chatRows]: any = await pool.query("SELECT role, content FROM chat_messages WHERE chat_session_id = ? ORDER BY id ASC", [sessionId]);
                 if (chatRows.length > 0) {
-                    const mappedChat = chatRows.map((m: any) => `${m.sender === 'customer' ? 'Klien' : 'AI Consultant'}: ${m.content}`).join('\n\n');
+                    const mappedChat = chatRows.map((m: any) => `${m.role === 'customer' || m.role === 'user' ? 'Klien' : 'AI Consultant'}: ${m.content}`).join('\n\n');
                     chatHistoryText += `\n\n=== RIWAYAT OBROLAN PRA-PEMESANAN ===\n${mappedChat}`;
                 }
             }
@@ -119,6 +119,6 @@ Jika menolak, gunakan format teks AWALAN: "REJECT: <pesan ramah Anda di sini>"`;
             }
         });
     } catch (e: any) {
-        return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+        return NextResponse.json({ success: false, message: e.message, error: e.message }, { status: 500 });
     }
 }
