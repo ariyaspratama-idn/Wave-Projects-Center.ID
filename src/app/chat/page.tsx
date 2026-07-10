@@ -116,7 +116,7 @@ export default function ChatPage() {
                                 <div className="whitespace-pre-wrap">{displayContent}</div>
                                 {hasTrigger && (
                                     <Link
-                                        href={`/checkout?package_id=${hasTrigger[1]}`}
+                                        href={`/checkout?package_id=${hasTrigger[1]}&chat_session=${typeof window !== 'undefined' ? localStorage.getItem('wave_chat_session') : ''}`}
                                         className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-4 rounded-xl text-center transition-all glow-blue mt-2 border border-blue-400/50"
                                     >
                                         💳 Buat Pesanan & Bayar Sekarang
