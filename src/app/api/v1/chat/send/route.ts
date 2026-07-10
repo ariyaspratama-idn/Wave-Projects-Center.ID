@@ -142,11 +142,28 @@ export async function POST(req: Request) {
             }));
 
             const chatSession = dynamicModel.startChat({ history: chatHistory });
-            const result = await chatSession.sendMessage(message);
-            aiText = result.response.text();
 
-        } catch (genErr: any) {
-            console.error("Gemini fallback triggered", genErr);
+            let attempts = 0;
+            let success = false;
+
+            while (attempts < 3 && !success) {
+                try {
+                    const result = await chatSession.sendMessage(message);
+                    aiText = result.response.text();
+                    success = true;
+                } catch (genErr: any) {
+                    attempts++;
+                    console.error(`Gemini request failed (Attempt ${attempts}):`, genErr.message);
+                    if (attempts >= 3) {
+                        aiText = `Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
+                    } else {
+                        // Wait 1.5 seconds before retrying
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                    }
+                }
+            }
+        } catch (outerGenErr: any) {
+            console.error("Outer Gemini processing failed:", outerGenErr);
             aiText = `Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
         }
 
