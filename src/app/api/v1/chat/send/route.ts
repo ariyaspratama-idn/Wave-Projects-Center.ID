@@ -136,19 +136,18 @@ export async function POST(req: Request) {
                 systemInstruction: systemPrompt
             });
 
-            const chatHistory = chatHistoryDb.map((msg: any) => ({
-                role: msg.sender === 'customer' ? 'user' : 'model',
-                parts: [{ text: msg.content }]
-            }));
+            const chatHistoryString = chatHistoryDb.map((msg: any) =>
+                `${msg.sender === 'customer' ? 'Klien' : 'Kamu (Nova)'}: ${msg.content}`
+            ).join('\n\n');
 
-            const chatSession = dynamicModel.startChat({ history: chatHistory });
+            const fullPrompt = `${systemPrompt}\n\n[Riwayat Percakapan Sebelumnya:]\n${chatHistoryString}\n\n[Pesan Klien Saat Ini:]\n${message}`;
 
             let attempts = 0;
             let success = false;
 
             while (attempts < 3 && !success) {
                 try {
-                    const result = await chatSession.sendMessage(message);
+                    const result = await dynamicModel.generateContent(fullPrompt);
                     aiText = result.response.text();
                     success = true;
                 } catch (genErr: any) {
