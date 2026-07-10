@@ -5,12 +5,16 @@ export const revalidate = 0; // Disable static caching so changes appear instant
 
 export async function GET() {
     try {
-        const [rows]: any = await pool.query('SELECT setting_key, setting_value FROM agency_settings');
+        const [rows]: any = await pool.query('SELECT setting_key, setting_value FROM system_settings');
 
         // Convert array of pairs to a single object map
-        const settingsMap: Record<string, string> = {};
+        const settingsMap: Record<string, any> = {};
         for (let r of rows) {
-            settingsMap[r.setting_key] = r.setting_value;
+            try {
+                settingsMap[r.setting_key] = typeof r.setting_value === 'string' ? JSON.parse(r.setting_value) : r.setting_value;
+            } catch (e) {
+                settingsMap[r.setting_key] = r.setting_value;
+            }
         }
 
         return NextResponse.json({ success: true, data: settingsMap });

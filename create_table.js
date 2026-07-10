@@ -7,28 +7,52 @@ async function run() {
         user: "2qbhFjoVxRDEvRF.root",
         password: "ZKCQrJAeQz155qIc",
         database: "test",
-        ssl: {
-            minVersion: 'TLSv1.2',
-            rejectUnauthorized: true
-        }
+        ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true }
     });
 
     try {
         await pool.query(`
-            CREATE TABLE IF NOT EXISTS \`attachments\` (
+            CREATE TABLE IF NOT EXISTS \`projects\` (
                 \`id\` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                \`uuid\` CHAR(36) UNIQUE,
                 \`order_id\` BIGINT UNSIGNED NOT NULL,
-                \`cloudinary_public_id\` VARCHAR(255) NOT NULL,
-                \`file_name\` VARCHAR(255) NOT NULL,
-                \`file_size\` BIGINT,
-                \`file_type\` VARCHAR(50),
-                \`secure_url\` TEXT NOT NULL,
-                INDEX \`idx_order\` (\`order_id\`),
-                INDEX \`idx_file_type\` (\`file_type\`),
+                \`client_id\` BIGINT UNSIGNED,
+                \`developer_id\` BIGINT UNSIGNED,
+                \`project_name\` VARCHAR(255),
+                \`domain_url\` VARCHAR(255),
+                \`repository_url\` VARCHAR(255),
+                \`status\` VARCHAR(50) DEFAULT 'briefing',
+                \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                \`updated_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (\`order_id\`) REFERENCES \`orders\`(\`id\`) ON DELETE CASCADE
             )
         `);
-        console.log("Table 'attachments' created successfully!");
+        console.log("Table projects created");
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS \`order_status_logs\` (
+                \`id\` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                \`order_id\` BIGINT UNSIGNED NOT NULL,
+                \`status\` VARCHAR(100) NOT NULL,
+                \`notes\` TEXT,
+                \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (\`order_id\`) REFERENCES \`orders\`(\`id\`) ON DELETE CASCADE
+            )
+        `);
+        console.log("Table order_status_logs created");
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS \`internal_project_notes\` (
+                \`id\` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                \`order_id\` BIGINT UNSIGNED NOT NULL,
+                \`user_id\` BIGINT UNSIGNED NOT NULL,
+                \`note\` TEXT NOT NULL,
+                \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (\`order_id\`) REFERENCES \`orders\`(\`id\`) ON DELETE CASCADE
+            )
+        `);
+        console.log("Table internal_project_notes created");
+
     } catch (err) {
         console.error("Error creating table:");
         console.error(err.message);

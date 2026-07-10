@@ -106,6 +106,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     <Link href="/dashboard/portfolios" className="block text-gray-400 hover:text-white pl-8 pr-4 py-2 rounded-lg transition-all text-sm">
                                         Data Portfolio
                                     </Link>
+                                    <Link href="/dashboard/ai" className="block text-blue-400 hover:text-blue-300 pl-8 pr-4 py-2 rounded-lg transition-all text-sm font-semibold">
+                                        AI Training Center
+                                    </Link>
                                 </div>
 
                                 <Link href="/dashboard/settings" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all text-sm font-medium mt-4 border-t border-white/5 pt-4">
