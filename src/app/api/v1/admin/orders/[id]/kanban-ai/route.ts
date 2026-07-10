@@ -13,9 +13,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
         const orderId = Number(params.id);
 
-        // Fetch client brief
+        // Fetch client brief & order details
         const [briefs]: any = await pool.query("SELECT * FROM client_briefs WHERE order_id = ?", [orderId]);
         if (briefs.length === 0) return NextResponse.json({ success: false, error: 'Brief belum diisi klien' }, { status: 400 });
+
+        const [orders]: any = await pool.query("SELECT github_url FROM orders WHERE id = ?", [orderId]);
+        const order = orders.length > 0 ? orders[0] : { github_url: '' };
 
         const brief = briefs[0];
 
@@ -24,9 +27,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         You are an expert System Architect. Review the following Client Brief and extract a comprehensive technical Kanban Board checklist.
         Break down the project into tiny, actionable technical tasks for a Solo-Developer.
 
-        CLIENT BRIEF:
+        CLIENT BRIEF (Including Raw Chat Needs):
         Project Name: ${brief.project_name}
-        Attributes: ${brief.core_attributes}
+        Attributes & Chat History: ${brief.core_attributes}
+        GitHub Constraints / Existing Repo (Evaluate if applicable): ${order.github_url || 'None'}
 
         OUTPUT FORMAT:
         Output ONLY a raw, minified JSON array of object tasks. No markdown, no prefixes, no explanations. 
