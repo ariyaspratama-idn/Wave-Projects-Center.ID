@@ -48,7 +48,7 @@ export async function POST(req: Request) {
             return NextResponse.json({
                 success: true,
                 data: {
-                    session_token: session_token,
+                    session_token: `CHAT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                     reply: "Wah, obrolan kita seru banget nih! Biar rancangan sistem kamu ini bisa langsung dieksekusi jadi PRD resmi dan masuk ke tahap penawaran harga, yuk langsung lanjutin obrolan ini via WhatsApp bareng mentor software kami di sini: https://wa.me/085156618435"
                 }
             });
