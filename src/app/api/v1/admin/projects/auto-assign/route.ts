@@ -17,6 +17,18 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: 'orderId is required' }, { status: 400 });
         }
 
+        // Migration for audit_logs
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS audit_logs (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                action VARCHAR(100) NOT NULL,
+                entity_type VARCHAR(100) NOT NULL,
+                entity_id INT NOT NULL,
+                new_value TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
         // LEAST ACTIVE WORKLOAD ALGORITHM
         // 1. Find all active users connected to the 'Developer' role.
         // 2. Count their active projects (status not live/maintenance).

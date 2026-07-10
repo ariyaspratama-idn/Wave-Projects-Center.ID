@@ -5,13 +5,14 @@ import pool from '@/lib/db';
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const authHeader = req.headers.get('authorization');
         if (!authHeader) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
 
-        const orderId = Number(params.id);
+        const { id } = await params;
+        const orderId = Number(id);
 
         // Fetch client brief & order details
         const [briefs]: any = await pool.query("SELECT * FROM client_briefs WHERE order_id = ?", [orderId]);
@@ -88,9 +89,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const orderId = Number(params.id);
+        const { id } = await params;
+        const orderId = Number(id);
         const [tasks]: any = await pool.query("SELECT * FROM kanban_tasks WHERE order_id = ? ORDER BY id ASC", [orderId]);
         return NextResponse.json({ success: true, data: tasks });
     } catch (e: any) {
@@ -98,11 +100,12 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const body = await req.json();
         const { taskId, status } = body;
-        await pool.query("UPDATE kanban_tasks SET status = ? WHERE id = ? AND order_id = ?", [status, taskId, params.id]);
+        const { id } = await params;
+        await pool.query("UPDATE kanban_tasks SET status = ? WHERE id = ? AND order_id = ?", [status, taskId, id]);
         return NextResponse.json({ success: true });
     } catch (e: any) {
         return NextResponse.json({ success: false, error: e.message }, { status: 500 });

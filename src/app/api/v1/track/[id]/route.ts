@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const orderId = Number(params.id);
+        const { id } = await params;
+        const orderId = Number(id);
         if (!orderId || isNaN(orderId)) return NextResponse.json({ success: false, error: 'Invalid Token' }, { status: 400 });
 
         const [orders]: any = await pool.query(`
