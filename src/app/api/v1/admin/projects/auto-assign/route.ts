@@ -47,10 +47,12 @@ export async function POST(req: Request) {
         const selectedDev = devs[0];
 
         // Assign the project using order_id
-        await pool.query(
-            "UPDATE projects SET developer_id = ? WHERE order_id = ?",
-            [selectedDev.developer_id, orderId]
-        );
+        // Upsert the project assigning it to developer
+        await pool.query(`
+            INSERT INTO projects (order_id, developer_id, status) 
+            VALUES (?, ?, 'New Lead') 
+            ON DUPLICATE KEY UPDATE developer_id = ?
+        `, [orderId, selectedDev.developer_id, selectedDev.developer_id]);
 
         // Audit Log entry (Tracking Auto-Balancer assignment)
         await pool.query(
