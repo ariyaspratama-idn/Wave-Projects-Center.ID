@@ -9,14 +9,49 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { session_token, message, customer_name, customer_email } = body;
+        const { session_token, message, customer_name, customer_email, turnstile_token } = body;
+
+        // Turnstile Validation
+        if (process.env.TURNSTILE_SECRET) {
+            if (!turnstile_token) {
+                return NextResponse.json({ success: false, error: "Captcha verification required" }, { status: 403 });
+            }
+            const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ secret: process.env.TURNSTILE_SECRET, response: turnstile_token })
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyData.success) {
+                return NextResponse.json({ success: false, error: "Captcha verification failed" }, { status: 403 });
+            }
+        }
 
         let sessionId;
+        let messageCount = 0;
+        let chatHistoryDb: any[] = [];
 
         // 1. Check or Create session
         if (session_token) {
             const [rows]: any = await pool.query('SELECT id FROM chat_sessions WHERE session_token = ? LIMIT 1', [session_token]);
-            if (rows.length > 0) sessionId = rows[0].id;
+            if (rows.length > 0) {
+                sessionId = rows[0].id;
+                const [countRows]: any = await pool.query('SELECT COUNT(id) as count FROM chat_messages WHERE chat_session_id = ? AND sender = "customer"', [sessionId]);
+                messageCount = countRows[0].count;
+
+                const [historyRows]: any = await pool.query('SELECT sender, content FROM chat_messages WHERE chat_session_id = ? ORDER BY id ASC LIMIT 30', [sessionId]);
+                chatHistoryDb = historyRows;
+            }
+        }
+
+        if (messageCount >= 20) {
+            return NextResponse.json({
+                success: true,
+                data: {
+                    session_token: session_token,
+                    reply: "Wah, obrolan kita seru banget nih! Biar rancangan sistem kamu ini bisa langsung dieksekusi jadi PRD resmi dan masuk ke tahap penawaran harga, yuk langsung lanjutin obrolan ini via WhatsApp bareng mentor software kami di sini: https://wa.me/085156618435"
+                }
+            });
         }
 
         if (!sessionId) {
@@ -75,7 +110,7 @@ export async function POST(req: Request) {
             } catch (e) { }
 
 
-            const prompt = `Anda adalah AI Consultant bernama "Nova" di Wave Projects Center.ID. 
+            const systemPrompt = `Anda adalah AI Consultant bernama "Nova" di Wave Projects Center.ID. 
             Misi & Slogan Perusahaan: "Bangun Software Impian Anda. Platform all-in-one untuk konsultasi AI, pemesanan, pembayaran, hingga serah terima proyek web & aplikasi. Satu ekosistem. Tanpa ribet."
             
             Tugas Utama Anda: 
@@ -87,7 +122,6 @@ export async function POST(req: Request) {
             ${pkgsText}
             ${ragText}
 
-            
             ATURAN KETAT UNTUK NOVA (WAJIB DIPATUHI):
             1. ANTI-HALUSINASI: Jangan pernah mengarang, merekomendasikan, atau menjanjikan paket, fitur, maupun harga di luar "Daftar Layanan/Paket" di atas.
             2. JANGAN MUDAH MENYERAH: Jika klien bertanya tentang pembuatan web/aplikasi, analisis kebutuhan mereka, cocokkan dengan paket terbaik yang tersedia, dan tawarkan paket tersebut beserta harganya.
@@ -95,17 +129,35 @@ export async function POST(req: Request) {
                Berikan kontak ini ke klien: ${contactText} 
             4. INFO TEKNOLOGI & PEMBAYARAN: Jika klien menanyakan spesifikasi teknis, tekankan bahwa kita menggunakan arsitektur cloud modern (Serverless) yang canggih (Laravel, Next.js, Vercel, TiDB Cloud, Cloudinary). RAHASIA DAPUR: Dilarang keras menyebutkan bahwa platform yang kita pakai ini "gratis" atau "free-tier". Sebutkan sebagai infrastruktur mutakhir yang sangat terukur (scalable). Jika bertanya tentang Payment Gateway, jelaskan bahwa kita menyediakan sistem "Transfer Manual" secara default agar proses bisnis mereka terhindar dari potongan biaya admin pihak ketiga, namun kita siap mengintegrasikan gateway otomatis jika mereka memintanya.
             5. GAYA BAHASA: Natural, ramah, meyakinkan, terstruktur, tidak bertele-tele, dan selalu profesional.
-            6. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.
-            
-            Pesan customer: "${message}" 
-            Jawaban Anda:`;
+            6. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.`;
 
-            const result = await model.generateContent(prompt);
+            const dynamicModel = genAI.getGenerativeModel({
+                model: "gemini-2.5-flash",
+                systemInstruction: systemPrompt
+            });
+
+            const chatHistory = chatHistoryDb.map((msg: any) => ({
+                role: msg.sender === 'customer' ? 'user' : 'model',
+                parts: [{ text: msg.content }]
+            }));
+
+            const chatSession = dynamicModel.startChat({ history: chatHistory });
+            const result = await chatSession.sendMessage(message);
             aiText = result.response.text();
 
         } catch (genErr: any) {
             console.error("Gemini fallback triggered", genErr);
             aiText = `Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
+        }
+
+        // WhatsApp Admin Alert Logic
+        const lowerPrompt = message.toLowerCase();
+        const lowerResponse = aiText.toLowerCase();
+        if (lowerPrompt.includes("ultimate") || lowerResponse.includes("ultimate") || lowerPrompt.includes("custom") || lowerResponse.includes("custom")) {
+            // Import dinamis agar tidak memperlambat start routing
+            import('@/lib/whatsapp').then(({ sendAdminAlert }) => {
+                sendAdminAlert(customer_name || 'Guest', 'Paket Ultimate / Custom', sessionId.toString()).catch(e => console.error(e));
+            }).catch(e => console.error("Gagal load whatsapp lib", e));
         }
 
         // 4. Save AI Response

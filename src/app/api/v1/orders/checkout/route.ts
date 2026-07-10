@@ -8,10 +8,11 @@ export async function POST(req: Request) {
 
         if (!package_id) return NextResponse.json({ success: false, message: 'Package ID required' }, { status: 400 });
 
-        const [pkgs]: any = await pool.query('SELECT price FROM packages WHERE id = ?', [package_id]);
+        const [pkgs]: any = await pool.query('SELECT name, price FROM packages WHERE id = ?', [package_id]);
         if (!pkgs.length) return NextResponse.json({ success: false, message: 'Invalid package' }, { status: 400 });
 
         const price = pkgs[0].price;
+        const packageName = pkgs[0].name;
         const totalAmount = payment_choice === 'DP_30' ? price * 0.3 : price;
 
         const orderNumber = `WAVE-${Date.now()}`;
@@ -42,6 +43,12 @@ export async function POST(req: Request) {
                     contents: { en: `Klien ${client_name || 'Tanpa Nama'} (${client_whatsapp}) telah memesan Paket #${package_id}.` }
                 })
             }).catch(() => null);
+        }
+
+        if (client_whatsapp) {
+            import('@/lib/whatsapp').then(({ sendClientFollowUp }) => {
+                sendClientFollowUp(client_whatsapp, client_name || client_whatsapp, packageName, orderNumber).catch(e => console.error(e));
+            }).catch(e => console.error('Gagal meload whatsapp service', e));
         }
 
         return NextResponse.json({

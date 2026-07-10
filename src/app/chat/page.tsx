@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { Turnstile } from '@marsidev/react-turnstile';
 
 interface Message {
     role: "user" | "ai";
@@ -25,7 +26,9 @@ export default function ChatPage() {
     ]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState<string>("");
     const bottomRef = useRef<HTMLDivElement>(null);
+    const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,7 +49,8 @@ export default function ChatPage() {
                 body: JSON.stringify({
                     message: msg,
                     session_token: token,
-                    customer_name: "Public Guest (Web)"
+                    customer_name: "Public Guest (Web)",
+                    turnstile_token: turnstileToken
                 })
             });
             const data = await res.json();
@@ -65,6 +69,15 @@ export default function ChatPage() {
 
     return (
         <div className="min-h-screen flex flex-col bg-[#0a0f1e]">
+            {siteKey && (
+                <div className="hidden">
+                    <Turnstile
+                        siteKey={siteKey}
+                        options={{ size: "invisible" }}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                    />
+                </div>
+            )}
             {/* Header */}
             <header className="glass border-b border-white/5 px-4 py-3 flex items-center gap-3">
                 <Link href="/" className="text-gray-400 hover:text-white transition">
