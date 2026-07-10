@@ -103,10 +103,10 @@ export async function POST(req: Request) {
         if (status === 'Down Payment') {
             try {
                 const baseUrl = req.url.split('/api/')[0];
-                fetch(`${baseUrl}/api/v1/admin/orders/${orderId}/kanban-ai`, {
+                await fetch(`${baseUrl}/api/v1/admin/orders/${orderId}/kanban-ai`, {
                     method: 'POST',
                     headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' }
-                }).catch(e => console.error("AutoPilot Engine Error (non-blocking):", e));
+                });
             } catch (err) {
                 console.error("AutoPilot dispatcher error:", err);
             }
@@ -141,9 +141,8 @@ export async function POST(req: Request) {
                         pkgDetails,
                         orderId
                     );
-                    // Fire & forget — don't let email failure block the status update
-                    sendEmail(order.client_email, order.client_name || 'Klien', `[Wave Projects] ${label}`, html)
-                        .catch(err => console.error('Brevo send error (non-blocking):', err));
+                    // Await it so Vercel doesn't kill the container
+                    await sendEmail(order.client_email, order.client_name || 'Klien', `[Wave Projects] ${label}`, html);
                 }
             } catch (emailErr) {
                 console.error('Email lookup error (non-blocking):', emailErr);

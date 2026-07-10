@@ -2,19 +2,24 @@
 
 import { useEffect, useState } from "react";
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 const STAGES = [
     "New Lead", "Quotation", "Down Payment", "Development",
     "Testing", "Revision", "Final Payment", "Handover", "Maintenance"
 ];
 
-export default function PublicTracker({ params }: { params: { id: string } }) {
+export default function PublicTracker() {
+    const params = useParams();
+    const orderId = params?.id as string;
+
     const [order, setOrder] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        fetch(`/api/v1/track/${params.id}`)
+        if (!orderId) return;
+        fetch(`/api/v1/track/${orderId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -24,7 +29,7 @@ export default function PublicTracker({ params }: { params: { id: string } }) {
                 }
                 setLoading(false);
             });
-    }, [params.id]);
+    }, [orderId]);
 
     if (loading) return <div className="text-center py-20 text-gray-400">Menarik data pelacakan kurir sistem...</div>;
     if (error) return <div className="text-center py-20 text-red-500 font-bold">Error: {error}</div>;

@@ -23,6 +23,7 @@ export default function OrderExecutiveDetail() {
     };
 
     useEffect(() => {
+        if (!orderId) return;
         fetchExecutiveData();
     }, [orderId]);
 

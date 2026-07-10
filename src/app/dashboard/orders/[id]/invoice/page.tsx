@@ -1,11 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useParams } from 'next/navigation';
 
-export default function SimplePrintInvoice({ params }: { params: { id: string } }) {
+export default function SimplePrintInvoice() {
+    const params = useParams();
+    const orderId = params?.id as string;
     const [order, setOrder] = useState<any>(null);
 
     useEffect(() => {
-        fetch(`/api/v1/track/${params.id}`)
+        if (!orderId) return;
+        fetch(`/api/v1/track/${orderId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -14,7 +18,7 @@ export default function SimplePrintInvoice({ params }: { params: { id: string } 
                     setTimeout(() => window.print(), 1000);
                 }
             });
-    }, [params.id]);
+    }, [orderId]);
 
     if (!order) return <p className="p-10 font-sans">Menyiapkan dokumen faktur...</p>;
 
