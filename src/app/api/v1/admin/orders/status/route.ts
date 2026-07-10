@@ -6,7 +6,24 @@ import { sendEmail } from '@/lib/email';
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 
 // Branded email template builder
-function buildEmailTemplate(clientName: string, orderNumber: string, status: string, statusLabel: string, message: string) {
+function buildEmailTemplate(clientName: string, orderNumber: string, status: string, statusLabel: string, message: string, pkgDetails?: any) {
+    let pkgHtml = '';
+    if (pkgDetails && (status === 'Down Payment' || status === 'Development' || status === 'Final Payment' || status === 'Handover')) {
+        const isDp = pkgDetails.paymentChoice === 'DP_30';
+        const dpText = isDp ? '(DP 30%)' : '(Lunas)';
+        pkgHtml = `
+            <div style="background:#1e293b;padding:15px;border-radius:8px;margin-top:20px;border:1px solid #475569;color:#e2e8f0;">
+                <h3 style="margin:0 0 10px;font-size:14px;color:#fff;">Detail Pesanan</h3>
+                <table style="width:100%;font-size:13px;border-collapse:collapse;">
+                    <tr><td style="padding:4px 0;color:#94a3b8;">Paket Dipilih:</td><td style="text-align:right;font-weight:600;color:#fff;">${pkgDetails.packageName}</td></tr>
+                    <tr><td style="padding:4px 0;color:#94a3b8;">Metode Bayar:</td><td style="text-align:right;font-weight:600;color:#fff;">${dpText}</td></tr>
+                    <tr><td style="padding:4px 0;color:#94a3b8;">Total Dibayar:</td><td style="text-align:right;font-weight:600;color:#38bdf8;">Rp ${Number(pkgDetails.totalAmount).toLocaleString('id-ID')}</td></tr>
+                    <tr><td style="padding:4px 0;color:#94a3b8;">Estimasi (SLA):</td><td style="text-align:right;font-weight:600;color:#fff;">14 - 30 Hari Kerja</td></tr>
+                </table>
+            </div>
+        `;
+    }
+
     return `
     <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:auto;background:#0a0f1e;border-radius:16px;overflow:hidden;border:1px solid #1e293b;">
         <div style="background:linear-gradient(135deg,#2563eb,#7c3aed);padding:32px 24px;text-align:center;">
@@ -20,6 +37,7 @@ function buildEmailTemplate(clientName: string, orderNumber: string, status: str
                 <p style="margin:0;font-size:18px;font-weight:bold;color:#60a5fa;">${statusLabel}</p>
             </div>
             <p style="font-size:14px;line-height:1.7;color:#cbd5e1;">${message}</p>
+            ${pkgHtml}
             <hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
             <p style="font-size:11px;color:#64748b;text-align:center;">Email ini dikirim secara otomatis oleh sistem Wave Projects Center.<br/>Jangan membalas email ini. Hubungi kami via WhatsApp jika ada pertanyaan.</p>
         </div>
@@ -76,18 +94,29 @@ export async function POST(req: Request) {
         if (STATUS_EMAIL_MAP[status]) {
             try {
                 const [orders]: any = await pool.query(
-                    "SELECT client_name, client_email, order_number FROM orders WHERE id = ?", [orderId]
+                    `SELECT o.client_name, o.client_email, o.order_number, o.payment_choice, o.total_amount, p.name as package_name 
+                     FROM orders o 
+                     LEFT JOIN packages p ON o.package_id = p.id 
+                     WHERE o.id = ?`,
+                    [orderId]
                 );
                 const order = orders[0];
 
                 if (order?.client_email) {
                     const { label, message } = STATUS_EMAIL_MAP[status];
+                    const pkgDetails = {
+                        packageName: order.package_name || 'Custom Package',
+                        paymentChoice: order.payment_choice,
+                        totalAmount: order.total_amount
+                    };
+
                     const html = buildEmailTemplate(
                         order.client_name || 'Klien',
                         order.order_number || String(orderId),
                         status,
                         label,
-                        message
+                        message,
+                        pkgDetails
                     );
                     // Fire & forget — don't let email failure block the status update
                     sendEmail(order.client_email, order.client_name || 'Klien', `[Wave Projects] ${label}`, html)

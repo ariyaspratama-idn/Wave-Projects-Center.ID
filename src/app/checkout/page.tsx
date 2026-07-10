@@ -45,11 +45,15 @@ export default function CheckoutPage() {
     const [result, setResult] = useState<{
         order_number: string;
         snap_token: string;
+        order_id: number;
     } | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [receiptFile, setReceiptFile] = useState<File | null>(null);
+    const [receiptUploading, setReceiptUploading] = useState(false);
+    const [paymentSubmitted, setPaymentSubmitted] = useState(false);
 
     const selectedPkg = PACKAGES.find((p) => p.id === form.package_id) || PACKAGES[0];
     const totalPayment = selectedPkg ? (form.payment_choice === "DP_30" ? selectedPkg.price * 0.3 : selectedPkg.price) : 0;
@@ -119,14 +123,69 @@ export default function CheckoutPage() {
         }
     }
 
+    async function handleReceiptSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        if (!receiptFile || !result) return;
+        setReceiptUploading(true);
+        setError("");
+
+        try {
+            const sigRes = await fetch("/api/v1/files/signature", { method: "POST" });
+            const sigData = await sigRes.json();
+
+            if (!sigData.success) throw new Error("Gagal mendapatkan signature Cloudinary");
+
+            const formData = new FormData();
+            formData.append("file", receiptFile);
+            formData.append("api_key", sigData.data.api_key);
+            formData.append("timestamp", sigData.data.timestamp);
+            formData.append("signature", sigData.data.signature);
+            formData.append("folder", sigData.data.folder);
+
+            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${sigData.data.cloud_name}/auto/upload`, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!uploadRes.ok) throw new Error("Gagal mengunggah file ke Cloudinary");
+
+            const uploadData = await uploadRes.json();
+
+            const res = await fetch("/api/v1/orders/payment-receipt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    order_id: result.order_id,
+                    receipt_url: uploadData.secure_url,
+                    receipt_public_id: uploadData.public_id
+                }),
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                setPaymentSubmitted(true);
+            } else {
+                setError(data.message || "Terjadi kesalahan saat mengkonfirmasi pembayaran");
+            }
+        } catch (err: any) {
+            setError(err.message || "Gagal mengirim bukti pembayaran");
+        } finally {
+            setReceiptUploading(false);
+        }
+    }
+
     if (result) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[#0a0f1e] px-4">
                 <div className="glass rounded-3xl p-10 max-w-md w-full text-center">
                     <div className="text-5xl mb-4">🎉</div>
-                    <h2 className="text-2xl font-bold mb-2">Pesanan Berhasil!</h2>
+                    <h2 className="text-2xl font-bold mb-2">
+                        {paymentSubmitted ? "Bukti Terkirim!" : "Menunggu Pembayaran"}
+                    </h2>
                     <p className="text-gray-400 text-sm mb-6">
-                        Order Anda telah tercatat dalam sistem kami.
+                        {paymentSubmitted
+                            ? "Bukti pembayaran berhasil diunggah dan sedang diverifikasi oleh Admin."
+                            : "Satu langkah lagi! Silakan transfer dan unggah bukti pembayaran Anda."}
                     </p>
                     <div className="bg-white/5 rounded-xl p-4 text-left space-y-2 mb-6">
                         <div className="flex justify-between text-sm">
@@ -175,17 +234,45 @@ export default function CheckoutPage() {
                                 <span className="font-bold text-white text-sm">ARIYAS PRATAMA RAMADHAN</span>
                             </div>
                         </div>
-                        <p className="text-xs text-yellow-500/90 italic leading-relaxed pt-1">
-                            *PENTING: Jangan lupa screenshot/simpan bukti transfer dan berikan ke CS/Admin Wave Projects beserta Nomor Order Anda via WhatsApp.
-                        </p>
                     </div>
 
-                    <Link
-                        href="/"
-                        className="inline-block bg-primary hover:bg-primary-light text-white font-semibold px-8 py-3 rounded-full transition-all glow-blue text-sm"
-                    >
-                        Kembali ke Beranda
-                    </Link>
+                    {!paymentSubmitted && (
+                        <form onSubmit={handleReceiptSubmit} className="bg-white/5 border border-white/10 rounded-xl p-4 text-left space-y-4 mb-6">
+                            <div>
+                                <label className="block text-xs text-gray-400 mb-1.5 focus:outline-none">Unggah Bukti Transfer / Pembayaran</label>
+                                <input
+                                    type="file"
+                                    required
+                                    accept="image/*"
+                                    onChange={(e) => setReceiptFile(e.target.files ? e.target.files[0] : null)}
+                                    className="w-full bg-[#0a0f1e]/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-400 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer"
+                                />
+                            </div>
+
+                            {error && (
+                                <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                                    {error}
+                                </p>
+                            )}
+
+                            <button
+                                type="submit"
+                                disabled={receiptUploading || !receiptFile}
+                                className="w-full bg-primary hover:bg-primary-light disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-all glow-blue text-sm"
+                            >
+                                {receiptUploading ? "Mengunggah..." : "Konfirmasi Pembayaran"}
+                            </button>
+                        </form>
+                    )}
+
+                    {paymentSubmitted && (
+                        <Link
+                            href="/"
+                            className="inline-block bg-primary hover:bg-primary-light text-white font-semibold px-8 py-3 rounded-full transition-all glow-blue text-sm"
+                        >
+                            Kembali ke Beranda
+                        </Link>
+                    )}
                 </div>
             </div>
         );
