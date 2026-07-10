@@ -13,6 +13,39 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         const { id } = await params;
         const orderId = Number(id);
 
+        // Fail-safe migrations for tables queried here
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS client_briefs (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                order_id INT NOT NULL,
+                project_name VARCHAR(255),
+                core_attributes TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS kanban_tasks (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                order_id INT NOT NULL,
+                task_code VARCHAR(100),
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                status ENUM('TODO', 'DOING', 'DONE') DEFAULT 'TODO',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS project_deployments (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                order_id INT NOT NULL,
+                platform VARCHAR(50),
+                message TEXT,
+                status VARCHAR(50),
+                url VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
         // Fetch Order Data Details
         const [orders]: any = await pool.query(`
             SELECT o.*, u.name as client_name, p.name as package_name 
