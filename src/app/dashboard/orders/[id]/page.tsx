@@ -91,7 +91,7 @@ export default function OrderExecutiveDetail() {
                         >
                             <option value="" className="text-black">-- Pilih Developer --</option>
                             {data.developers?.map((d: any) => (
-                                <option key={d.id} value={d.id} className="text-black">{d.name} (@{d.github_username})</option>
+                                <option key={d.id} value={d.id} className="text-black">{d.name}</option>
                             ))}
                         </select>
                     </div>
