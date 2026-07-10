@@ -6,8 +6,9 @@ import { sendEmail } from '@/lib/email';
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 
 // Branded email template builder
-function buildEmailTemplate(clientName: string, orderNumber: string, status: string, statusLabel: string, message: string, pkgDetails?: any) {
+function buildEmailTemplate(clientName: string, orderNumber: string, status: string, statusLabel: string, message: string, pkgDetails?: any, orderId?: number) {
     let pkgHtml = '';
+    let invoiceAction = '';
     if (pkgDetails && (status === 'Down Payment' || status === 'Development' || status === 'Final Payment' || status === 'Handover')) {
         const isDp = pkgDetails.paymentChoice === 'DP_30';
         const dpText = isDp ? '(DP 30%)' : '(Lunas)';
@@ -22,6 +23,13 @@ function buildEmailTemplate(clientName: string, orderNumber: string, status: str
                 </table>
             </div>
         `;
+        if (orderId) {
+            invoiceAction = `
+            <div style="text-align: center; margin-top: 24px;">
+                <a href="https://wave-projects-center-id.vercel.app/dashboard/orders/${orderId}/invoice" style="background:linear-gradient(135deg,#38bdf8,#2563eb);color:#fff;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:14px;display:inline-block;box-shadow:0 4px 15px rgba(37,99,235,0.3);">📄 Lihat & Cetak Invoice Resmi</a>
+            </div>
+            `;
+        }
     }
 
     return `
@@ -38,6 +46,7 @@ function buildEmailTemplate(clientName: string, orderNumber: string, status: str
             </div>
             <p style="font-size:14px;line-height:1.7;color:#cbd5e1;">${message}</p>
             ${pkgHtml}
+            ${invoiceAction}
             <hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
             <p style="font-size:11px;color:#64748b;text-align:center;">Email ini dikirim secara otomatis oleh sistem Wave Projects Center.<br/>Jangan membalas email ini. Hubungi kami via WhatsApp jika ada pertanyaan.</p>
         </div>
@@ -129,7 +138,8 @@ export async function POST(req: Request) {
                         status,
                         label,
                         message,
-                        pkgDetails
+                        pkgDetails,
+                        orderId
                     );
                     // Fire & forget — don't let email failure block the status update
                     sendEmail(order.client_email, order.client_name || 'Klien', `[Wave Projects] ${label}`, html)
