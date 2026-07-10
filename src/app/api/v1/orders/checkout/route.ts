@@ -79,7 +79,7 @@ Jika menolak, gunakan format teks AWALAN: "REJECT: <pesan ramah Anda di sini>"`;
 
         // Silent Injection to client_briefs so Admin kanban-ai button works instantly
         await pool.query(
-            "INSERT INTO client_briefs (order_id, project_name, core_attributes, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())",
+            "INSERT INTO client_briefs (order_id, project_name, core_attributes) VALUES (?, ?, ?)",
             [orderId, project_purpose.slice(0, 50) || 'Proyek Pesanan Baru', chatHistoryText]
         );
 
