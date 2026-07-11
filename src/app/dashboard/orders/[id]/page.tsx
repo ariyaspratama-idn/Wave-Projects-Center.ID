@@ -11,6 +11,7 @@ export default function OrderExecutiveDetail() {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [aiGenerating, setAiGenerating] = useState(false);
+    const [pdfGenerating, setPdfGenerating] = useState(false);
 
     const fetchExecutiveData = () => {
         const token = localStorage.getItem("wave_token");
@@ -67,6 +68,50 @@ export default function OrderExecutiveDetail() {
         fetchExecutiveData(); // reload
     };
 
+    const handleDownloadPRD = async () => {
+        if (!data.brief || !data.brief.core_attributes) {
+            alert("Brief klien masih kosong, tidak bisa membuat dokumen.");
+            return;
+        }
+
+        setPdfGenerating(true);
+        try {
+            const token = localStorage.getItem("wave_token");
+            const res = await fetch("/api/v1/admin/prd", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    rawCustomerRequest: data.brief.core_attributes,
+                    projectName: data.order.project_name || data.order.package_name
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Terjadi kesalahan sistem API PRD.');
+            }
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `PRD_${data.order.client_name.replace(/\s+/g, '_')}_ORDER${orderId}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+
+            alert("✨ Dokumen PRD Word Berhasil Diunduh!");
+        } catch (e: any) {
+            alert("Gagal Unduh PRD: " + e.message);
+        } finally {
+            setPdfGenerating(false);
+        }
+    };
+
     if (loading) return <p className="text-gray-500 py-10">Mempersiapkan Executive Dashboard...</p>;
     if (!data) return <p className="text-red-500 py-10 font-bold">Akses ditolak atau Data ID tidak ditemukan.</p>;
 
@@ -77,15 +122,18 @@ export default function OrderExecutiveDetail() {
                     <h1 className="text-3xl font-extrabold gradient-text">Executive Dashboard: #{orderId.padStart(4, '0')}</h1>
                     <p className="text-sm text-gray-400 mt-2">Klien: {data.order.client_name} | Paket: {data.order.package_name}</p>
 
-                    {data.attachments && data.attachments.length > 0 && (
-                        <div className="mt-3 flex gap-2">
-                            {data.attachments.map((att: any) => (
-                                <a key={att.id} href={att.secure_url} target="_blank" className="text-xs bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-lg border border-blue-500/40 hover:bg-blue-500/30 flex items-center gap-1 transition-all">
-                                    📎 Bukti Pembayaran ({new Date(att.created_at).toLocaleDateString()})
-                                </a>
-                            ))}
-                        </div>
-                    )}
+                    <div className="mt-4 flex gap-2">
+                        {data.attachments && data.attachments.map((att: any) => (
+                            <a key={att.id} href={att.secure_url} target="_blank" className="text-xs bg-blue-500/20 text-blue-300 px-3 py-2 rounded-lg border border-blue-500/40 hover:bg-blue-500/30 flex items-center gap-1 transition-all">
+                                📎 Bukti Pembayaran ({new Date(att.created_at).toLocaleDateString()})
+                            </a>
+                        ))}
+                        {data.brief && (
+                            <button onClick={handleDownloadPRD} disabled={pdfGenerating} className="text-xs bg-green-500/20 text-green-300 px-3 py-2 rounded-lg border border-green-500/40 hover:bg-green-500/30 flex items-center gap-1 font-bold transition-all">
+                                {pdfGenerating ? '🔄 Menyusun Word...' : '📄 Unduh Dokumen PRD (.docx)'}
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <div className="flex gap-2 text-right">
                     <div className="flex flex-col text-sm border border-white/10 p-2 rounded-xl bg-white/5">
