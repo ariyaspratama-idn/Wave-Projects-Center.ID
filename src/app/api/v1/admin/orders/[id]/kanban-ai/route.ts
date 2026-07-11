@@ -58,15 +58,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         );
 
         const geminiData = await geminiRes.json();
+
+        if (!geminiRes.ok) {
+            return NextResponse.json({ success: false, error: 'Gemini API Fail: ' + JSON.stringify(geminiData) }, { status: 400 });
+        }
+
         const rawJsonText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
 
         let taskArray = [];
         try {
-            taskArray = JSON.parse(rawJsonText);
-        } catch (e) {
-            // fallback if it wrapped in ```json
-            const stripped = rawJsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const stripped = rawJsonText.replace(/```json/gi, '').replace(/```/g, '').trim();
             taskArray = JSON.parse(stripped);
+        } catch (e) {
+            return NextResponse.json({ success: false, error: 'AI failed to generate valid JSON array. Raw: ' + rawJsonText }, { status: 400 });
         }
 
         // Wipe existing kanban tasks and insert new ones
@@ -82,7 +86,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             await pool.query("UPDATE kanban_tasks SET task_code = ? WHERE id = ?", [taskCode, insertId]);
         }
 
-        return NextResponse.json({ success: true, message: 'AI Kanban successfully spawned', tasks: taskArray.length });
+        return NextResponse.json({ success: true, message: 'AI Kanban successfully spawned', tasks: taskArray.length, raw: rawJsonText });
     } catch (e: any) {
         console.error(e);
         return NextResponse.json({ success: false, error: e.message }, { status: 500 });

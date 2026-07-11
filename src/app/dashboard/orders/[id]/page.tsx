@@ -32,11 +32,17 @@ export default function OrderExecutiveDetail() {
 
         setAiGenerating(true);
         const token = localStorage.getItem("wave_token");
-        await fetch(`/api/v1/admin/orders/${orderId}/kanban-ai`, {
+        const res = await fetch(`/api/v1/admin/orders/${orderId}/kanban-ai`, {
             method: 'POST',
             headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
         });
+        const data = await res.json();
         setAiGenerating(false);
+
+        if (!data.success) {
+            alert("Gagal memanggil AI: " + (data.error || "Unknown Error"));
+        }
+
         fetchExecutiveData(); // reload
     };
 
