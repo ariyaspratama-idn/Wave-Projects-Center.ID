@@ -136,9 +136,9 @@ export default function OrderExecutiveDetail() {
                                             <div key={task.id} className="bg-white/5 border border-white/10 rounded-lg p-3 group relative hover:border-primary/50 transition-all">
                                                 <div className="flex justify-between items-start mb-1">
                                                     <h4 className="text-sm font-semibold leading-tight">{task.title}</h4>
-                                                    {task.task_code && (
+                                                    {task.id && (
                                                         <span className="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono border border-blue-500/30 whitespace-nowrap ml-2">
-                                                            {task.task_code}
+                                                            TASK-{orderId}-{task.id}
                                                         </span>
                                                     )}
                                                 </div>

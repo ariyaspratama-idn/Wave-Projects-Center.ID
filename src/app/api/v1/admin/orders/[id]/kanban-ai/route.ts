@@ -77,13 +77,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         await pool.query("DELETE FROM kanban_tasks WHERE order_id = ?", [orderId]);
 
         for (const t of taskArray) {
-            const [result]: any = await pool.query(
+            await pool.query(
                 "INSERT INTO kanban_tasks (order_id, title, description, status) VALUES (?, ?, ?, 'TODO')",
                 [orderId, t.title || 'Untitled', t.description || '']
             );
-            const insertId = result.insertId;
-            const taskCode = `TASK-${orderId}-${insertId}`;
-            await pool.query("UPDATE kanban_tasks SET task_code = ? WHERE id = ?", [taskCode, insertId]);
         }
 
         return NextResponse.json({ success: true, message: 'AI Kanban successfully spawned', tasks: taskArray.length, raw: rawJsonText });
