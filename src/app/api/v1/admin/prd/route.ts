@@ -18,8 +18,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, error: 'rawCustomerRequest required' }, { status: 400 });
         }
 
+        const rawRequestStr = typeof rawCustomerRequest === 'object' ? JSON.stringify(rawCustomerRequest, null, 2) : String(rawCustomerRequest);
+
         // Call the absolute PRD generator module
-        const { buffer } = await createPRD({ rawCustomerRequest, projectName: projectName || 'Wave Projects Client App' });
+        const { buffer } = await createPRD({ rawCustomerRequest: rawRequestStr, projectName: projectName || 'Wave Projects Client App' });
 
         return new NextResponse(buffer as unknown as BodyInit, {
             headers: {
