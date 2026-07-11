@@ -63,7 +63,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         const [tasks]: any = await pool.query("SELECT * FROM kanban_tasks WHERE order_id = ? ORDER BY id ASC", [orderId]);
 
         // Fetch Webhooks Deployments
-        const [deployments]: any = await pool.query("SELECT * FROM project_deployments WHERE order_id = ? ORDER BY created_at DESC", [orderId]);
+        const [deployments]: any = await pool.query("SELECT * FROM project_deployments WHERE order_id = ? ORDER BY id DESC", [orderId]);
 
         // Fetch Developers for Assignment
         const [developers]: any = await pool.query(`
@@ -74,7 +74,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         `);
 
         // Fetch Attachments (Payment Proofs)
-        const [attachments]: any = await pool.query("SELECT * FROM attachments WHERE order_id = ? ORDER BY created_at DESC", [orderId]);
+        const [attachments]: any = await pool.query("SELECT * FROM attachments WHERE order_id = ? ORDER BY id DESC", [orderId]);
 
         return NextResponse.json({
             success: true,
