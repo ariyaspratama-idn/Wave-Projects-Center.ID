@@ -18,7 +18,7 @@ const { prdAiOutputSchema } = require("./prdSchema");
 const { SYSTEM_PROMPT, buildUserPrompt } = require("./prdPrompt");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const MODEL = process.env.PRD_AI_MODEL || "gemini-2.0-flash";
+const MODEL = process.env.PRD_AI_MODEL || "gemini-flash-latest";
 
 /**
  * Converts our JSON Schema to Gemini's responseSchema format.
