@@ -8,7 +8,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         if (!orderId || isNaN(orderId)) return NextResponse.json({ success: false, error: 'Invalid Token' }, { status: 400 });
 
         const [orders]: any = await pool.query(`
-            SELECT o.id, o.status, o.total_amount, p.name as package_name, u.name as client_name
+            SELECT o.id, o.status, o.total_amount, o.payment_choice, o.payment_status,
+                COALESCE(NULLIF(o.client_name, ''), u.name, 'Klien') as client_name,
+                o.client_email, o.client_whatsapp,
+                p.name as package_name, p.price as package_price
             FROM orders o
             LEFT JOIN packages p ON o.package_id = p.id
             LEFT JOIN users u ON o.user_id = u.id
