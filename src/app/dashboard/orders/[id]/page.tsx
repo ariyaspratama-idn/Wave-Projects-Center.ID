@@ -148,7 +148,11 @@ export default function OrderExecutiveDetail() {
     };
 
     const handleValidatePayment = async () => {
-        if (!confirm('Apakah Anda yakin ingin MEMVALIDASI pembayaran ini?\n\nTindakan ini akan:\n• Menandai pembayaran sebagai LUNAS\n• Mengirim Invoice resmi ke email klien via Brevo\n• Menaikkan status order ke "Down Payment"')) return;
+        const isDPPelunasan = data?.order?.payment_status === 'dp_paid';
+        const confirmMsg = isDPPelunasan
+            ? 'Apakah Anda yakin ingin MEMVALIDASI PELUNASAN 70% ini?\n\nTindakan ini akan:\n• Menandai pembayaran sebagai LUNAS PENUH\n• Mengirim Invoice Lunas ke email klien via Brevo\n• Proyek siap untuk diserahkan (Handover)'
+            : 'Apakah Anda yakin ingin MEMVALIDASI pembayaran ini?\n\nTindakan ini akan:\n• Menandai pembayaran (DP/Full) sebagai diterima\n• Mengirim Invoice ke email klien via Brevo\n• Menaikkan status order';
+        if (!confirm(confirmMsg)) return;
 
         setValidatingPayment(true);
         try {
@@ -240,12 +244,23 @@ export default function OrderExecutiveDetail() {
                     )}
                 </div>
 
-                {/* Payment Status Badge */}
-                <div className="flex items-center gap-3">
+                {/* Payment Status Badge + DP Info */}
+                <div className="flex flex-wrap items-center gap-3">
                     <span className="text-xs text-gray-500">Status Bayar:</span>
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${data.order.payment_status === 'paid' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : data.order.payment_status === 'waiting_verification' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
-                        {data.order.payment_status === 'paid' ? '✅ LUNAS' : data.order.payment_status === 'waiting_verification' ? '⏳ MENUNGGU VALIDASI' : '❌ BELUM BAYAR'}
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${data.order.payment_status === 'paid' ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                        : data.order.payment_status === 'dp_paid' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                            : data.order.payment_status === 'waiting_verification' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                                : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                        {data.order.payment_status === 'paid' ? '✅ LUNAS'
+                            : data.order.payment_status === 'dp_paid' ? '🟠 DP 30% DITERIMA — Menunggu Pelunasan 70%'
+                                : data.order.payment_status === 'waiting_verification' ? '⏳ MENUNGGU VALIDASI'
+                                    : '❌ BELUM BAYAR'}
                     </span>
+                    {data.order.payment_choice === 'DP_30' && (
+                        <span className="text-[10px] text-gray-500 bg-white/5 px-2 py-1 rounded border border-white/10">
+                            Metode: DP 30% | Total Paket: Rp {Number(data.order.total_amount / (data.order.payment_status === 'dp_paid' || data.order.payment_status === 'paid' ? 0.3 : 1)).toLocaleString('id-ID') || '-'}
+                        </span>
+                    )}
                 </div>
 
                 {/* Action Buttons */}
@@ -257,7 +272,9 @@ export default function OrderExecutiveDetail() {
                     ))}
                     {data.attachments && data.attachments.length > 0 && data.order.payment_status !== 'paid' && (
                         <button onClick={handleValidatePayment} disabled={validatingPayment} className="text-xs bg-emerald-500/20 text-emerald-300 px-4 py-2 rounded-lg border border-emerald-500/40 hover:bg-emerald-500/30 flex items-center gap-1 font-bold transition-all glow-blue">
-                            {validatingPayment ? '⏳ Memproses Validasi...' : '✅ Validasi Pembayaran & Kirim Invoice'}
+                            {validatingPayment ? '⏳ Memproses Validasi...'
+                                : data.order.payment_status === 'dp_paid' ? '💰 Validasi Pelunasan 70% & Kirim Invoice LUNAS'
+                                    : '✅ Validasi Pembayaran & Kirim Invoice'}
                         </button>
                     )}
                     {data.brief && (
