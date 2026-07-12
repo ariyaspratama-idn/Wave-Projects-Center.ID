@@ -277,6 +277,18 @@ export default function OrderExecutiveDetail() {
                                     : '✅ Validasi Pembayaran & Kirim Invoice'}
                         </button>
                     )}
+                    {data.order.client_email && (
+                        <button onClick={async () => {
+                            const token = localStorage.getItem('wave_token');
+                            const res = await fetch(`/api/v1/admin/orders/${orderId}/resend-invoice`, {
+                                method: 'POST', headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            const r = await res.json();
+                            alert(r.success ? '📧 ' + r.message : '❌ Gagal: ' + r.error);
+                        }} className="text-xs bg-purple-500/20 text-purple-300 px-3 py-2 rounded-lg border border-purple-500/40 hover:bg-purple-500/30 flex items-center gap-1 font-bold transition-all">
+                            📧 Kirim Ulang Invoice via Email
+                        </button>
+                    )}
                     {data.brief && (
                         <button onClick={handleDownloadPRD} disabled={pdfGenerating} className="text-xs bg-green-500/20 text-green-300 px-3 py-2 rounded-lg border border-green-500/40 hover:bg-green-500/30 flex items-center gap-1 font-bold transition-all">
                             {pdfGenerating ? '🔄 Menyusun Word...' : '📄 Unduh Dokumen PRD (.docx)'}
