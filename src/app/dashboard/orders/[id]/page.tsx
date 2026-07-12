@@ -12,15 +12,49 @@ export default function OrderExecutiveDetail() {
     const [loading, setLoading] = useState(true);
     const [aiGenerating, setAiGenerating] = useState(false);
     const [pdfGenerating, setPdfGenerating] = useState(false);
+    const [editingContact, setEditingContact] = useState(false);
+    const [contactForm, setContactForm] = useState({ client_name: '', client_email: '', client_whatsapp: '' });
+    const [savingContact, setSavingContact] = useState(false);
 
     const fetchExecutiveData = () => {
         const token = localStorage.getItem("wave_token");
         fetch(`/api/v1/admin/orders/${orderId}`, { headers: { "Authorization": `Bearer ${token}` } })
             .then(res => res.json())
             .then(res => {
-                if (res.success) setData(res.data);
+                if (res.success) {
+                    setData(res.data);
+                    setContactForm({
+                        client_name: res.data.order.client_name || '',
+                        client_email: res.data.order.client_email || '',
+                        client_whatsapp: res.data.order.client_whatsapp || ''
+                    });
+                }
                 setLoading(false);
             });
+    };
+
+    const handleSaveContact = async () => {
+        setSavingContact(true);
+        try {
+            const token = localStorage.getItem("wave_token");
+            const res = await fetch(`/api/v1/admin/orders/${orderId}`, {
+                method: 'PATCH',
+                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify(contactForm)
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert('✅ Detail kontak klien berhasil diperbarui!');
+                setEditingContact(false);
+                fetchExecutiveData();
+            } else {
+                alert('Gagal: ' + result.error);
+            }
+        } catch (e: any) {
+            alert('Error: ' + e.message);
+        } finally {
+            setSavingContact(false);
+        }
     };
 
     useEffect(() => {
@@ -118,11 +152,53 @@ export default function OrderExecutiveDetail() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-start">
-                <div>
+                <div className="flex-1">
                     <h1 className="text-3xl font-extrabold gradient-text">Executive Dashboard: #{orderId.padStart(4, '0')}</h1>
-                    <p className="text-sm text-gray-400 mt-2">Klien: {data.order.client_name} | Paket: {data.order.package_name}</p>
 
-                    <div className="mt-4 flex gap-2">
+                    {/* Client Contact Card */}
+                    <div className="mt-3 bg-white/5 border border-white/10 rounded-xl p-4">
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">📋 Informasi Klien</h3>
+                            <button
+                                onClick={() => setEditingContact(!editingContact)}
+                                className="text-[10px] text-primary hover:text-primary-light transition-all font-semibold"
+                            >
+                                {editingContact ? '✕ Batal' : '✏️ Edit'}
+                            </button>
+                        </div>
+
+                        {!editingContact ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Nama Klien</span>
+                                    <span className="text-sm font-semibold">{data.order.client_name || <span className="text-red-400 italic">Belum diisi</span>}</span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">Email</span>
+                                    <span className="text-sm font-semibold">{data.order.client_email || <span className="text-red-400 italic">Belum diisi</span>}</span>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] text-gray-500 block">WhatsApp</span>
+                                    <span className="text-sm font-semibold">{data.order.client_whatsapp || <span className="text-red-400 italic">Belum diisi</span>}</span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <input value={contactForm.client_name} onChange={e => setContactForm({ ...contactForm, client_name: e.target.value })} placeholder="Nama Klien" className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/50" />
+                                    <input value={contactForm.client_email} onChange={e => setContactForm({ ...contactForm, client_email: e.target.value })} placeholder="Email Klien" type="email" className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/50" />
+                                    <input value={contactForm.client_whatsapp} onChange={e => setContactForm({ ...contactForm, client_whatsapp: e.target.value })} placeholder="08xxxxxxxxxx" className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/50" />
+                                </div>
+                                <button onClick={handleSaveContact} disabled={savingContact} className="bg-green-500/20 text-green-300 border border-green-500/40 hover:bg-green-500/30 text-xs font-bold px-4 py-2 rounded-lg transition-all">
+                                    {savingContact ? '⏳ Menyimpan...' : '💾 Simpan Kontak Klien'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <p className="text-sm text-gray-400 mt-3">Paket: <span className="text-white font-semibold">{data.order.package_name}</span></p>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
                         {data.attachments && data.attachments.map((att: any) => (
                             <a key={att.id} href={att.secure_url} target="_blank" className="text-xs bg-blue-500/20 text-blue-300 px-3 py-2 rounded-lg border border-blue-500/40 hover:bg-blue-500/30 flex items-center gap-1 transition-all">
                                 📎 Bukti Pembayaran ({new Date(att.created_at).toLocaleDateString()})

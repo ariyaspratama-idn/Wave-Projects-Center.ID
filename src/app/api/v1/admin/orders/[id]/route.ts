@@ -92,3 +92,37 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         return NextResponse.json({ success: false, error: e.message }, { status: 500 });
     }
 }
+
+// PATCH: Update order client contact details
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const authHeader = req.headers.get('authorization');
+        if (!authHeader) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+        jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+
+        const { id } = await params;
+        const orderId = Number(id);
+
+        const body = await req.json();
+        const { client_name, client_email, client_whatsapp } = body;
+
+        const updates: string[] = [];
+        const values: any[] = [];
+
+        if (client_name !== undefined) { updates.push('client_name = ?'); values.push(client_name); }
+        if (client_email !== undefined) { updates.push('client_email = ?'); values.push(client_email); }
+        if (client_whatsapp !== undefined) { updates.push('client_whatsapp = ?'); values.push(client_whatsapp); }
+
+        if (updates.length === 0) {
+            return NextResponse.json({ success: false, error: 'No fields to update' }, { status: 400 });
+        }
+
+        values.push(orderId);
+        await pool.query(`UPDATE orders SET ${updates.join(', ')} WHERE id = ?`, values);
+
+        return NextResponse.json({ success: true, message: 'Contact details updated' });
+
+    } catch (e: any) {
+        return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    }
+}
