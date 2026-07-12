@@ -14,7 +14,7 @@ export const sendEmail = async (toEmail: string, toName: string, subject: string
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
-                sender: { name: "Wave Projects Center", email: process.env.BREVO_SENDER_EMAIL || "apramadhan.id@gmail.com" },
+                sender: { name: "Wave Projects Center", email: process.env.BREVO_SENDER_EMAIL || "ariyaspratama.id@gmail.com" },
                 to: [{ email: toEmail, name: toName }],
                 subject: subject,
                 htmlContent: htmlContent
