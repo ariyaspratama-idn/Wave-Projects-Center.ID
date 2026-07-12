@@ -82,9 +82,8 @@ export default function UsersManagementPage() {
                         <div>
                             <label className="block text-xs text-gray-400 mb-1.5">Role (Jabatan) <span className="text-red-400">*</span></label>
                             <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full bg-[#161b2a] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/50">
-                                <option value="Admin">Admin (Keuangan / CS)</option>
+                                <option value="Admin">Admin (Keuangan / CS / Marketing)</option>
                                 <option value="Developer">Developer (Full Stack)</option>
-                                <option value="Marketing">Marketing</option>
                             </select>
                         </div>
                         <div>
@@ -133,7 +132,7 @@ export default function UsersManagementPage() {
                 <div className="glass rounded-xl p-6 border border-white/5">
                     <h3 className="font-bold text-sm text-gray-200 mb-1">🏦 Rekening Pembayaran</h3>
                     <p className="text-[10px] text-gray-500 mb-4">
-                        {isDev ? 'Untuk pembayaran fee pengerjaan proyek' : form.role === 'Marketing' ? 'Untuk komisi marketing' : 'Untuk pencairan gaji / reimbursement'}
+                        {isDev ? 'Untuk pembayaran fee pengerjaan proyek' : 'Untuk pencairan gaji / reimbursement / komisi'}
                     </p>
                     <div className="grid md:grid-cols-3 gap-4">
                         <div>

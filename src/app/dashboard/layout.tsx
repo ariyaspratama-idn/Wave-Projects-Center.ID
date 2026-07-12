@@ -72,7 +72,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <span className="opacity-70 mr-2">📊</span> Beranda Dashboard
                         </Link>
 
-                        {(roleName === "Super Admin" || roleName === "Customer Service") && (
+                        {(roleName === "Super Admin" || roleName === "Admin") && (
                             <Link href="/dashboard/chat" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all relative text-sm font-medium">
                                 <span className="opacity-70 mr-2">💬</span> Live Chat Panel <span className="absolute right-3 top-3.5 w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                             </Link>
@@ -82,7 +82,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <span className="opacity-70 mr-2">📦</span> {roleName === "Customer" ? "Pesanan Anda" : "Manajemen Pesanan"}
                         </Link>
 
-                        {(roleName === "Super Admin" || roleName === "Admin Keuangan") && (
+                        {(roleName === "Super Admin" || roleName === "Admin") && (
                             <Link href="/dashboard/finance" className="block text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-lg transition-all text-sm font-medium">
                                 <span className="opacity-70 mr-2">💰</span> Manajemen Keuangan
                             </Link>
