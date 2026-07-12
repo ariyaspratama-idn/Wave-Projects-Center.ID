@@ -48,7 +48,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         // Fetch Order Data Details
         const [orders]: any = await pool.query(`
-            SELECT o.*, u.name as client_name, p.name as package_name 
+            SELECT o.*, COALESCE(o.client_name, u.name) as client_name, p.name as package_name 
             FROM orders o 
             LEFT JOIN users u ON o.user_id = u.id 
             LEFT JOIN packages p ON p.id = o.package_id 
