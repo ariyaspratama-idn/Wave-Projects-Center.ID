@@ -27,6 +27,11 @@ CREATE TABLE `users` (
     `password` VARCHAR(255) NOT NULL,
     `phone` VARCHAR(20),
     `avatar_url` TEXT,
+    `github_username` VARCHAR(100) NULL,
+    `bank_name` VARCHAR(100) NULL,
+    `bank_account_number` VARCHAR(50) NULL,
+    `bank_account_name` VARCHAR(150) NULL,
+    `notification_email` VARCHAR(150) NULL,
     `status` ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
     `last_login_at` DATETIME NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -191,14 +196,16 @@ CREATE TABLE `activity_logs` (
 );
 
 
--- 4. INSERT DUMMY DATA FOR INITIALIZATION
+-- 4. SEED DATA: Simplified 3+1 Role Structure
+-- Super Admin = full access (replaces Owner)
+-- Admin = Keuangan + CS + Marketing (unified operations)
+-- Developer = technical team (project execution)
+-- Customer = client/customer (auto-assigned on checkout)
 INSERT INTO `roles` (`name`, `description`) VALUES 
-('Super Admin', 'Full Access'),
-('Admin', 'System Administration'),
-('Marketing', 'Marketing and Sales'),
-('Developer', 'Development Team'),
-('Customer', 'Client/Customer'),
-('Owner', 'Platform Owner');
+('Super Admin', 'Full Access — Owner & Master Control'),
+('Admin', 'Operations — Keuangan, Customer Service, Marketing'),
+('Developer', 'Technical — Development & Project Execution'),
+('Customer', 'Client — External Customer/Pemesan');
 
 INSERT INTO `packages` (`name`, `slug`, `description`, `price`, `estimated_days`, `features`) VALUES
 ('Landing Page', 'landing-page', 'Single page website untuk company profile', 1500000, 7, '[\"Desain Custom\", \"Responsive\", \"Form Kontak\"]'),

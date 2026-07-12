@@ -90,7 +90,7 @@ export default function OfflinePRDGenerator() {
                         className="w-full border p-2 rounded"
                         placeholder="Contoh: 45.000.000"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Ini akan otomatis dimasukkan ke dalam porsi laporan Admin Keuangan (Bagian 6.3).</p>
+                    <p className="text-xs text-gray-500 mt-1">Ini akan otomatis dimasukkan ke dalam porsi laporan Admin (Bagian 6.3).</p>
                 </div>
 
                 <div>
