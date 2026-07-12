@@ -139,6 +139,40 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 .catch(err => console.error('Brevo email failed:', err));
         }
 
+        // 5. Auto-Trigger AI Kanban/PRD Generation (first payment only — DP or FULL)
+        if (currentPaymentStatus !== 'dp_paid') {
+            try {
+                const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+                const [briefs]: any = await pool.query('SELECT * FROM client_briefs WHERE order_id = ?', [orderId]);
+                const [existingTasks]: any = await pool.query('SELECT COUNT(*) as cnt FROM kanban_tasks WHERE order_id = ?', [orderId]);
+
+                if (GEMINI_API_KEY && briefs.length > 0 && existingTasks[0].cnt === 0) {
+                    const brief = briefs[0];
+                    const geminiRes = await fetch(
+                        `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: `You are an expert System Architect. Break down this client project into actionable tasks for a Solo-Developer.\nProject: ${brief.project_name}\nBrief: ${brief.core_attributes}\nGithub: ${order.github_url || 'None'}\nOutput ONLY a raw JSON array like: [{"title": "...", "description": "..."}]. No markdown.` }] }],
+                                generationConfig: { temperature: 0.2, maxOutputTokens: 4096 },
+                                systemInstruction: { parts: [{ text: 'Output ONLY raw valid JSON arrays.' }] }
+                            })
+                        }
+                    );
+                    const gData = await geminiRes.json();
+                    const rawText = gData?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+                    const tasks = JSON.parse(rawText.replace(/```json/gi, '').replace(/```/g, '').trim());
+                    for (const t of tasks) {
+                        await pool.query('INSERT INTO kanban_tasks (order_id, title, description, status) VALUES (?, ?, ?, "TODO")', [orderId, t.title || 'Untitled', t.description || '']);
+                    }
+                    console.log(`Auto-PRD: ${tasks.length} tasks generated for order ${orderId}`);
+                }
+            } catch (aiErr) {
+                console.error('Auto-PRD generation failed (non-blocking):', aiErr);
+            }
+        }
+
         const statusLabel = newPaymentStatus === 'paid' ? 'LUNAS' : 'DP DITERIMA';
         return NextResponse.json({
             success: true,
@@ -159,6 +193,7 @@ function buildEmailHTML(opts: {
     totalLabel: string; totalValue: string; totalColor: string;
     nextStepTitle: string; nextStepBody: string;
     nextStepBg: string; nextStepBorder: string; nextStepTitleColor: string; nextStepBodyColor: string;
+    trackingUrl?: string;
 }): string {
     const rowsHTML = [
         { label: 'No. Invoice', value: opts.invoiceNumber },
@@ -195,6 +230,9 @@ function buildEmailHTML(opts: {
             <div style="background: ${opts.nextStepBg}; border: 1px solid ${opts.nextStepBorder}; border-radius: 8px; padding: 16px; margin: 24px 0;">
                 <p style="color: ${opts.nextStepTitleColor}; font-size: 13px; margin: 0; font-weight: bold;">${opts.nextStepTitle}</p>
                 <p style="color: ${opts.nextStepBodyColor}; font-size: 12px; margin: 8px 0 0; line-height: 1.6;">${opts.nextStepBody}</p>
+            </div>
+            <div style="text-align: center; margin: 24px 0;">
+                <a href="https://wave-projects-center-id.vercel.app/track/${opts.orderId}" style="display: inline-block; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">🔍 Lacak Status Proyek Anda</a>
             </div>
             <p style="color: #9ca3af; font-size: 11px; text-align: center; margin-top: 32px;">
                 Dokumen ini digenerate otomatis oleh sistem Wave Projects Center.ID<br/>Valid tanpa tanda tangan fisik.
