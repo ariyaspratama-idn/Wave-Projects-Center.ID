@@ -15,6 +15,7 @@ export default function OrderExecutiveDetail() {
     const [editingContact, setEditingContact] = useState(false);
     const [contactForm, setContactForm] = useState({ client_name: '', client_email: '', client_whatsapp: '' });
     const [savingContact, setSavingContact] = useState(false);
+    const [validatingPayment, setValidatingPayment] = useState(false);
 
     const fetchExecutiveData = () => {
         const token = localStorage.getItem("wave_token");
@@ -146,6 +147,32 @@ export default function OrderExecutiveDetail() {
         }
     };
 
+    const handleValidatePayment = async () => {
+        if (!confirm('Apakah Anda yakin ingin MEMVALIDASI pembayaran ini?\n\nTindakan ini akan:\n• Menandai pembayaran sebagai LUNAS\n• Mengirim Invoice resmi ke email klien via Brevo\n• Menaikkan status order ke "Down Payment"')) return;
+
+        setValidatingPayment(true);
+        try {
+            const token = localStorage.getItem('wave_token');
+            const res = await fetch(`/api/v1/admin/orders/${orderId}/validate-payment`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert('✅ ' + result.message);
+                fetchExecutiveData();
+            } else {
+                alert('Gagal: ' + result.error);
+            }
+        } catch (e: any) {
+            alert('Error: ' + e.message);
+        } finally {
+            setValidatingPayment(false);
+        }
+    };
+
+    const safeDate = (d: any) => { try { const dt = new Date(d); return isNaN(dt.getTime()) ? '-' : dt.toLocaleDateString('id-ID'); } catch { return '-'; } };
+
     if (loading) return <p className="text-gray-500 py-10">Mempersiapkan Executive Dashboard...</p>;
     if (!data) return <p className="text-red-500 py-10 font-bold">Akses ditolak atau Data ID tidak ditemukan.</p>;
 
@@ -213,13 +240,26 @@ export default function OrderExecutiveDetail() {
                     )}
                 </div>
 
+                {/* Payment Status Badge */}
+                <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-500">Status Bayar:</span>
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${data.order.payment_status === 'paid' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : data.order.payment_status === 'waiting_verification' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                        {data.order.payment_status === 'paid' ? '✅ LUNAS' : data.order.payment_status === 'waiting_verification' ? '⏳ MENUNGGU VALIDASI' : '❌ BELUM BAYAR'}
+                    </span>
+                </div>
+
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-2">
                     {data.attachments && data.attachments.map((att: any) => (
                         <a key={att.id} href={att.secure_url} target="_blank" className="text-xs bg-blue-500/20 text-blue-300 px-3 py-2 rounded-lg border border-blue-500/40 hover:bg-blue-500/30 flex items-center gap-1 transition-all">
-                            📎 Bukti Pembayaran ({new Date(att.created_at).toLocaleDateString()})
+                            📎 Lihat Bukti Pembayaran ({safeDate(att.created_at)})
                         </a>
                     ))}
+                    {data.attachments && data.attachments.length > 0 && data.order.payment_status !== 'paid' && (
+                        <button onClick={handleValidatePayment} disabled={validatingPayment} className="text-xs bg-emerald-500/20 text-emerald-300 px-4 py-2 rounded-lg border border-emerald-500/40 hover:bg-emerald-500/30 flex items-center gap-1 font-bold transition-all glow-blue">
+                            {validatingPayment ? '⏳ Memproses Validasi...' : '✅ Validasi Pembayaran & Kirim Invoice'}
+                        </button>
+                    )}
                     {data.brief && (
                         <button onClick={handleDownloadPRD} disabled={pdfGenerating} className="text-xs bg-green-500/20 text-green-300 px-3 py-2 rounded-lg border border-green-500/40 hover:bg-green-500/30 flex items-center gap-1 font-bold transition-all">
                             {pdfGenerating ? '🔄 Menyusun Word...' : '📄 Unduh Dokumen PRD (.docx)'}
