@@ -87,6 +87,10 @@ function buildInvoiceEmail(name: string, inv: string, pkg: string, oid: number, 
                 <tr><td style="padding:16px 12px;font-size:15px;font-weight:bold;color:#1e3a5f;">TOTAL</td><td style="padding:16px 12px;font-size:18px;font-weight:bold;color:${status === 'LUNAS' ? '#059669' : '#dc2626'};text-align:right;">Rp ${amount.toLocaleString('id-ID')}</td></tr>
             </table>
             <p style="color:#9ca3af;font-size:11px;text-align:center;margin-top:32px;">Dokumen ini digenerate otomatis oleh Wave Projects Center.ID</p>
+            <div style="text-align:center;margin:24px 0;">
+                <a href="https://wave-projects-center-id.vercel.app/track/${oid}" style="display:inline-block;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:13px;margin:4px;">🔍 Lacak Status Proyek</a>
+                <a href="https://wave-projects-center-id.vercel.app/invoice/${oid}" style="display:inline-block;background:linear-gradient(135deg,#059669,#047857);color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:13px;margin:4px;">📄 Unduh / Cetak Invoice</a>
+            </div>
         </div>
         <div style="background:#0f172a;padding:20px;text-align:center;"><p style="color:#64748b;font-size:11px;margin:0;">© ${new Date().getFullYear()} Wave Projects Center.ID</p></div>
     </div>`;
@@ -116,6 +120,10 @@ function buildDPEmail(name: string, inv: string, pkg: string, oid: number, dp: n
                 <p style="color:#b45309;font-size:12px;margin:8px 0 0;line-height:1.6;">Sisa tagihan sebesar <strong>Rp ${sisa.toLocaleString('id-ID')}</strong> wajib dilunasi sebelum proyek diserahkan.</p>
             </div>
             <p style="color:#9ca3af;font-size:11px;text-align:center;margin-top:32px;">Dokumen ini digenerate otomatis oleh Wave Projects Center.ID</p>
+            <div style="text-align:center;margin:24px 0;">
+                <a href="https://wave-projects-center-id.vercel.app/track/${oid}" style="display:inline-block;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:13px;margin:4px;">🔍 Lacak Status Proyek</a>
+                <a href="https://wave-projects-center-id.vercel.app/invoice/${oid}" style="display:inline-block;background:linear-gradient(135deg,#059669,#047857);color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:13px;margin:4px;">📄 Unduh / Cetak Invoice</a>
+            </div>
         </div>
         <div style="background:#0f172a;padding:20px;text-align:center;"><p style="color:#64748b;font-size:11px;margin:0;">© ${new Date().getFullYear()} Wave Projects Center.ID</p></div>
     </div>`;
