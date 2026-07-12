@@ -98,7 +98,7 @@ export default function OrderExecutiveDetail() {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `PRD_${data.order.client_name.replace(/\s+/g, '_')}_ORDER${orderId}.docx`;
+            a.download = `PRD_${(data.order.client_name || 'Klien').replace(/\s+/g, '_')}_ORDER${orderId}.docx`;
             document.body.appendChild(a);
             a.click();
             a.remove();
