@@ -21,8 +21,23 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, message: 'Forbidden. Super Admin only.' }, { status: 403 });
         }
 
+        // Fail-safe migration: add new columns if not exist
+        const migrations = [
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS github_username VARCHAR(100) NULL",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_name VARCHAR(100) NULL",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_account_number VARCHAR(50) NULL",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS bank_account_name VARCHAR(150) NULL",
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS notification_email VARCHAR(150) NULL",
+        ];
+        for (const sql of migrations) {
+            await pool.query(sql).catch(() => null); // Ignore if already exists
+        }
+
         const body = await req.json();
-        const { name, email, phone, password, role, github_username } = body;
+        const {
+            name, email, phone, password, role,
+            github_username, bank_name, bank_account_number, bank_account_name, notification_email
+        } = body;
 
         // Check if exists
         const [existing]: any = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
@@ -36,20 +51,19 @@ export async function POST(req: Request) {
         const uuid = crypto.randomUUID();
 
         const [result]: any = await pool.query(
-            "INSERT INTO users (uuid, name, email, password, phone, status) VALUES (?, ?, ?, ?, ?, 'active')",
-            [uuid, name, email, hash, phone || null]
+            `INSERT INTO users (uuid, name, email, password, phone, github_username, bank_name, bank_account_number, bank_account_name, notification_email, status) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')`,
+            [uuid, name, email, hash, phone || null, github_username || null, bank_name || null, bank_account_number || null, bank_account_name || null, notification_email || null]
         );
         const newUserId = result.insertId;
 
-        // Assing role
+        // Assign role
         const [roleRows]: any = await pool.query("SELECT id FROM roles WHERE name = ?", [role]);
         if (roleRows.length > 0) {
             await pool.query("INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)", [newUserId, roleRows[0].id]);
         }
 
-        // Save github_username to system_settings mapped by user if needed (omitted for now unless we add a column)
-
-        return NextResponse.json({ success: true, message: 'User created successfully' });
+        return NextResponse.json({ success: true, message: `Akun ${name} (${role}) berhasil dibuat!` });
     } catch (e: any) {
         return NextResponse.json({ success: false, error: e.message }, { status: 500 });
     }
