@@ -24,8 +24,38 @@ export async function GET(req: Request) {
 
         await ensureTableExists();
 
+        // Custom SOP rules
         const [rows]: any = await pool.query('SELECT * FROM ai_knowledge_base ORDER BY id ASC');
-        return NextResponse.json({ success: true, data: rows });
+
+        // Live package data the AI auto-learns
+        let packages: any[] = [];
+        try {
+            const [pkgRows]: any = await pool.query("SELECT id, name, price, description, features, status FROM packages ORDER BY id ASC");
+            packages = pkgRows;
+        } catch (e) { }
+
+        // Stats
+        let stats = { totalChats: 0, totalMessages: 0, totalOrders: 0, totalPackages: 0 };
+        try {
+            const [chatCount]: any = await pool.query("SELECT COUNT(*) as c FROM chat_sessions");
+            stats.totalChats = chatCount[0].c || 0;
+        } catch (e) { }
+        try {
+            const [msgCount]: any = await pool.query("SELECT COUNT(*) as c FROM chat_messages");
+            stats.totalMessages = msgCount[0].c || 0;
+        } catch (e) { }
+        try {
+            const [ordCount]: any = await pool.query("SELECT COUNT(*) as c FROM orders");
+            stats.totalOrders = ordCount[0].c || 0;
+        } catch (e) { }
+        stats.totalPackages = packages.length;
+
+        return NextResponse.json({
+            success: true,
+            data: rows,
+            packages,
+            stats
+        });
     } catch (e: any) {
         return NextResponse.json({ success: false, error: e.message }, { status: 500 });
     }
