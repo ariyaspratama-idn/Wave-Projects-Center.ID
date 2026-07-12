@@ -13,7 +13,7 @@ export default function OrderExecutiveDetail() {
     const [aiGenerating, setAiGenerating] = useState(false);
     const [pdfGenerating, setPdfGenerating] = useState(false);
     const [editingContact, setEditingContact] = useState(false);
-    const [contactForm, setContactForm] = useState({ client_name: '', client_email: '', client_whatsapp: '' });
+    const [contactForm, setContactForm] = useState({ client_name: '', client_email: '', client_whatsapp: '', payment_status: '' });
     const [savingContact, setSavingContact] = useState(false);
     const [validatingPayment, setValidatingPayment] = useState(false);
 
@@ -27,7 +27,8 @@ export default function OrderExecutiveDetail() {
                     setContactForm({
                         client_name: res.data.order.client_name || '',
                         client_email: res.data.order.client_email || '',
-                        client_whatsapp: res.data.order.client_whatsapp || ''
+                        client_whatsapp: res.data.order.client_whatsapp || '',
+                        payment_status: res.data.order.payment_status || ''
                     });
                 }
                 setLoading(false);
@@ -232,13 +233,19 @@ export default function OrderExecutiveDetail() {
                         </div>
                     ) : (
                         <div className="space-y-2">
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                                 <input value={contactForm.client_name} onChange={e => setContactForm({ ...contactForm, client_name: e.target.value })} placeholder="Nama Klien" className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/50" />
                                 <input value={contactForm.client_email} onChange={e => setContactForm({ ...contactForm, client_email: e.target.value })} placeholder="Email Klien" type="email" className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/50" />
                                 <input value={contactForm.client_whatsapp} onChange={e => setContactForm({ ...contactForm, client_whatsapp: e.target.value })} placeholder="08xxxxxxxxxx" className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/50" />
+                                <select value={contactForm.payment_status} onChange={e => setContactForm({ ...contactForm, payment_status: e.target.value })} className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/50">
+                                    <option value="pending" className="text-black">❌ Belum Bayar</option>
+                                    <option value="waiting_verification" className="text-black">⏳ Menunggu Validasi</option>
+                                    <option value="dp_paid" className="text-black">🟠 DP 30% Diterima</option>
+                                    <option value="paid" className="text-black">✅ Lunas</option>
+                                </select>
                             </div>
                             <button onClick={handleSaveContact} disabled={savingContact} className="bg-green-500/20 text-green-300 border border-green-500/40 hover:bg-green-500/30 text-xs font-bold px-4 py-2 rounded-lg transition-all">
-                                {savingContact ? '⏳ Menyimpan...' : '💾 Simpan Kontak Klien'}
+                                {savingContact ? '⏳ Menyimpan...' : '💾 Simpan Data Klien & Status Bayar'}
                             </button>
                         </div>
                     )}

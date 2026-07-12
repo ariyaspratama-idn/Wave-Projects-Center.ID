@@ -104,7 +104,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const orderId = Number(id);
 
         const body = await req.json();
-        const { client_name, client_email, client_whatsapp } = body;
+        const { client_name, client_email, client_whatsapp, payment_status } = body;
 
         const updates: string[] = [];
         const values: any[] = [];
@@ -112,6 +112,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         if (client_name !== undefined) { updates.push('client_name = ?'); values.push(client_name); }
         if (client_email !== undefined) { updates.push('client_email = ?'); values.push(client_email); }
         if (client_whatsapp !== undefined) { updates.push('client_whatsapp = ?'); values.push(client_whatsapp); }
+        if (payment_status !== undefined) { updates.push('payment_status = ?'); values.push(payment_status); }
 
         if (updates.length === 0) {
             return NextResponse.json({ success: false, error: 'No fields to update' }, { status: 400 });
