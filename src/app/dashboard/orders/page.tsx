@@ -93,7 +93,8 @@ export default function OrderTracking() {
                                     <div>
                                         <div className="text-xs bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full inline-block font-semibold mb-2">Order ID: #{o.id.toString().padStart(4, '0')}</div>
                                         <h3 className="text-xl font-bold">{o.package_name || 'Paket Kustom'}</h3>
-                                        <p className="text-gray-400 text-sm">Klien: {o.user_name} ({o.user_email})</p>
+                                        <p className="text-gray-400 text-sm">Klien: {o.user_name || <span className="text-red-400 italic">Belum diisi</span>}</p>
+                                        <p className="text-gray-500 text-xs">{o.user_email || ''}{o.user_whatsapp ? ` · WA: ${o.user_whatsapp}` : ''}</p>
 
                                         {isInternal && (
                                             <div className="mt-3">

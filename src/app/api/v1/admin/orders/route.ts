@@ -12,7 +12,11 @@ export async function GET(req: Request) {
         const decoded: any = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
 
         let query = `
-            SELECT o.*, u.name as user_name, u.email as user_email, p.name as package_name, dev.name as developer_name
+            SELECT o.*, 
+                COALESCE(NULLIF(o.client_name, ''), u.name) as user_name, 
+                COALESCE(NULLIF(o.client_email, ''), u.email) as user_email, 
+                o.client_whatsapp as user_whatsapp,
+                p.name as package_name, dev.name as developer_name
             FROM orders o
             LEFT JOIN users u ON o.user_id = u.id
             LEFT JOIN packages p ON o.package_id = p.id
