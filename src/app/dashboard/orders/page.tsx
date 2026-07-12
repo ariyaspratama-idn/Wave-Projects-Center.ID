@@ -109,7 +109,7 @@ export default function OrderTracking() {
                                                 <a href={`/dashboard/orders/${o.id}`} className="text-[10px] bg-primary hover:bg-primary-light border border-primary/50 px-3 py-1.5 rounded-md font-semibold text-white transition-all glow-blue">
                                                     🚀 Masuk Executive Panel (AI & Kanban)
                                                 </a>
-                                                <a href={`/dashboard/orders/${o.id}/invoice`} target="_blank" className="text-[10px] bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-md font-semibold text-white transition-all">
+                                                <a href={`/invoice/${o.id}`} target="_blank" className="text-[10px] bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-md font-semibold text-white transition-all">
                                                     📄 Cetak Invoice (Faktur)
                                                 </a>
                                                 <button onClick={() => { navigator.clipboard.writeText(window.location.origin + '/track/' + o.id); alert('Link Tracker Publik (Aman) berhasil disalin. Kirim ke WhatsApp Klien!'); }} className="text-[10px] bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-md font-semibold text-blue-300 transition-all">
