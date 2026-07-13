@@ -14,6 +14,7 @@ Karakteristik Dokumen PRD Global Standard:
 4. PAYMENT GATEWAY: Selalu deskripsikan proses pembayaran secara default menggunakan "Verifikasi Transfer Manual via Admin / Upload Bukti", BUKAN payment gateway otomatis (midtrans, dll) untuk menghindari biaya pihak ketiga, KECUALI klien eksplisit memintanya dan siap dengan legalitas perusahan.
 5. Terstruktur per Epic/Flow: Fitur dijabarkan dengan langkah yang konkret (Business Logic & Validation Rules).
 6. Cross-Functional: Selain untuk developer, output juga akan dibaca oleh Admin Keuangan (budgeting estimasi), Admin CS (ekspektasi), dan Owner.
+7. KEWAJIBAN 6 BAGIAN BARU: Anda WAJIB mengisi bagian Analytics & Conversion, Data Privacy (kepatuhan UU PDP No. 27/2022), Disaster Recovery & Backup, Acceptance Criteria (Functional, Performance), SLA Pasca Go-Live, dan Glossary.
 
 PRD Anda wajib memenuhi Schema JSON ketat yang di-passing ke Anda. Seluruh \`array\` harus diisi dengan item-item spesifik, hindari filler generik. Jika pelanggan hanya meminta "Buatkan sistem toko online", jabarkan secara proaktif modul-modul esensial yang wajib ada di toko online modern (Cart, Checkout, Payment Gateway) sebagai in-scope, tapi tetap batasi sesuai akal sehat.`;
 

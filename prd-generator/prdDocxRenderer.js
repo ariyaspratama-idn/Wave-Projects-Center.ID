@@ -223,6 +223,12 @@ async function renderPRDToDocx(prdData) {
   const timeline = d.timeline || [];
   const risks = d.risks || [];
   const attachments = d.suggestedAttachments || [];
+  const analytics = d.analyticsAndConversion || {};
+  const dataPrivacy = d.dataPrivacy || [];
+  const dr = d.drAndBackup || {};
+  const ac = d.acceptanceCriteria || [];
+  const sla = d.slaPascaGoLive || [];
+  const glossary = d.glossary || [];
 
   const companyName = d.companyName || "Wave Projects Center.ID";
   const dateCreated = d.dateCreated || new Date().toLocaleDateString("id-ID");
@@ -265,7 +271,13 @@ async function renderPRDToDocx(prdData) {
     tocItem("8. Batasan Proyek & Asumsi (Out of Scope)"),
     tocItem("9. Operasional Lintas Divisi"),
     tocItem("10. Timeline & Risiko"),
-    tocItem("11. Persetujuan & Tanda Tangan"),
+    tocItem("11. Analytics & Conversion Tracking"),
+    tocItem("12. Kepatuhan Data Pribadi (UU PDP)"),
+    tocItem("13. Backup & Disaster Recovery"),
+    tocItem("14. Acceptance Criteria (DoD)"),
+    tocItem("15. SLA Dukungan Pasca Go-Live"),
+    tocItem("16. Glossary / Daftar Istilah"),
+    tocItem("17. Persetujuan & Tanda Tangan"),
     pageBreak()
   );
 
@@ -391,7 +403,69 @@ async function renderPRDToDocx(prdData) {
 
   // ============ BAGIAN 11 ============
   children.push(
-    heading1("11. Persetujuan & Lembar Pengesahan (Sign-Off)"),
+    heading1("11. Analytics & Conversion Tracking"),
+    ...fieldBlockList("Metrik Pelacakan", analytics.metrics),
+    ...fieldBlockText("Catatan Integrasi Analytics", analytics.notes),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 12 ============
+  children.push(
+    heading1("12. Kepatuhan Data Pribadi (UU PDP)"),
+    dataTable(
+      ["Persyaratan", "Status", "PIC"],
+      dataPrivacy.map(p => [p.requirement, p.status, p.pic]),
+      [5000, 2000, 2026]
+    ),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 13 ============
+  children.push(
+    heading1("13. Backup & Disaster Recovery"),
+    heading2("Strategi Backup"),
+    dataTable(
+      ["Komponen", "Strategi", "Frekuensi", "RTO", "RPO"],
+      (dr.strategies || []).map(s => [s.component, s.strategy, s.frequency, s.rto, s.rpo]),
+      [2000, 3000, 1500, 1000, 1526]
+    ),
+    heading2("Prosedur Recovery"),
+    ...fieldBlockList("Langkah-Langkah DR", dr.procedure),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 14 ============
+  children.push(
+    heading1("14. Acceptance Criteria (Definition of Done)"),
+    ...fieldBlockList("Kriteria Penerimaan per User Story", ac),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 15 ============
+  children.push(
+    heading1("15. SLA Dukungan Pasca Go-Live"),
+    dataTable(
+      ["Kategori", "Durasi", "Response Time", "PIC"],
+      sla.map(s => [s.category, s.duration, s.response_time, s.pic]),
+      [2500, 2500, 2500, 1526]
+    ),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 16 ============
+  children.push(
+    heading1("16. Glossary / Daftar Istilah"),
+    dataTable(
+      ["Istilah", "Definisi"],
+      glossary.map(g => [g.term, g.definition]),
+      [2500, 6526]
+    ),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 17 ============
+  children.push(
+    heading1("17. Persetujuan & Lembar Pengesahan (Sign-Off)"),
     para("Dokumen ini dianggap berlaku sebagai kontrak pengerjaan internal setelah seluruh form ini disetujui."),
     dataTable(
       ["Jabatan / Peran", "Nama", "Tanda Tangan", "Tanggal Persetujuan"],

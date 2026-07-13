@@ -31,7 +31,13 @@ const prdAiOutputSchema = {
     "crossFunctionalOperations",
     "timeline",
     "risks",
-    "suggestedAttachments"
+    "suggestedAttachments",
+    "analyticsAndConversion",
+    "dataPrivacy",
+    "drAndBackup",
+    "acceptanceCriteria",
+    "slaPascaGoLive",
+    "glossary"
   ],
   properties: {
     introduction: {
@@ -207,6 +213,81 @@ const prdAiOutputSchema = {
       }
     },
     suggestedAttachments: stringArray("Dokumen referensi.", "Satu saran dokumen."),
+    analyticsAndConversion: {
+      type: "object",
+      additionalProperties: false,
+      required: ["metrics", "notes"],
+      properties: {
+        metrics: stringArray("Daftar metrik pelacakan (Page Views, Conversion, dll).", "Satu metrik."),
+        notes: { type: "string", description: "Catatan terkait Analytics (contoh: setup GA4)." }
+      }
+    },
+    dataPrivacy: {
+      type: "array",
+      description: "Daftar poin kepatuhan UU PDP (Data Privacy).",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["requirement", "status", "pic"],
+        properties: {
+          requirement: { type: "string" },
+          status: { type: "string" },
+          pic: { type: "string" }
+        }
+      }
+    },
+    drAndBackup: {
+      type: "object",
+      additionalProperties: false,
+      required: ["strategies", "procedure"],
+      properties: {
+        strategies: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["component", "strategy", "frequency", "rto", "rpo"],
+            properties: {
+              component: { type: "string" },
+              strategy: { type: "string" },
+              frequency: { type: "string" },
+              rto: { type: "string" },
+              rpo: { type: "string" }
+            }
+          }
+        },
+        procedure: stringArray("Langkah-langkah prosedur Disaster Recovery.", "Satu langkah DR.")
+      }
+    },
+    acceptanceCriteria: stringArray("Kriteria penerimaan/Definition of Done per User Story.", "Satu kriteria (AC)."),
+    slaPascaGoLive: {
+      type: "array",
+      description: "Daftar SLA dukungan purna jual/Go-Live.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["category", "duration", "response_time", "pic"],
+        properties: {
+          category: { type: "string" },
+          duration: { type: "string" },
+          response_time: { type: "string" },
+          pic: { type: "string" }
+        }
+      }
+    },
+    glossary: {
+      type: "array",
+      description: "Daftar Istilah teknis/domain yang digunakan.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["term", "definition"],
+        properties: {
+          term: { type: "string" },
+          definition: { type: "string" }
+        }
+      }
+    }
   }
 };
 
