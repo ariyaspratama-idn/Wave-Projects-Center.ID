@@ -18,24 +18,54 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         const [briefs]: any = await pool.query("SELECT * FROM client_briefs WHERE order_id = ?", [orderId]);
         if (briefs.length === 0) return NextResponse.json({ success: false, error: 'Brief belum diisi klien' }, { status: 400 });
 
-        const [orders]: any = await pool.query("SELECT github_url FROM orders WHERE id = ?", [orderId]);
-        const order = orders.length > 0 ? orders[0] : { github_url: '' };
+        const [orders]: any = await pool.query("SELECT o.github_url, o.title, o.description, p.name as package_name, p.price as package_price, p.features as package_features FROM orders o LEFT JOIN packages p ON o.package_id = p.id WHERE o.id = ?", [orderId]);
+        const order = orders.length > 0 ? orders[0] : { github_url: '', package_name: '', package_price: 0 };
 
         const brief = briefs[0];
 
-        // Call Google Gemini Flash API (native fetch — zero SDK overhead)
-        const prompt = `
-        You are an expert System Architect. Review the following Client Brief and extract a comprehensive technical Kanban Board checklist.
-        Break down the project into tiny, actionable technical tasks for a Solo-Developer.
+        // Fetch PRD template from database
+        let prdTemplateContext = '';
+        try {
+            const [templateRows]: any = await pool.query("SELECT setting_value FROM system_settings WHERE setting_key = 'prd_template'");
+            if (templateRows.length > 0) {
+                const sections = typeof templateRows[0].setting_value === 'string' ? JSON.parse(templateRows[0].setting_value) : templateRows[0].setting_value;
+                prdTemplateContext = '\n\nPRD TEMPLATE STRUKTUR (27 Bagian) — Gunakan ini sebagai panduan mengelompokkan task:\n' +
+                    sections.map((s: any) => `${s.no}. ${s.title}: ${s.desc}`).join('\n');
+            }
+        } catch (e) { }
 
-        CLIENT BRIEF (Including Raw Chat Needs):
+        // Fetch custom SOP rules
+        let sopContext = '';
+        try {
+            const [rules]: any = await pool.query('SELECT content FROM ai_knowledge_base WHERE is_active = 1');
+            if (rules.length > 0) {
+                sopContext = '\n\nSOP & ATURAN KHUSUS AGENCY (WAJIB DIPATUHI):\n' +
+                    rules.map((r: any, i: number) => `${i + 1}. ${r.content}`).join('\n');
+            }
+        } catch (e) { }
+
+        // Call Google Gemini Flash API
+        const prompt = `
+        You are an expert System Architect & PRD Specialist for Wave Projects Center.ID Agency.
+        Review the following Client Brief and generate a comprehensive, PRD-aligned technical Kanban Board.
+
+        CLIENT BRIEF:
         Project Name: ${brief.project_name}
         Attributes & Chat History: ${brief.core_attributes}
-        GitHub Constraints / Existing Repo (Evaluate if applicable): ${order.github_url || 'None'}
+        Package: ${order.package_name || 'Custom'} (Rp ${Number(order.package_price || 0).toLocaleString('id-ID')})
+        GitHub Repo: ${order.github_url || 'None'}
+        ${prdTemplateContext}
+        ${sopContext}
+
+        INSTRUKSI:
+        1. Pecah proyek menjadi task-task kecil yang actionable untuk developer.
+        2. Kelompokkan task berdasarkan fase PRD: Setup, Frontend, Backend, Database, Integration, Testing, Deployment, Documentation.
+        3. Setiap task harus spesifik dan bisa dikerjakan dalam 1-4 jam.
+        4. Sertakan task untuk: Kepatuhan UU PDP, Analytics Setup, Security Checklist, SLA Documentation.
 
         OUTPUT FORMAT:
         Output ONLY a raw, minified JSON array of object tasks. No markdown, no prefixes, no explanations. 
-        Like: [{"title": "Setup Next.js Auth", "description": "Configure NextAuth with Google Provider"}, ...]
+        Like: [{"title": "Setup Next.js Auth", "description": "Configure NextAuth with Google Provider", "phase": "Backend"}, ...]
         Ensure it is exactly a valid JSON array.
         `;
 
