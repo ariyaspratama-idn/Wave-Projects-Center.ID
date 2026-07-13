@@ -80,14 +80,50 @@ export default function AITrainingCenter() {
         if (Array.isArray(f)) return f;
         try { return JSON.parse(f); } catch { return []; }
     };
+    const [seeding, setSeeding] = useState(false);
+    const [seedMsg, setSeedMsg] = useState('');
+
+    const handleSeedPRD = async () => {
+        setSeeding(true);
+        setSeedMsg('');
+        const token = localStorage.getItem("wave_token");
+        try {
+            const res = await fetch("/api/v1/admin/ai/seed-prd", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                setSeedMsg(`✅ ${data.message}`);
+                fetchData(); // Refresh to show new SOP
+            } else {
+                setSeedMsg(`❌ ${data.error}`);
+            }
+        } catch (e: any) {
+            setSeedMsg(`❌ Error: ${e.message}`);
+        }
+        setSeeding(false);
+    };
 
     return (
         <div className="max-w-6xl space-y-6">
             {/* Header */}
-            <div>
-                <h1 className="text-3xl font-extrabold gradient-text">🧠 AI Training Center — Nova</h1>
-                <p className="text-gray-400 mt-2">Pusat pengetahuan, aturan, dan data yang dipelajari oleh AI Agent (Nova) secara real-time.</p>
+            <div className="flex items-start justify-between">
+                <div>
+                    <h1 className="text-3xl font-extrabold gradient-text">🧠 AI Training Center — Nova</h1>
+                    <p className="text-gray-400 mt-2">Pusat pengetahuan, aturan, dan data yang dipelajari oleh AI Agent (Nova) secara real-time.</p>
+                </div>
+                <button onClick={handleSeedPRD} disabled={seeding}
+                    className="shrink-0 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold py-2.5 px-5 rounded-xl text-xs transition-all disabled:opacity-50 shadow-lg shadow-purple-500/20">
+                    {seeding ? '⏳ Menyimpan...' : '📄 Inject PRD Template ke Database'}
+                </button>
             </div>
+
+            {seedMsg && (
+                <div className={`p-3 rounded-xl text-xs border ${seedMsg.startsWith('✅') ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}>
+                    {seedMsg}
+                </div>
+            )}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
