@@ -1,0 +1,10 @@
+
+> frontend@0.1.0 dev
+> next dev --webpack
+
+▲ Next.js 16.2.9 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://100.68.69.21:3000
+- Environments: .env.local
+✓ Ready in 648ms
+^C^C

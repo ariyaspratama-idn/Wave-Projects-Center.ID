@@ -1,33 +1,42 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge'; // Edge runtime bypasses 10s timeout constraints during streaming
+export const runtime = 'edge';
 
-const OPENAI_SECRET_1 = "sk-proj-07yV5DNZPgXDTkKRFib8zuMaVtG6lLSHIB";
-const OPENAI_SECRET_2 = "Qb_2euBBk_eT6cY273OgnY6B3_VxYcuFQOe7RPaKT3";
-const OPENAI_SECRET_3 = "BlbkFJXLYJCTSLceU-autRgrT2EbkyH4cXhDhQr24XT_sJ7zxqJZevyCQxppL6PshHq02Aj9eDtgFR0A";
-const apiKey = process.env.OPENAI_API_KEY || (OPENAI_SECRET_1 + OPENAI_SECRET_2 + OPENAI_SECRET_3);
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export async function POST(req: Request) {
     try {
         const { messages } = await req.json();
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        // Cari system prompt
+        const sysMsg = messages.find((m: any) => m.role === 'system');
+        const systemInstruction = sysMsg ? { parts: [{ text: sysMsg.content }] } : undefined;
+
+        // Convert messages array
+        const contents = messages
+            .filter((m: any) => m.role !== 'system')
+            .map((m: any) => ({
+                role: m.role === 'assistant' ? 'model' : 'user',
+                parts: [{ text: m.content }]
+            }));
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini",
-                messages: messages,
-                stream: true,
-                temperature: 0.7
+                contents: contents,
+                systemInstruction: systemInstruction,
+                generationConfig: {
+                    temperature: 0.7,
+                }
             })
         });
 
         if (!response.ok) {
             const errText = await response.text();
-            throw new Error(`OpenAI Error: ${errText}`);
+            throw new Error(`Gemini Error: ${errText}`);
         }
 
         const stream = new ReadableStream({
@@ -57,7 +66,13 @@ export async function POST(req: Request) {
                                 }
                                 try {
                                     const data = JSON.parse(dataStr);
-                                    const text = data.choices[0]?.delta?.content;
+                                    let text = "";
+                                    if (data.candidates && data.candidates.length > 0) {
+                                        const parts = data.candidates[0].content?.parts;
+                                        if (parts) {
+                                            parts.forEach((p: any) => { if (p.text) text += p.text });
+                                        }
+                                    }
                                     if (text) controller.enqueue(new TextEncoder().encode(text));
                                 } catch (e) { }
                             }
