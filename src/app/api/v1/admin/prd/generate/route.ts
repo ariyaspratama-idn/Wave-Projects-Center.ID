@@ -9,7 +9,7 @@ const { renderPRDToDocx } = require('../../../../../../../prd-generator/prdDocxR
 
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" }); // use PRO for PRD
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // use PRO for PRD
 
 export async function POST(req: Request) {
     try {
