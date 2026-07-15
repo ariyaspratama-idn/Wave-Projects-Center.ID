@@ -135,11 +135,7 @@ export async function POST(req: Request) {
             6. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.
             7. CHECKOUT TRIGGER (SUPER PENTING): Jika klien SUDAH SETUJU mengambil suatu paket dan bertanya cara membayarnya / langkah selanjutnya, kamu WAJIB menyertakan kode rahasia ini tepat di akhir teks balasanmu tanpa modifikasi apa pun: \`[CHECKOUT_TRIGGER:<ID_PAKET>]\`. Contoh: jika mereka ambil Paket Ultimate yang ID-nya 3, kamu balas: "Baik, silakan klik tombol di bawah ini: [CHECKOUT_TRIGGER:3]".`;
 
-            const dynamicModel = genAI.getGenerativeModel({
-                model: "gemini-1.5-pro",
-                systemInstruction: systemPrompt
-            });
-
+            // Use the top-level 'model' variable instead of creating a dynamicModel
             const chatHistoryString = chatHistoryDb.map((msg: any) =>
                 `${msg.sender === 'customer' ? 'Klien' : 'Kamu (Nova)'}: ${msg.content}`
             ).join('\n\n');
@@ -151,14 +147,17 @@ export async function POST(req: Request) {
 
             while (attempts < 3 && !success) {
                 try {
-                    const result = await dynamicModel.generateContent(fullPrompt);
+                    const result = await model.generateContent({
+                        contents: [{ role: "user", parts: [{ text: fullPrompt }] }],
+                        systemInstruction: { role: 'system', parts: [{ text: systemPrompt }] }
+                    });
                     aiText = result.response.text();
                     success = true;
                 } catch (genErr: any) {
                     attempts++;
                     console.error(`Gemini request failed (Attempt ${attempts}):`, genErr.message);
                     if (attempts >= 3) {
-                        aiText = `Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
+                        aiText = `[DEBUG API ERROR ${genErr?.message || "GenErr"}] Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
                     } else {
                         // Wait 1.5 seconds before retrying
                         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -167,7 +166,7 @@ export async function POST(req: Request) {
             }
         } catch (outerGenErr: any) {
             console.error("Outer Gemini processing failed:", outerGenErr);
-            aiText = `Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
+            aiText = `[OUTER ERROR API ${outerGenErr?.message || "Unknown"}] Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
         }
 
         // WhatsApp Admin Alert Logic
