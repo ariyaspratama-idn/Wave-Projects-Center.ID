@@ -35,28 +35,41 @@ export async function POST(req: Request) {
             normalizedContents.unshift({ role: 'user', parts: [{ text: '(Initial Context)' }] });
         }
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: normalizedContents,
-                systemInstruction: systemInstruction,
-                generationConfig: {
-                    temperature: 0.7,
-                }
-            })
-        });
+        const MODELS = ["gemini-flash-latest", "gemini-1.5-flash", "gemini-1.0-pro", "gemini-pro", "gemini-1.5-pro"];
+        let finalResponse: Response | null = null;
+        let lastErrStr = "";
 
-        if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`Gemini Error: ${errText}`);
+        for (const model of MODELS) {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: normalizedContents,
+                    systemInstruction: systemInstruction,
+                    generationConfig: {
+                        temperature: 0.7,
+                    }
+                })
+            });
+
+            if (response.ok) {
+                finalResponse = response;
+                break; // Found a working model!
+            }
+
+            lastErrStr = await response.text();
+            // Continue completely unconditionally.
+        }
+
+        if (!finalResponse) {
+            throw new Error(`Semua varian model AI sedang kepenuhan/gagal (High Demand). Error terakhir: ${lastErrStr}`);
         }
 
         const stream = new ReadableStream({
             async start(controller) {
-                const reader = response.body?.getReader();
+                const reader = finalResponse?.body?.getReader();
                 if (!reader) {
                     controller.close();
                     return;

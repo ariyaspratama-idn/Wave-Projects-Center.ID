@@ -54,28 +54,41 @@ export async function POST(req: Request) {
             return cleaned;
         }
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                systemInstruction: { parts: [{ text: "Anda adalah Product Manager ahli yang memformat sistem ke dalam JSON PRD teknikal." }] },
-                contents: [{ parts: [{ text: "Permintaan Klien: " + rawRequestStr + "\nNama Proyek: " + projectName + "\n\nEkstrak seluruh informasi teknis ke dalam struktur JSON yang diminta." + partInfo }] }],
-                generationConfig: {
-                    temperature: 0.3,
-                    maxOutputTokens: 8192,
-                    responseMimeType: "application/json",
-                    responseSchema: cleanSchemaForGemini(schemaToUse),
-                }
-            })
-        });
+        const MODELS = ["gemini-flash-latest", "gemini-1.5-flash", "gemini-1.0-pro", "gemini-pro", "gemini-1.5-pro"];
+        let finalResponse: Response | null = null;
+        let lastErrStr = "";
 
-        if (!response.ok) {
-            const errStr = await response.text();
-            throw new Error(`Gemini API Error: ${errStr}`);
+        for (const model of MODELS) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    systemInstruction: { parts: [{ text: "Anda adalah Product Manager ahli yang memformat sistem ke dalam JSON PRD teknikal." }] },
+                    contents: [{ parts: [{ text: "Permintaan Klien: " + rawRequestStr + "\nNama Proyek: " + projectName + "\n\nEkstrak seluruh informasi teknis ke dalam struktur JSON yang diminta." + partInfo }] }],
+                    generationConfig: {
+                        temperature: 0.3,
+                        maxOutputTokens: 8192,
+                        responseMimeType: "application/json",
+                        responseSchema: cleanSchemaForGemini(schemaToUse),
+                    }
+                })
+            });
+
+            if (response.ok) {
+                finalResponse = response;
+                break;
+            }
+
+            lastErrStr = await response.text();
+            // Continue unconditionally
         }
 
-        const data = await response.json();
+        if (!finalResponse) {
+            throw new Error(`Semua varian model AI sedang kepenuhan/gagal (High Demand). Error terakhir: ${lastErrStr}`);
+        }
+
+        const data = await finalResponse.json();
         const textPart = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
         return NextResponse.json({
