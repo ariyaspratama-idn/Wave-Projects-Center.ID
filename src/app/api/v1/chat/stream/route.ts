@@ -13,12 +13,27 @@ export async function POST(req: Request) {
         const systemInstruction = sysMsg ? { parts: [{ text: sysMsg.content }] } : undefined;
 
         // Convert messages array
-        const contents = messages
-            .filter((m: any) => m.role !== 'system')
-            .map((m: any) => ({
-                role: m.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: m.content }]
-            }));
+        const rawContents = messages.filter((m: any) => m.role !== 'system');
+
+        let normalizedContents: any[] = [];
+        let currentRole = "";
+
+        // Gemini strictly requires alternating roles (user, model, user, model)
+        // We merge consecutive messages from the same role.
+        for (const m of rawContents) {
+            let r = m.role === 'assistant' ? 'model' : 'user';
+            if (r === currentRole && normalizedContents.length > 0) {
+                normalizedContents[normalizedContents.length - 1].parts[0].text += `\n\n${m.content}`;
+            } else {
+                normalizedContents.push({ role: r, parts: [{ text: m.content }] });
+                currentRole = r;
+            }
+        }
+
+        // Gemini strictly requires the first message to be from 'user'
+        if (normalizedContents.length > 0 && normalizedContents[0].role !== 'user') {
+            normalizedContents.unshift({ role: 'user', parts: [{ text: '(Initial Context)' }] });
+        }
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`, {
             method: 'POST',
@@ -26,7 +41,7 @@ export async function POST(req: Request) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                contents: contents,
+                contents: normalizedContents,
                 systemInstruction: systemInstruction,
                 generationConfig: {
                     temperature: 0.7,

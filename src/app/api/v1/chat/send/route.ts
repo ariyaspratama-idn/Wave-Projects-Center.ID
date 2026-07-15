@@ -145,7 +145,8 @@ export async function POST(req: Request) {
                     session_token: activeToken,
                     session_id: sessionId,
                     messages: messages,
-                    customer_name: customer_name
+                    customer_name: customer_name,
+                    contact_text: contactText
                 }
             });
 

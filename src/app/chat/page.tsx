@@ -96,7 +96,7 @@ export default function ChatPage() {
                         });
                     }
                 } catch (e) {
-                    accumulatedText = "Maaf, sistem AI sedang terkendala arus stream. Refresh atau coba ulangi.";
+                    accumulatedText = `Maaf, sistem AI sedang terkendala. Silakan hubungi admin kami melalui: ${data.data.contact_text || 'WhatsApp admin'}`;
                     setMessages((prev) => {
                         const newMsg = [...prev];
                         newMsg[newMsg.length - 1].content = accumulatedText;

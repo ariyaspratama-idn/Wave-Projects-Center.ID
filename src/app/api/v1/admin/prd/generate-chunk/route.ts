@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { interpretCustomerRequest } from '../../../../../../../prd-generator/aiClient';
+import aiClient from '../../../../../../../prd-generator/aiClient';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
             prevContext: prevContext || {}
         };
 
-        const chunkData = await interpretCustomerRequest(baseContext);
+        const chunkData = await aiClient.interpretCustomerRequest(baseContext);
 
         return NextResponse.json({
             success: true,
