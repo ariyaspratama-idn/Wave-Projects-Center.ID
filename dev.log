@@ -2,9 +2,18 @@
 > frontend@0.1.0 dev
 > next dev --webpack
 
+⚠ Port 3000 is in use by process 14940, using available port 3001 instead.
 ▲ Next.js 16.2.9 (webpack)
-- Local:         http://localhost:3000
-- Network:       http://100.68.69.21:3000
+- Local:         http://localhost:3001
+- Network:       http://100.68.69.21:3001
 - Environments: .env.local
-✓ Ready in 648ms
-^C^C
+✓ Ready in 967ms
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3000
+- PID:          14940
+- Dir:          C:\Users\Admin\.gemini\antigravity\scratch\Wave Project.ID Center
+- Log:          .next\dev\logs\next-development.log
+
+Run taskkill /PID 14940 /F to stop it.
+[?25h

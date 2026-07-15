@@ -121,7 +121,10 @@ export default function OrderExecutiveDetail() {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 1, projectName: data.order.project_name || data.order.package_name })
             });
-            if (!res1.ok) throw new Error("Gagal generate Part 1");
+            if (!res1.ok) {
+                const err = await res1.json().catch(() => ({}));
+                throw new Error("Part 1: " + (err.error || "Gagal"));
+            }
             const data1 = await res1.json();
 
             setPrdProgress("Membuat Tahap 2/3 (Analisis Data & QA)...");
@@ -130,7 +133,10 @@ export default function OrderExecutiveDetail() {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 2, projectName: data.order.project_name || data.order.package_name, prevContext: data1.data })
             });
-            if (!res2.ok) throw new Error("Gagal generate Part 2");
+            if (!res2.ok) {
+                const err = await res2.json().catch(() => ({}));
+                throw new Error("Part 2: " + (err.error || "Gagal"));
+            }
             const data2 = await res2.json();
 
             setPrdProgress("Membuat Tahap 3/3 (Sistem Database)...");
@@ -139,7 +145,10 @@ export default function OrderExecutiveDetail() {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
                 body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 3, projectName: data.order.project_name || data.order.package_name, prevContext: data2.data })
             });
-            if (!res3.ok) throw new Error("Gagal generate Part 3");
+            if (!res3.ok) {
+                const err = await res3.json().catch(() => ({}));
+                throw new Error("Part 3: " + (err.error || "Gagal"));
+            }
             const data3 = await res3.json();
 
             setPrdProgress("Merender Dokumen Word...");
