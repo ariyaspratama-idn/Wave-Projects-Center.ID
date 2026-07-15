@@ -54,7 +54,7 @@ export async function POST(req: Request) {
             return cleaned;
         }
 
-        const MODELS = ["gemini-flash-latest", "gemini-1.5-flash", "gemini-1.0-pro", "gemini-pro", "gemini-1.5-pro"];
+        const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3-flash-preview", "gemini-flash-lite-latest", "gemini-pro-latest", "gemini-2.5-pro"];
         let finalResponse: Response | null = null;
         let lastErrStr = "";
 
