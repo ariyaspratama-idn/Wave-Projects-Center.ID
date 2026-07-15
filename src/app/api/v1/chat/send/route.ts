@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
 
 export const maxDuration = 60; // Extend Vercel timeout to 60 seconds
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
-const modelPro = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-const modelFlash = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+// Initialize OpenAI using user's explicit fallback API key if not in env
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
 export async function POST(req: Request) {
     try {
@@ -136,41 +136,30 @@ export async function POST(req: Request) {
             6. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.
             7. CHECKOUT TRIGGER (SUPER PENTING): Jika klien SUDAH SETUJU mengambil suatu paket dan bertanya cara membayarnya / langkah selanjutnya, kamu WAJIB menyertakan kode rahasia ini tepat di akhir teks balasanmu tanpa modifikasi apa pun: \`[CHECKOUT_TRIGGER:<ID_PAKET>]\`. Contoh: jika mereka ambil Paket Ultimate yang ID-nya 3, kamu balas: "Baik, silakan klik tombol di bawah ini: [CHECKOUT_TRIGGER:3]".`;
 
-            // Use the top-level 'model' variable instead of creating a dynamicModel
-            const chatHistoryString = chatHistoryDb.map((msg: any) =>
-                `${msg.sender === 'customer' ? 'Klien' : 'Kamu (Nova)'}: ${msg.content}`
-            ).join('\n\n');
+            // Restructure prompt history into OpenAI Messages format
+            const messages: any[] = [{ role: "system", content: systemPrompt }];
 
-            const fullPrompt = `${systemPrompt}\n\n[Riwayat Percakapan Sebelumnya:]\n${chatHistoryString}\n\n[Pesan Klien Saat Ini:]\n${message}`;
+            chatHistoryDb.forEach((msg: any) => {
+                messages.push({
+                    role: msg.sender === 'customer' ? 'user' : 'assistant',
+                    content: msg.content
+                });
+            });
+            messages.push({ role: "user", content: message });
 
-            let attempts = 0;
-            let success = false;
-            let lastError = "";
-
-            while (attempts < 3 && !success) {
-                try {
-                    const activeModel = attempts < 2 ? modelPro : modelFlash;
-                    const result = await activeModel.generateContent({
-                        contents: [{ role: "user", parts: [{ text: fullPrompt }] }],
-                        systemInstruction: { role: 'system', parts: [{ text: systemPrompt }] }
-                    });
-                    aiText = result.response.text();
-                    success = true;
-                } catch (genErr: any) {
-                    attempts++;
-                    lastError = genErr.message;
-                    console.error(`Gemini request failed (Attempt ${attempts}):`, genErr.message);
-
-                    if (attempts >= 3) {
-                        aiText = `Mohon maaf, sistem AI kami sedang padat (High Demand). Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
-                    } else {
-                        // Exponential backoff: 2s, 4s
-                        await new Promise(resolve => setTimeout(resolve, attempts * 2000));
-                    }
-                }
+            try {
+                const completion = await openai.chat.completions.create({
+                    model: "gpt-4o-mini",
+                    messages: messages,
+                });
+                aiText = completion.choices[0].message.content || aiText;
+            } catch (genErr: any) {
+                console.error(`OpenAI request failed:`, genErr.message);
+                aiText = `Mohon maaf, sistem AI kami sedang padat (High Demand). Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
             }
+
         } catch (outerGenErr: any) {
-            console.error("Outer Gemini processing failed:", outerGenErr);
+            console.error("Outer AI processing failed:", outerGenErr);
             aiText = `[OUTER ERROR API ${outerGenErr?.message || "Unknown"}] Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
         }
 
