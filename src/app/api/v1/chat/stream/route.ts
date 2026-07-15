@@ -82,16 +82,14 @@ export async function POST(req: Request) {
                         if (done) break;
                         buffer += decoder.decode(value, { stream: true });
 
-                        let boundary = buffer.indexOf('\n\n');
-                        while (boundary !== -1) {
-                            const chunk = buffer.slice(0, boundary);
-                            buffer = buffer.slice(boundary + 2);
+                        const lines = buffer.split('\n');
+                        buffer = lines.pop() || "";
 
-                            if (chunk.startsWith('data: ')) {
-                                const dataStr = chunk.replace('data: ', '');
-                                if (dataStr === '[DONE]') {
-                                    break;
-                                }
+                        for (const rawLine of lines) {
+                            const line = rawLine.trim();
+                            if (line.startsWith('data: ')) {
+                                const dataStr = line.replace('data: ', '').trim();
+                                if (dataStr === '[DONE]') break;
                                 try {
                                     const data = JSON.parse(dataStr);
                                     let text = "";
@@ -102,9 +100,10 @@ export async function POST(req: Request) {
                                         }
                                     }
                                     if (text) controller.enqueue(new TextEncoder().encode(text));
-                                } catch (e) { }
+                                } catch (e) {
+                                    // Silently ignore incomplete json parts if any
+                                }
                             }
-                            boundary = buffer.indexOf('\n\n');
                         }
                     }
                 } finally {
