@@ -37,6 +37,7 @@ export async function POST(req: Request) {
         // 2. Setup Gemini Generation Config with Schema
         const generationConfig = {
             temperature: 0.2, // low temp for consistency
+            maxOutputTokens: 8192,
             responseMimeType: "application/json",
             responseSchema: prdAiOutputSchema,
         };
