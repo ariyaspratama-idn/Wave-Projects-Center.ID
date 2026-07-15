@@ -1,16 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import OpenAI from 'openai';
 
-export const maxDuration = 60; // Extend Vercel timeout to 60 seconds
-
-const OPENAI_SECRET_1 = "sk-proj-07yV5DNZPgXDTkKRFib8zuMaVtG6lLSHIB";
-const OPENAI_SECRET_2 = "Qb_2euBBk_eT6cY273OgnY6B3_VxYcuFQOe7RPaKT3";
-const OPENAI_SECRET_3 = "BlbkFJXLYJCTSLceU-autRgrT2EbkyH4cXhDhQr24XT_sJ7zxqJZevyCQxppL6PshHq02Aj9eDtgFR0A";
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || (OPENAI_SECRET_1 + OPENAI_SECRET_2 + OPENAI_SECRET_3)
-});
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
     try {
@@ -150,45 +141,23 @@ export async function POST(req: Request) {
             });
             messages.push({ role: "user", content: message });
 
-            try {
-                const completion = await openai.chat.completions.create({
-                    model: "gpt-4o-mini",
+            return NextResponse.json({
+                success: true,
+                data: {
+                    session_token: activeToken,
+                    session_id: sessionId,
                     messages: messages,
-                });
-                aiText = completion.choices[0].message.content || aiText;
-            } catch (genErr: any) {
-                console.error(`OpenAI request failed:`, genErr.message);
-                aiText = `Mohon maaf, sistem AI kami sedang padat (High Demand). Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
-            }
+                    customer_name: customer_name
+                }
+            });
 
         } catch (outerGenErr: any) {
             console.error("Outer AI processing failed:", outerGenErr);
-            aiText = `[OUTER ERROR API ${outerGenErr?.message || "Unknown"}] Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
+            return NextResponse.json({
+                success: false,
+                error: `Mohon maaf, sistem database kami sedang padat. Silakan hubungi admin.`
+            }, { status: 500 });
         }
-
-        // WhatsApp Admin Alert Logic
-        const lowerPrompt = message.toLowerCase();
-        const lowerResponse = aiText.toLowerCase();
-        if (lowerPrompt.includes("ultimate") || lowerResponse.includes("ultimate") || lowerPrompt.includes("custom") || lowerResponse.includes("custom")) {
-            // Import dinamis agar tidak memperlambat start routing
-            import('@/lib/whatsapp').then(({ sendAdminAlert }) => {
-                sendAdminAlert(customer_name || 'Guest', 'Paket Ultimate / Custom', sessionId.toString()).catch(e => console.error(e));
-            }).catch(e => console.error("Gagal load whatsapp lib", e));
-        }
-
-        // 4. Save AI Response
-        await pool.query(
-            "INSERT INTO chat_messages (chat_session_id, sender, content) VALUES (?, ?, ?)",
-            [sessionId, 'ai', aiText]
-        );
-
-        return NextResponse.json({
-            success: true,
-            data: {
-                session_token: activeToken, // Accurately return the token stored in DB
-                reply: aiText
-            }
-        });
 
     } catch (e: any) {
         return NextResponse.json({ success: false, error: e.message }, { status: 500 });

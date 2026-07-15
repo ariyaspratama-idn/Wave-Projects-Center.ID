@@ -12,6 +12,7 @@ export default function OrderExecutiveDetail() {
     const [loading, setLoading] = useState(true);
     const [aiGenerating, setAiGenerating] = useState(false);
     const [pdfGenerating, setPdfGenerating] = useState(false);
+    const [prdProgress, setPrdProgress] = useState("");
     const [editingContact, setEditingContact] = useState(false);
     const [contactForm, setContactForm] = useState({ client_name: '', client_email: '', client_whatsapp: '', payment_status: '' });
     const [savingContact, setSavingContact] = useState(false);
@@ -111,8 +112,40 @@ export default function OrderExecutiveDetail() {
         }
 
         setPdfGenerating(true);
+        setPrdProgress("Membuat Tahap 1/3 (Pendahuluan)...");
         try {
             const token = localStorage.getItem("wave_token");
+
+            // Chunk 1
+            const res1 = await fetch("/api/v1/admin/prd/generate-chunk", {
+                method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 1, projectName: data.order.project_name || data.order.package_name })
+            });
+            if (!res1.ok) throw new Error("Gagal generate Part 1");
+            const data1 = await res1.json();
+
+            setPrdProgress("Membuat Tahap 2/3 (Analisis Data & QA)...");
+            // Chunk 2
+            const res2 = await fetch("/api/v1/admin/prd/generate-chunk", {
+                method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 2, projectName: data.order.project_name || data.order.package_name, prevContext: data1.data })
+            });
+            if (!res2.ok) throw new Error("Gagal generate Part 2");
+            const data2 = await res2.json();
+
+            setPrdProgress("Membuat Tahap 3/3 (Sistem Database)...");
+            // Chunk 3
+            const res3 = await fetch("/api/v1/admin/prd/generate-chunk", {
+                method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 3, projectName: data.order.project_name || data.order.package_name, prevContext: data2.data })
+            });
+            if (!res3.ok) throw new Error("Gagal generate Part 3");
+            const data3 = await res3.json();
+
+            setPrdProgress("Merender Dokumen Word...");
+
+            const fullPrdData = { ...data1.data, ...data2.data, ...data3.data };
+
             const res = await fetch("/api/v1/admin/prd", {
                 method: "POST",
                 headers: {
@@ -120,14 +153,14 @@ export default function OrderExecutiveDetail() {
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    rawCustomerRequest: data.brief.core_attributes,
+                    fullPrdData,
                     projectName: data.order.project_name || data.order.package_name
                 })
             });
 
             if (!res.ok) {
                 const err = await res.json();
-                throw new Error(err.error || 'Terjadi kesalahan sistem API PRD.');
+                throw new Error(err.error || 'Terjadi kesalahan sistem API PRD saat render.');
             }
 
             const blob = await res.blob();
@@ -145,6 +178,7 @@ export default function OrderExecutiveDetail() {
             alert("Gagal Unduh PRD: " + e.message);
         } finally {
             setPdfGenerating(false);
+            setPrdProgress("");
         }
     };
 
@@ -298,7 +332,7 @@ export default function OrderExecutiveDetail() {
                     )}
                     {data.brief && (
                         <button onClick={handleDownloadPRD} disabled={pdfGenerating} className="text-xs bg-green-500/20 text-green-300 px-3 py-2 rounded-lg border border-green-500/40 hover:bg-green-500/30 flex items-center gap-1 font-bold transition-all">
-                            {pdfGenerating ? '🔄 Menyusun Word...' : '📄 Unduh Dokumen PRD (.docx)'}
+                            {pdfGenerating ? (prdProgress ? `🔄 ${prdProgress}` : '🔄 Menyusun Word...') : '📄 Unduh Dokumen PRD (.docx)'}
                         </button>
                     )}
                 </div>

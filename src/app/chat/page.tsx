@@ -59,15 +59,68 @@ export default function ChatPage() {
                 })
             });
             const data = await res.json();
+
             if (data.success && data.data) {
+                if (data.data.reply) {
+                    setMessages((prev) => [...prev, { role: "ai", content: data.data.reply }]);
+                    setLoading(false);
+                    return;
+                }
+
                 localStorage.setItem("wave_chat_session", data.data.session_token);
-                setMessages((prev) => [...prev, { role: "ai", content: data.data.reply }]);
+
+                setMessages((prev) => [...prev, { role: "ai", content: "" }]);
+                setLoading(false);
+
+                let accumulatedText = "";
+
+                try {
+                    const streamRes = await fetch("/api/v1/chat/stream", {
+                        method: 'POST',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ messages: data.data.messages })
+                    });
+
+                    if (!streamRes.ok) throw new Error("Stream fail");
+
+                    const reader = streamRes.body?.getReader();
+                    const decoder = new TextDecoder();
+                    while (reader) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        accumulatedText += decoder.decode(value, { stream: true });
+                        setMessages((prev) => {
+                            const newMsg = [...prev];
+                            newMsg[newMsg.length - 1].content = accumulatedText;
+                            return newMsg;
+                        });
+                    }
+                } catch (e) {
+                    accumulatedText = "Maaf, sistem AI sedang terkendala arus stream. Refresh atau coba ulangi.";
+                    setMessages((prev) => {
+                        const newMsg = [...prev];
+                        newMsg[newMsg.length - 1].content = accumulatedText;
+                        return newMsg;
+                    });
+                }
+
+                fetch("/api/v1/chat/save", {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        sessionId: data.data.session_id,
+                        aiText: accumulatedText,
+                        customer_name: data.data.customer_name,
+                        message: msg
+                    })
+                });
+
             } else {
                 setMessages((prev) => [...prev, { role: "ai", content: "Maaf, sistem layanan sedang sibuk." }]);
+                setLoading(false);
             }
         } catch (e) {
             setMessages((prev) => [...prev, { role: "ai", content: "Koneksi ke server gagal. Coba lagi nanti." }]);
-        } finally {
             setLoading(false);
         }
     }

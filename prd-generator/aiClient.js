@@ -14,7 +14,7 @@
  * returns a parsed JSON object matching prdAiOutputSchema.
  */
 
-const { prdAiOutputSchema } = require("./prdSchema");
+const { prdAiOutputSchemaPart1, prdAiOutputSchemaPart2, prdAiOutputSchemaPart3, prdAiOutputSchema } = require("./prdSchema");
 const { SYSTEM_PROMPT, buildUserPrompt } = require("./prdPrompt");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -57,6 +57,20 @@ async function interpretCustomerRequest(ctx) {
     throw new Error("GEMINI_API_KEY belum diset di environment variables.");
   }
 
+  let schemaToUse = prdAiOutputSchema;
+  let partInfo = "";
+
+  if (ctx.part === 1) {
+    schemaToUse = prdAiOutputSchemaPart1;
+    partInfo = "\n\n[PENTING] INI ADALAH GENERATE PRD PART 1 (BAB AWAL). Fokus hanya menghasilkan field JSON yang sesuai schema Part 1.";
+  } else if (ctx.part === 2) {
+    schemaToUse = prdAiOutputSchemaPart2;
+    partInfo = `\n\n[PENTING] INI ADALAH GENERATE PRD PART 2 (BAB TENGAH). Berikut adalah hasil dari Part 1 agar konteks nyambung (JANGAN tulis ulang): ${JSON.stringify(ctx.prevContext || {})}`;
+  } else if (ctx.part === 3) {
+    schemaToUse = prdAiOutputSchemaPart3;
+    partInfo = `\n\n[PENTING] INI ADALAH GENERATE PRD PART 3 (FINAL/TEKNIS). Berikut adalah hasil sebelumnya agar arsitektur teknis tepat: ${JSON.stringify(ctx.prevContext || {})}`;
+  }
+
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
   const response = await fetch(url, {
@@ -66,12 +80,12 @@ async function interpretCustomerRequest(ctx) {
       systemInstruction: {
         parts: [{ text: SYSTEM_PROMPT }]
       },
-      contents: [{ parts: [{ text: buildUserPrompt(ctx) }] }],
+      contents: [{ parts: [{ text: buildUserPrompt(ctx) + partInfo }] }],
       generationConfig: {
         temperature: 0.3,
         maxOutputTokens: 8192,
         responseMimeType: "application/json",
-        responseSchema: cleanSchemaForGemini(prdAiOutputSchema),
+        responseSchema: cleanSchemaForGemini(schemaToUse),
       }
     })
   });

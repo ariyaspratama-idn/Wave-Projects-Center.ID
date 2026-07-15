@@ -13,27 +13,16 @@ export async function POST(req: Request) {
         jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
 
         const body = await req.json();
-        const { rawCustomerRequest, projectName } = body;
+        const { fullPrdData, projectName } = body;
 
-        if (!rawCustomerRequest) {
-            return NextResponse.json({ success: false, error: 'rawCustomerRequest required' }, { status: 400 });
+        if (!fullPrdData) {
+            return NextResponse.json({ success: false, error: 'fullPrdData (hasil chunk) required' }, { status: 400 });
         }
 
-        const rawRequestStr = typeof rawCustomerRequest === 'object' ? JSON.stringify(rawCustomerRequest, null, 2) : String(rawCustomerRequest);
+        const prdData = fullPrdData;
 
-        const baseContext = {
-            projectName: projectName || "Wave Projects Client App",
-            clientName: "Client",
-            projectType: "Custom Development",
-            priority: "Tinggi",
-            rawCustomerRequest: rawRequestStr
-        };
-
-        const { interpretCustomerRequest } = require('../../../../../../prd-generator/aiClient.js');
-        const prdData = await interpretCustomerRequest(baseContext);
-
-        prdData.projectName = baseContext.projectName;
-        prdData.clientName = baseContext.clientName;
+        prdData.projectName = projectName || "Wave Projects Client App";
+        prdData.clientName = prdData.clientName || "Client";
         prdData.prdId = `PRD-CUSTOM-${Date.now()}`;
 
         // Render to Word Document buffer
