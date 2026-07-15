@@ -44,9 +44,8 @@ export async function POST(req: Request) {
             responseSchema: prdAiOutputSchema,
         };
 
-        // 3. Call AI with Retry and Fallback
-        const modelPro = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-        const modelFlash = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        // 3. Call AI with Retry (Pure Gemini-1.5-Pro due to Flash 404 key restriction)
+        const activeModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
         let jsonResp = "";
         let attempts = 0;
@@ -55,8 +54,6 @@ export async function POST(req: Request) {
 
         while (attempts < 3 && !success) {
             try {
-                const activeModel = attempts < 2 ? modelPro : modelFlash;
-
                 const result = await activeModel.generateContent({
                     contents: [
                         { role: "user", parts: [{ text: userPrompt }] }
@@ -73,14 +70,14 @@ export async function POST(req: Request) {
                 console.error(`[PRD Generator] Attempt ${attempts} failed:`, lastError);
 
                 if (attempts < 3) {
-                    // Wait before retrying (exponential backoff: 2.5s, then fallback to flash)
-                    await new Promise(resolve => setTimeout(resolve, attempts * 2500));
+                    // Wait before retrying (exponential backoff: 5s, 10s) to bypass High Demand queue
+                    await new Promise(resolve => setTimeout(resolve, attempts * 5000));
                 }
             }
         }
 
         if (!success) {
-            throw new Error(`Kapasitas server AI sedang penuh (503). Silakan coba lagi nanti. Detail: ${lastError}`);
+            throw new Error(`Kapasitas server AI sedang penuh (503). Silakan coba lagi nanti. Detail: \n${lastError}`);
         }
         const prdData = JSON.parse(jsonResp);
 
