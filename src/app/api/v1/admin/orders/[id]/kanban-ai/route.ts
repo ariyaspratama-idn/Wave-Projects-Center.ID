@@ -18,7 +18,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         const [briefs]: any = await pool.query("SELECT * FROM client_briefs WHERE order_id = ?", [orderId]);
         if (briefs.length === 0) return NextResponse.json({ success: false, error: 'Brief belum diisi klien' }, { status: 400 });
 
-        const [orders]: any = await pool.query("SELECT o.github_url, o.title, o.description, p.name as package_name, p.price as package_price, p.features as package_features FROM orders o LEFT JOIN packages p ON o.package_id = p.id WHERE o.id = ?", [orderId]);
+        const [orders]: any = await pool.query("SELECT o.github_url, p.name as package_name, p.price as package_price, p.features as package_features FROM orders o LEFT JOIN packages p ON o.package_id = p.id WHERE o.id = ?", [orderId]);
         const order = orders.length > 0 ? orders[0] : { github_url: '', package_name: '', package_price: 0 };
 
         const brief = briefs[0];
@@ -69,29 +69,41 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         Ensure it is exactly a valid JSON array.
         `;
 
-        const geminiRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: {
-                        temperature: 0.2,
-                        maxOutputTokens: 4096,
-                    },
-                    systemInstruction: {
-                        parts: [{ text: "You are an AI that ONLY outputs raw, minified valid JSON arrays. Never use markdown code blocks or any wrapping." }]
-                    }
-                })
+        const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-3-flash-preview", "gemini-flash-lite-latest", "gemini-pro-latest", "gemini-2.5-pro"];
+        let geminiRes: Response | null = null;
+        let lastErrStr = "";
+
+        for (const model of MODELS) {
+            const res = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            temperature: 0.2,
+                            maxOutputTokens: 4096,
+                        },
+                        systemInstruction: {
+                            parts: [{ text: "You are an AI that ONLY outputs raw, minified valid JSON arrays. Never use markdown code blocks or any wrapping." }]
+                        }
+                    })
+                }
+            );
+
+            if (res.ok) {
+                geminiRes = res;
+                break;
             }
-        );
+            lastErrStr = await res.text();
+        }
+
+        if (!geminiRes) {
+            return NextResponse.json({ success: false, error: 'Semua model AI penuh/gagal: ' + lastErrStr }, { status: 400 });
+        }
 
         const geminiData = await geminiRes.json();
-
-        if (!geminiRes.ok) {
-            return NextResponse.json({ success: false, error: 'Gemini API Fail: ' + JSON.stringify(geminiData) }, { status: 400 });
-        }
 
         const rawJsonText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
 
