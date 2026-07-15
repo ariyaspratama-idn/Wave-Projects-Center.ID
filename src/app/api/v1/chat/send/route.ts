@@ -6,7 +6,7 @@ export const maxDuration = 60; // Extend Vercel timeout to 60 seconds
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 export async function POST(req: Request) {
     try {
@@ -136,7 +136,7 @@ export async function POST(req: Request) {
             7. CHECKOUT TRIGGER (SUPER PENTING): Jika klien SUDAH SETUJU mengambil suatu paket dan bertanya cara membayarnya / langkah selanjutnya, kamu WAJIB menyertakan kode rahasia ini tepat di akhir teks balasanmu tanpa modifikasi apa pun: \`[CHECKOUT_TRIGGER:<ID_PAKET>]\`. Contoh: jika mereka ambil Paket Ultimate yang ID-nya 3, kamu balas: "Baik, silakan klik tombol di bawah ini: [CHECKOUT_TRIGGER:3]".`;
 
             const dynamicModel = genAI.getGenerativeModel({
-                model: "gemini-1.5-flash",
+                model: "gemini-1.5-pro",
                 systemInstruction: systemPrompt
             });
 
