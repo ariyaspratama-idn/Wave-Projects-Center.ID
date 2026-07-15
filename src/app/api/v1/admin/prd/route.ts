@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { renderPRDToDocx } from '../../../../../../prd-generator/prdDocxRenderer';
 
-export const maxDuration = 60; // 1 Minute limit for maximum PRD generation
-
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 
 export async function POST(req: Request) {
