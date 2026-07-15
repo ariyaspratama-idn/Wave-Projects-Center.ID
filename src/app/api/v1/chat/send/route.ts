@@ -6,7 +6,8 @@ export const maxDuration = 60; // Extend Vercel timeout to 60 seconds
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const modelPro = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const modelFlash = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export async function POST(req: Request) {
     try {
@@ -144,10 +145,12 @@ export async function POST(req: Request) {
 
             let attempts = 0;
             let success = false;
+            let lastError = "";
 
             while (attempts < 3 && !success) {
                 try {
-                    const result = await model.generateContent({
+                    const activeModel = attempts < 2 ? modelPro : modelFlash;
+                    const result = await activeModel.generateContent({
                         contents: [{ role: "user", parts: [{ text: fullPrompt }] }],
                         systemInstruction: { role: 'system', parts: [{ text: systemPrompt }] }
                     });
@@ -155,12 +158,14 @@ export async function POST(req: Request) {
                     success = true;
                 } catch (genErr: any) {
                     attempts++;
+                    lastError = genErr.message;
                     console.error(`Gemini request failed (Attempt ${attempts}):`, genErr.message);
+
                     if (attempts >= 3) {
-                        aiText = `[DEBUG API ERROR ${genErr?.message || "GenErr"}] Mohon maaf, sistem AI kami sedang padat atau terkendala. Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
+                        aiText = `Mohon maaf, sistem AI kami sedang padat (High Demand). Untuk melanjutkan percakapan/negosiasi, silakan langsung hubungi admin kami melalui: ${contactText}`;
                     } else {
-                        // Wait 1.5 seconds before retrying
-                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        // Exponential backoff: 2s, 4s
+                        await new Promise(resolve => setTimeout(resolve, attempts * 2000));
                     }
                 }
             }
