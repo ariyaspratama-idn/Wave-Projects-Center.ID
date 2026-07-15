@@ -9,7 +9,6 @@ const { renderPRDToDocx } = require('../../../../../../../prd-generator/prdDocxR
 
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // use PRO for PRD
 
 export async function POST(req: Request) {
     try {
@@ -42,16 +41,44 @@ export async function POST(req: Request) {
             responseSchema: prdAiOutputSchema,
         };
 
-        // 3. Call AI
-        const result = await model.generateContent({
-            contents: [
-                { role: "user", parts: [{ text: userPrompt }] }
-            ],
-            systemInstruction: { role: 'system', parts: [{ text: SYSTEM_PROMPT }] },
-            generationConfig
-        });
+        // 3. Call AI with Retry and Fallback
+        const modelPro = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+        const modelFlash = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        const jsonResp = result.response.text();
+        let jsonResp = "";
+        let attempts = 0;
+        let success = false;
+        let lastError = "";
+
+        while (attempts < 3 && !success) {
+            try {
+                const activeModel = attempts < 2 ? modelPro : modelFlash;
+
+                const result = await activeModel.generateContent({
+                    contents: [
+                        { role: "user", parts: [{ text: userPrompt }] }
+                    ],
+                    systemInstruction: { role: 'system', parts: [{ text: SYSTEM_PROMPT }] },
+                    generationConfig
+                });
+
+                jsonResp = result.response.text();
+                success = true;
+            } catch (err: any) {
+                attempts++;
+                lastError = err.message;
+                console.error(`[PRD Generator] Attempt ${attempts} failed:`, lastError);
+
+                if (attempts < 3) {
+                    // Wait before retrying (exponential backoff: 2.5s, then fallback to flash)
+                    await new Promise(resolve => setTimeout(resolve, attempts * 2500));
+                }
+            }
+        }
+
+        if (!success) {
+            throw new Error(`Kapasitas server AI sedang penuh (503). Silakan coba lagi nanti. Detail: ${lastError}`);
+        }
         const prdData = JSON.parse(jsonResp);
 
         // Map Admin Inputs directly into the AI output before rendering
