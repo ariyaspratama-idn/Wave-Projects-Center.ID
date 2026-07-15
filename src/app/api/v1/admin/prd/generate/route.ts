@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+export const maxDuration = 60; // Extend Vercel timeout to 60 seconds
+
 // Relative path to the original generator scripts
 const { SYSTEM_PROMPT, buildUserPrompt } = require('../../../../../../../prd-generator/prdPrompt');
 const { prdAiOutputSchema } = require('../../../../../../../prd-generator/prdSchema');

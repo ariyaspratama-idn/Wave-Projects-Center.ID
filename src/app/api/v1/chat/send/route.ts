@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+export const maxDuration = 60; // Extend Vercel timeout to 60 seconds
+
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
