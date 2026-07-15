@@ -15,6 +15,11 @@ Karakteristik Dokumen PRD Global Standard:
 5. Terstruktur per Epic/Flow: Fitur dijabarkan dengan langkah yang konkret (Business Logic & Validation Rules).
 6. Cross-Functional: Selain untuk developer, output juga akan dibaca oleh Admin Keuangan (budgeting estimasi), Admin CS (ekspektasi), dan Owner.
 7. KEWAJIBAN 6 BAGIAN BARU: Anda WAJIB mengisi bagian Analytics & Conversion, Data Privacy (kepatuhan UU PDP No. 27/2022), Disaster Recovery & Backup, Acceptance Criteria (Functional, Performance), SLA Pasca Go-Live, dan Glossary.
+8. KEDALAMAN TEKNIS TINGKAT TINGGI (30+ HALAMAN): Klien menghendaki spesifikasi teknis yang mendalam ("kaga ada tuh yg menejelaskan logik nya gimana, syntax nya gimna"). Anda WAJIB menjabarkan: 
+   - Backend Architecture (Tech stack, Daftar Endpoint API lengkap dengan Method, Request Payload, Auth, dan Response Code).
+   - Frontend Architecture (Tech stack, Route Maps, State Management).
+   - Database Schema (Nama Tabel, Deskripsi, Kolom lengkap dengan Tipe Data & Constraints, serta Relasi antar tabel 1:N/N:M).
+   - Core Business Logic & Pseudo-code (Tuliskan algoritma logika if/else yang detail, sertakan CONTOH SYNTAX KODE NYATA baik SQL, PHP, atau JS untuk fitur-fitur esensial).
 
 PRD Anda wajib memenuhi Schema JSON ketat yang di-passing ke Anda. Seluruh \`array\` harus diisi dengan item-item spesifik, hindari filler generik. Jika pelanggan hanya meminta "Buatkan sistem toko online", jabarkan secara proaktif modul-modul esensial yang wajib ada di toko online modern (Cart, Checkout, Payment Gateway) sebagai in-scope, tapi tetap batasi sesuai akal sehat.`;
 

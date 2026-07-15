@@ -37,7 +37,11 @@ const prdAiOutputSchema = {
     "drAndBackup",
     "acceptanceCriteria",
     "slaPascaGoLive",
-    "glossary"
+    "glossary",
+    "backendArchitecture",
+    "frontendArchitecture",
+    "databaseSchemaDetailed",
+    "coreBusinessLogicPseudocode"
   ],
   properties: {
     introduction: {
@@ -285,6 +289,93 @@ const prdAiOutputSchema = {
         properties: {
           term: { type: "string" },
           definition: { type: "string" }
+        }
+      }
+    },
+    backendArchitecture: {
+      type: "object",
+      additionalProperties: false,
+      required: ["techStack", "apiEndpoints", "securityProtocols"],
+      properties: {
+        techStack: { type: "string", description: "Node.js, Laravel, Go, etc." },
+        apiEndpoints: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["method", "path", "authRequired", "payload", "response"],
+            properties: {
+              method: { type: "string" },
+              path: { type: "string" },
+              authRequired: { type: "string" },
+              payload: { type: "string" },
+              response: { type: "string" }
+            }
+          }
+        },
+        securityProtocols: stringArray("CORS, Rate Limiting, JWT.", "Satu aturan keamanan backend.")
+      }
+    },
+    frontendArchitecture: {
+      type: "object",
+      additionalProperties: false,
+      required: ["techStack", "stateManagement", "routesMap"],
+      properties: {
+        techStack: { type: "string", description: "React, Next.js, Vue, etc." },
+        stateManagement: { type: "string", description: "Redux, Zustand, Context API." },
+        routesMap: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["path", "componentName", "accessLevel", "dataRequirements"],
+            properties: {
+              path: { type: "string" },
+              componentName: { type: "string" },
+              accessLevel: { type: "string" },
+              dataRequirements: { type: "string" }
+            }
+          }
+        }
+      }
+    },
+    databaseSchemaDetailed: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["tableName", "description", "columns", "relations"],
+        properties: {
+          tableName: { type: "string" },
+          description: { type: "string" },
+          columns: {
+            type: "array",
+            items: {
+              type: "object",
+              additionalProperties: false,
+              required: ["name", "type", "constraints", "description"],
+              properties: {
+                name: { type: "string" },
+                type: { type: "string" },
+                constraints: { type: "string" },
+                description: { type: "string" }
+              }
+            }
+          },
+          relations: stringArray("Relasi tabel. Misal: id_user -> users.id (1:N).", "Satu relasi.")
+        }
+      }
+    },
+    coreBusinessLogicPseudocode: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["epicName", "logicSteps", "syntaxExample"],
+        properties: {
+          epicName: { type: "string" },
+          logicSteps: stringArray("Langkah-langkah if/else algoritma.", "Satu baris pseudo-code."),
+          syntaxExample: { type: "string", description: "Contoh syntax nyata SQL atau JS/PHP." }
         }
       }
     }

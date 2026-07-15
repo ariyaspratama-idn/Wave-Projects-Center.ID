@@ -229,6 +229,10 @@ async function renderPRDToDocx(prdData) {
   const ac = d.acceptanceCriteria || [];
   const sla = d.slaPascaGoLive || [];
   const glossary = d.glossary || [];
+  const backend = d.backendArchitecture || {};
+  const frontend = d.frontendArchitecture || {};
+  const dbSchema = d.databaseSchemaDetailed || [];
+  const logic = d.coreBusinessLogicPseudocode || [];
 
   const companyName = d.companyName || "Wave Projects Center.ID";
   const dateCreated = d.dateCreated || new Date().toLocaleDateString("id-ID");
@@ -277,7 +281,11 @@ async function renderPRDToDocx(prdData) {
     tocItem("14. Acceptance Criteria (DoD)"),
     tocItem("15. SLA Dukungan Pasca Go-Live"),
     tocItem("16. Glossary / Daftar Istilah"),
-    tocItem("17. Persetujuan & Tanda Tangan"),
+    tocItem("17. Database Schema"),
+    tocItem("18. Backend Architecture & API Specs"),
+    tocItem("19. Frontend Architecture"),
+    tocItem("20. Core Business Logic & Pseudo-Code"),
+    tocItem("21. Persetujuan & Tanda Tangan"),
     pageBreak()
   );
 
@@ -465,7 +473,89 @@ async function renderPRDToDocx(prdData) {
 
   // ============ BAGIAN 17 ============
   children.push(
-    heading1("17. Persetujuan & Lembar Pengesahan (Sign-Off)"),
+    heading1("17. Database Schema Detailed"),
+    ...(dbSchema.map((t, idx) => [
+      heading2(`${idx + 1}. Tabel: ${t.tableName}`),
+      para(`Deskripsi: ${t.description}`, { italics: true, color: GREY_TEXT }),
+      dataTable(
+        ["Kolom", "Tipe Data", "Constraints", "Deskripsi"],
+        (t.columns || []).map(c => [c.name, c.type, c.constraints, c.description]),
+        [2000, 2000, 2000, 3026]
+      ),
+      ...fieldBlockList("Relasi Tabel", t.relations),
+      new Paragraph({ spacing: { after: 200 } })
+    ]).flat()),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 18 ============
+  children.push(
+    heading1("18. Backend Architecture & API Definitions"),
+    ...fieldBlockText("Tech Stack", backend.techStack),
+    ...fieldBlockList("Protokol Keamanan Backend", backend.securityProtocols),
+    heading2("API Endpoints"),
+    dataTable(
+      ["Method", "Path", "Auth", "Payload / Req", "Response"],
+      (backend.apiEndpoints || []).map(a => [a.method, a.path, a.authRequired, a.payload, a.response]),
+      [1000, 2500, 1000, 2263, 2263]
+    ),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 19 ============
+  children.push(
+    heading1("19. Frontend Architecture"),
+    ...fieldBlockText("Tech Stack", frontend.techStack),
+    ...fieldBlockText("State Management", frontend.stateManagement),
+    heading2("Routes Map"),
+    dataTable(
+      ["Path", "Component Name", "Access Level", "Data Requirements"],
+      (frontend.routesMap || []).map(r => [r.path, r.componentName, r.accessLevel, r.dataRequirements]),
+      [2000, 2500, 1500, 3026]
+    ),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 20 ============
+  children.push(
+    heading1("20. Core Business Logic & Pseudo-Code"),
+    ...(logic.map((l, idx) => [
+      heading2(`Logika Modul: ${l.epicName}`),
+      ...fieldBlockList("Logic Steps", l.logicSteps),
+      fieldLabel("Contoh Syntax Referensi"),
+      new Table({
+        width: { size: CONTENT_W, type: WidthType.DXA },
+        columnWidths: [CONTENT_W],
+        rows: [
+          new TableRow({
+            children: [
+              new TableCell({
+                borders: {
+                  top: { style: BorderStyle.SINGLE, size: 4, color: GREY_TEXT },
+                  bottom: { style: BorderStyle.SINGLE, size: 4, color: GREY_TEXT },
+                  left: { style: BorderStyle.SINGLE, size: 4, color: GREY_TEXT },
+                  right: { style: BorderStyle.SINGLE, size: 4, color: GREY_TEXT },
+                },
+                shading: { fill: "1E1E1E", type: ShadingType.CLEAR },
+                margins: { top: 100, bottom: 100, left: 100, right: 100 },
+                children: [
+                  new Paragraph({
+                    children: [new TextRun({ text: fmt(l.syntaxExample), font: "Courier New", size: 18, color: "00FF00" })]
+                  })
+                ]
+              })
+            ]
+          })
+        ]
+      }),
+      new Paragraph({ spacing: { after: 300 } })
+    ]).flat()),
+    pageBreak()
+  );
+
+  // ============ BAGIAN 21 ============
+  children.push(
+    heading1("21. Persetujuan & Lembar Pengesahan (Sign-Off)"),
     para("Dokumen ini dianggap berlaku sebagai kontrak pengerjaan internal setelah seluruh form ini disetujui."),
     dataTable(
       ["Jabatan / Peran", "Nama", "Tanda Tangan", "Tanggal Persetujuan"],
