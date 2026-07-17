@@ -18,7 +18,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         const [briefs]: any = await pool.query("SELECT * FROM client_briefs WHERE order_id = ?", [orderId]);
         if (briefs.length === 0) return NextResponse.json({ success: false, error: 'Brief belum diisi klien' }, { status: 400 });
 
-        const [orders]: any = await pool.query("SELECT o.github_url, p.name as package_name, p.price as package_price, p.features as package_features FROM orders o LEFT JOIN packages p ON o.package_id = p.id WHERE o.id = ?", [orderId]);
+        const [orders]: any = await pool.query("SELECT o.github_url, p.name as package_name, p.price as package_price, p.code as package_features FROM orders o LEFT JOIN packages p ON o.package_id = p.id WHERE o.id = ?", [orderId]);
         const order = orders.length > 0 ? orders[0] : { github_url: '', package_name: '', package_price: 0 };
 
         const brief = briefs[0];
