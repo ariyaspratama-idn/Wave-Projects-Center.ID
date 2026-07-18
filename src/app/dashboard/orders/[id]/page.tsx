@@ -153,7 +153,12 @@ export default function OrderExecutiveDetail() {
 
             setPrdProgress("Merender Dokumen Word...");
 
-            const fullPrdData = { ...data1.data, ...data2.data, ...data3.data };
+            const fullPrdData = {
+                ...data1.data,
+                ...data2.data,
+                ...data3.data,
+                rawCustomerRequest: data.brief.core_attributes
+            };
 
             const res = await fetch("/api/v1/admin/prd", {
                 method: "POST",
