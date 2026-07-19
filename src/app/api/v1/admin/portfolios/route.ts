@@ -25,6 +25,7 @@ export async function POST(req: Request) {
         const description = formData.get('description') as string;
         const live_link = formData.get('live_link') as string;
         const imageFile = formData.get('image') as File | null;
+        const screenshotUrl = formData.get('screenshot_url') as string | null;
 
         let image_url = '';
 
@@ -36,6 +37,13 @@ export async function POST(req: Request) {
 
             // Upload directly to memory
             const uploadResponse = await cloudinary.uploader.upload(dataUri, {
+                folder: 'wave_portfolios',
+            });
+            image_url = uploadResponse.secure_url;
+        }
+        else if (screenshotUrl) {
+            // Remote fetch using Cloudinary
+            const uploadResponse = await cloudinary.uploader.upload(screenshotUrl, {
                 folder: 'wave_portfolios',
             });
             image_url = uploadResponse.secure_url;
