@@ -38,6 +38,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         let logNote: string;
         let emailSubject: string;
         let emailBody: string;
+        let financeAmount = 0;
+        let financeDesc = "";
 
         if (isDP && currentPaymentStatus !== 'dp_paid') {
             // ═══ CASE 1: DP 30% — First validation (DP received) ═══
@@ -47,6 +49,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             newPaymentStatus = 'dp_paid';
             newOrderStatus = 'Down Payment';
             logNote = `DP 30% sebesar Rp ${dpAmount.toLocaleString('id-ID')} telah diverifikasi. Sisa tagihan: Rp ${remainingAmount.toLocaleString('id-ID')}`;
+            financeAmount = dpAmount;
+            financeDesc = `Pembayaran DP 30% - Order #${orderId} (${clientName})`;
 
             emailSubject = `✅ DP Diterima — ${invoiceNumber} | Sisa Tagihan Rp ${remainingAmount.toLocaleString('id-ID')}`;
             emailBody = buildEmailHTML({
@@ -76,6 +80,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             newPaymentStatus = 'paid';
             newOrderStatus = order.status; // Don't change current project stage
             logNote = `Pelunasan sisa 70% sebesar Rp ${remainingAmount.toLocaleString('id-ID')} telah diverifikasi. Status: LUNAS PENUH.`;
+            financeAmount = remainingAmount;
+            financeDesc = `Pelunasan 70% - Order #${orderId} (${clientName})`;
 
             emailSubject = `🎉 LUNAS — ${invoiceNumber} | Seluruh Pembayaran Telah Diterima`;
             emailBody = buildEmailHTML({
@@ -101,6 +107,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             newPaymentStatus = 'paid';
             newOrderStatus = 'Down Payment';
             logNote = `Pembayaran penuh sebesar Rp ${fullPrice.toLocaleString('id-ID')} telah diverifikasi. Status: LUNAS.`;
+            financeAmount = fullPrice;
+            financeDesc = `Pembayaran Penuh - Order #${orderId} (${clientName})`;
 
             emailSubject = `✅ ${invoiceNumber} — Pembayaran Lunas Dikonfirmasi | Wave Projects`;
             emailBody = buildEmailHTML({
@@ -131,6 +139,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         await pool.query(
             "INSERT INTO order_status_logs (order_id, status, notes, created_at) VALUES (?, ?, ?, NOW())",
             [orderId, newOrderStatus, logNote]
+        );
+
+        // 3.5 Auto-record Finance
+        await pool.query(
+            "INSERT INTO finance_ledgers (order_id, type, category, description, amount, created_at) VALUES (?, 'INCOME', 'Pembayaran Klien', ?, ?, NOW())",
+            [orderId, financeDesc, financeAmount]
         );
 
         // 4. Send Email
