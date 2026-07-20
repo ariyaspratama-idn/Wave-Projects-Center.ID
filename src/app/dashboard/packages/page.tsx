@@ -12,10 +12,17 @@ export default function PackageManagement() {
     const [newFeature, setNewFeature] = useState("");
 
     const fetchPackages = () => {
-        fetch("/api/v1/packages")
+        const token = localStorage.getItem("wave_token");
+        fetch("/api/v1/admin/packages", {
+            headers: { "Authorization": `Bearer ${token}` }
+        })
             .then(res => res.json())
             .then(data => {
-                if (data.success) setPackages(data.data);
+                if (data.success) {
+                    setPackages(data.data);
+                } else {
+                    alert("Gagal memuat paket: " + data.error);
+                }
                 setLoading(false);
             });
     };
@@ -44,7 +51,7 @@ export default function PackageManagement() {
 
     const handleSave = async () => {
         const token = localStorage.getItem("wave_token");
-        await fetch("/api/v1/admin/packages", {
+        const res = await fetch("/api/v1/admin/packages", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -52,8 +59,13 @@ export default function PackageManagement() {
             },
             body: JSON.stringify(form)
         });
-        setShowModal(false);
-        fetchPackages(); // Reload
+        const data = await res.json();
+        if (data.success) {
+            setShowModal(false);
+            fetchPackages(); // Reload
+        } else {
+            alert("Gagal menyimpan: " + data.error);
+        }
     };
 
     return (

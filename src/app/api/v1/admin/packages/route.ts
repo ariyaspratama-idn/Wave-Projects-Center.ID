@@ -4,6 +4,32 @@ import pool from '@/lib/db';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 
+export async function GET(req: Request) {
+    try {
+        const authHeader = req.headers.get('authorization');
+        if (!authHeader) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+        jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+
+        // Lazy migration for new columns just in case they don't exist
+        try {
+            await pool.query("ALTER TABLE packages ADD COLUMN tag VARCHAR(100) DEFAULT ''");
+            await pool.query("ALTER TABLE packages ADD COLUMN `desc` TEXT");
+            await pool.query("ALTER TABLE packages ADD COLUMN popular BOOLEAN DEFAULT FALSE");
+        } catch (e) { }
+
+        const [rows] = await pool.query('SELECT * FROM packages ORDER BY price ASC');
+
+        const formatted = Array.isArray(rows) ? rows.map((r: any) => ({
+            ...r,
+            features: typeof r.code === 'string' ? JSON.parse(r.code) : (r.code || [])
+        })) : [];
+
+        return NextResponse.json({ success: true, data: formatted });
+    } catch (e: any) {
+        return NextResponse.json({ success: false, error: e.message }, { status: 500 });
+    }
+}
+
 export async function POST(req: Request) {
     try {
         const authHeader = req.headers.get('authorization');
