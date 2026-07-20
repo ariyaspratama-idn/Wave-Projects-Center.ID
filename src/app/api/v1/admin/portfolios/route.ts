@@ -59,3 +59,24 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: false, error: e.message }, { status: e.name === 'JsonWebTokenError' ? 401 : 500 });
     }
 }
+
+export async function DELETE(req: Request) {
+    try {
+        const authHeader = req.headers.get('authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return NextResponse.json({ success: false, message: 'Unauthenticated' }, { status: 401 });
+        }
+        jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+
+        const url = new URL(req.url);
+        const id = url.searchParams.get('id');
+
+        if (!id) return NextResponse.json({ success: false, message: 'ID is required' }, { status: 400 });
+
+        await pool.query("DELETE FROM portfolios WHERE id = ?", [id]);
+
+        return NextResponse.json({ success: true, message: 'Project deleted' });
+    } catch (e: any) {
+        return NextResponse.json({ success: false, error: e.message }, { status: e.name === 'JsonWebTokenError' ? 401 : 500 });
+    }
+}

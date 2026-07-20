@@ -37,6 +37,23 @@ export default function PortfolioCMS() {
         setCapturing(false);
     };
 
+    const handleDelete = async (id: number) => {
+        if (!confirm("Yakin ingin menghapus portfolio ini? Gambar (yang ter-upload di Cloudinary) tidak akan ikut terhapus dari cloud storage demi pengarsipan, namun data hilang dari database web.")) return;
+
+        const token = localStorage.getItem("wave_token");
+        const res = await fetch(`/api/v1/admin/portfolios?id=${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            setPortfolios(prev => prev.filter(p => p.id !== id));
+        } else {
+            alert("Gagal menghapus: " + data.error);
+        }
+    };
+
     const handleSubmit = async (e: any) => {
         e.preventDefault();
 
@@ -140,7 +157,16 @@ export default function PortfolioCMS() {
                     ) : (
                         <div className="grid sm:grid-cols-2 gap-4">
                             {portfolios.map(p => (
-                                <div key={p.id} className="glass rounded-xl overflow-hidden border border-white/5 group hover:border-white/20 transition-all hover:-translate-y-1">
+                                <div key={p.id} className="glass rounded-xl overflow-hidden border border-white/5 group hover:border-rose-500/30 transition-all hover:-translate-y-1 relative">
+
+                                    <button
+                                        onClick={() => handleDelete(p.id)}
+                                        className="absolute top-2 right-2 bg-red-600 hover:bg-red-500 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-20 shadow-lg border border-red-400"
+                                        title="Hapus Portfolio"
+                                    >
+                                        🗑️ Hapus
+                                    </button>
+
                                     <div className="h-36 bg-white/5 relative overflow-hidden">
                                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center">
                                             {p.live_link && (
