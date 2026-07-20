@@ -5,15 +5,21 @@ export async function POST(req: Request) {
     try {
         const { sessionId, aiText, customer_name, message } = await req.json();
 
-        // WhatsApp Admin Alert Logic
         const lowerPrompt = message?.toLowerCase() || "";
         const lowerResponse = aiText?.toLowerCase() || "";
+
+        // Flag to trigger AI escalation
+        const needsHuman = lowerResponse.includes("whatsapp") || lowerResponse.includes("wa.me");
 
         if (lowerPrompt.includes("ultimate") || lowerResponse.includes("ultimate") || lowerPrompt.includes("custom") || lowerResponse.includes("custom")) {
             // Import dinamis agar tidak memperlambat start routing
             import('@/lib/whatsapp').then(({ sendAdminAlert }) => {
                 sendAdminAlert(customer_name || 'Guest', 'Paket Ultimate / Custom', sessionId.toString()).catch(e => console.error(e));
             }).catch(e => console.error("Gagal load whatsapp lib", e));
+        }
+
+        if (needsHuman && sessionId) {
+            await pool.query("UPDATE chat_sessions SET needs_human = 1 WHERE id = ?", [sessionId]);
         }
 
         // Save AI Response
