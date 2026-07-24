@@ -68,7 +68,7 @@ function Hero({ settings }: { settings: any }) {
         </h1>
 
         {/* Visual Hero Title */}
-        <div className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6 inline-block">
+        <div className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6 block">
           {settings?.hero_title || (
             <>
               Transformasi Digital <br />
