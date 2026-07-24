@@ -22,7 +22,7 @@ function Navbar({ settings }: { settings: any }) {
             Pesan Sekarang
           </Link>
         </div>
-        <button className="md:hidden text-white" onClick={() => setOpen(!open)}>
+        <button className="md:hidden text-white" aria-label="Toggle menu" onClick={() => setOpen(!open)}>
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
         </button>
       </div>
