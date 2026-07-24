@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 /* ───── Navbar ───── */
@@ -280,8 +281,7 @@ function Portfolio() {
           {items.map((p, i) => (
             <div key={i} className="glass rounded-2xl overflow-hidden group hover:border-primary/50 transition-all">
               <div className="h-48 bg-white/10 relative overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.image_url} alt={`Jasa pembuatan sistem ${p.title} oleh Wave Projects`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={p.image_url || "/assets/img/og-preview.png"} alt={`Jasa pembuatan sistem ${p.title} oleh Wave Projects`} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="p-6">
                 <h3 className="text-lg font-bold mb-2">{p.title}</h3>
