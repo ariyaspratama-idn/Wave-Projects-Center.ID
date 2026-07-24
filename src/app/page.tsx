@@ -62,10 +62,20 @@ function Hero({ settings }: { settings: any }) {
           </div>
         )}
 
-        <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6">
-          Jasa Pembuatan Website, Custom Software & Sistem Enterprise Profesional di Indonesia - <br />
-          <span className="gradient-text">Wave Projects</span>
+        {/* SEO Hidden H1 */}
+        <h1 className="sr-only">
+          Jasa Pembuatan Website, Custom Software & Sistem Enterprise Profesional di Indonesia - Wave Projects
         </h1>
+
+        {/* Visual Hero Title */}
+        <div className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6 inline-block">
+          {settings?.hero_title || (
+            <>
+              Transformasi Digital <br />
+              <span className="gradient-text">Masa Depan.</span>
+            </>
+          )}
+        </div>
 
         <p className="lead text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
           {settings?.hero_subtitle || 'Platform all-in-one untuk konsultasi AI, pemesanan, pembayaran, hingga serah terima proyek web & aplikasi. Satu ekosistem. Tanpa ribet.'}
