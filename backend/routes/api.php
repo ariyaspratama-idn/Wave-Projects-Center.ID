@@ -32,6 +32,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/orders', [\App\Http\Controllers\Api\V1\OrderController::class, 'index']);
         Route::post('/logout', [\App\Http\Controllers\Api\V1\AuthController::class, 'logout']);
 
+        // PRD Micro-Jobs API
+        Route::post('/admin/prd/generate', [\App\Http\Controllers\Api\V1\PrdController::class, 'generate']);
+
         // Super Admin only route for creating other users
         Route::middleware(\App\Http\Middleware\CheckRole::class . ':Super Admin')->group(function () {
             Route::post('/admin/users/create', [\App\Http\Controllers\Api\V1\AdminController::class, 'createUser']);
