@@ -18,8 +18,8 @@ function Navbar({ settings }: { settings: any }) {
     <>
       <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-surface-dim/70 backdrop-blur-xl border-b border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)]' : 'bg-transparent'}`}>
         <div className="flex justify-between items-center px-6 lg:px-10 py-4 max-w-[1440px] mx-auto">
-          <Link href="/" className="font-display text-2xl font-extrabold tracking-tight flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Image src={Logo} alt="Wave Projects Logo" className="h-10 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" priority />
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity bg-white/95 px-4 py-2 rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+            <Image src={Logo} alt="Wave Projects Logo" className="h-10 md:h-12 w-auto object-contain" priority />
           </Link>
           <div className="hidden md:flex gap-8 items-center">
             <Link href="#portfolio" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Work</Link>
@@ -61,12 +61,7 @@ function Hero({ settings }: { settings: any }) {
   return (
     <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-32 pb-24 px-6 mesh-gradient overflow-hidden -mt-20">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L2c+PC9zdmc+')] [mask-image:linear-gradient(to_bottom,white,transparent)]"></div>
-
-      <div className="w-full aspect-square max-w-[280px] mx-auto mb-8 relative flex items-center justify-center z-10 pt-20">
-        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp5qegUCDMwA0jSGBf67Jj6LpDIfpIHX2QSSz6qKELo_cpnGE_BXFGU7PXKPWEWnDOfOkcdl7hVGCw8A8YY78z66Nuf-33Q_CwiLBMBOIID3trftth9qpsvnE-JtxjBpNckOBmGOA_DFZkdA-ppD2hdn83N2C1szX0oRlTvY8VId7Xp-7k9wyQc0xHXZ6D9-S2SyBUI7Wr-EMh0unRM7JHTAY_Pawrc9d5Ye9fTpEGaESa73fYHL7-EQ" alt="Indo Futurism Crystal" className="w-full h-full object-contain animate-float drop-shadow-[0_0_40px_rgba(184,195,255,0.3)]" />
-      </div>
-
-      <div className="relative z-10 max-w-[1440px] mx-auto text-center flex flex-col items-center gap-6">
+      <div className="relative z-10 max-w-[1440px] mx-auto text-center flex flex-col items-center gap-6 pt-16">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-glass-stroke bg-surface/30 backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-neon-violet animate-pulse"></span>
           <span className="font-label text-xs text-soft-peach">Powered by AI — Gemini 1.5 Flash</span>
@@ -321,7 +316,7 @@ function CTAAndFooter() {
       <footer className="w-full border-t border-glass-stroke bg-obsidian-deep pt-20 pb-28 md:pb-12 px-6 z-10 relative mt-auto">
         <div className="max-w-[1440px] mx-auto w-full grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="flex items-center mb-6 hover:opacity-80 transition-opacity">
+            <Link href="/" className="inline-flex items-center mb-6 hover:opacity-80 transition-opacity bg-white/95 px-5 py-3 rounded-2xl">
               <Image src={Logo} alt="Wave Projects Logo" className="h-12 w-auto object-contain" />
             </Link>
             <p className="font-body text-sm text-on-surface-variant max-w-md">
