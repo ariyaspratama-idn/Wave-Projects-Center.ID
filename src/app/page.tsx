@@ -4,263 +4,167 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-/* ───── Navbar ───── */
+/* ───── Navigation ───── */
 function Navbar({ settings }: { settings: any }) {
-  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 w-full z-50 glass">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        <Link href="/" className="text-xl font-extrabold tracking-tight">
-          <span className="gradient-text">{settings?.agency_name?.split(' ')[0] || 'Wave'}</span>{" "}
-          <span className="text-white/80">{settings?.agency_name?.split(' ').slice(1).join(' ') || 'Projects'}</span>
-        </Link>
-        <div className="hidden md:flex items-center gap-8">
-          <Link href="#packages" className="text-sm text-gray-300 hover:text-white transition">Paket</Link>
-          <Link href="#features" className="text-sm text-gray-300 hover:text-white transition">Fitur</Link>
-          <Link href="/chat" className="text-sm text-gray-300 hover:text-white transition">AI Chat</Link>
-          <Link href="/checkout" className="bg-primary/90 hover:bg-primary text-white text-sm font-semibold px-5 py-2 rounded-full transition-all hover:-translate-y-0.5 glow-blue">
-            Pesan Sekarang
+    <>
+      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-surface-dim/70 backdrop-blur-xl border-b border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)]' : 'bg-transparent'}`}>
+        <div className="flex justify-between items-center px-6 lg:px-10 py-4 max-w-[1440px] mx-auto">
+          <Link href="/" className="font-display text-2xl font-extrabold tracking-tight flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-3xl">waves</span>
+            <span className="text-on-surface">Wave Projects</span>
           </Link>
+          <div className="hidden md:flex gap-8 items-center">
+            <Link href="#portfolio" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Work</Link>
+            <Link href="#features" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Services</Link>
+            <Link href="#packages" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Packages</Link>
+            <Link href="/chat" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Lab & AI</Link>
+            <Link href="/checkout" className="glow-btn-primary text-white font-label text-sm px-6 py-2 rounded-full active:scale-95 transition-transform uppercase tracking-widest">
+              Start Project
+            </Link>
+          </div>
         </div>
-        <button className="md:hidden text-white" aria-label="Toggle menu" onClick={() => setOpen(!open)}>
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
-        </button>
-      </div>
-      {open && (
-        <div className="md:hidden px-4 pb-4 flex flex-col gap-3">
-          <Link href="#packages" className="text-gray-300 hover:text-white text-sm py-1" onClick={() => setOpen(false)}>Paket</Link>
-          <Link href="#features" className="text-gray-300 hover:text-white text-sm py-1" onClick={() => setOpen(false)}>Fitur</Link>
-          <Link href="/chat" className="text-gray-300 hover:text-white text-sm py-1" onClick={() => setOpen(false)}>AI Chat</Link>
-          <Link href="/checkout" className="bg-primary text-white text-sm font-semibold px-5 py-2 rounded-full text-center" onClick={() => setOpen(false)}>Pesan Sekarang</Link>
-        </div>
-      )}
-    </nav>
+      </nav>
+
+      {/* Mobile Bottom Nav */}
+      <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] rounded-full border border-white/10 z-50 bg-surface-container-lowest/50 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex justify-between px-2 py-2">
+        <Link href="/" className="flex flex-col items-center justify-center bg-primary/20 text-primary rounded-full px-4 py-2 ring-1 ring-primary/50">
+          <span className="material-symbols-outlined text-xl mb-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
+          <span className="text-[10px] font-label">Home</span>
+        </Link>
+        <Link href="#features" className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-white/5 rounded-full">
+          <span className="material-symbols-outlined text-xl mb-0.5">auto_awesome</span>
+          <span className="text-[10px] font-label">Services</span>
+        </Link>
+        <Link href="/chat" className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-white/5 rounded-full">
+          <span className="material-symbols-outlined text-xl mb-0.5">psychology</span>
+          <span className="text-[10px] font-label">AI Chat</span>
+        </Link>
+        <Link href="/checkout" className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-white/5 rounded-full">
+          <span className="material-symbols-outlined text-xl mb-0.5">shopping_cart</span>
+          <span className="text-[10px] font-label">Order</span>
+        </Link>
+      </nav>
+    </>
   );
 }
 
 /* ───── Hero ───── */
 function Hero({ settings }: { settings: any }) {
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden">
-      {/* Background gradients */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse-slow" />
-        <div className="absolute top-40 right-1/4 w-80 h-80 bg-secondary/20 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: "1.5s" }} />
-        <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-accent/15 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: "3s" }} />
+    <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-32 pb-24 px-6 mesh-gradient overflow-hidden -mt-20">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L2c+PC9zdmc+')] [mask-image:linear-gradient(to_bottom,white,transparent)]"></div>
+
+      <div className="w-full aspect-square max-w-[280px] mx-auto mb-8 relative flex items-center justify-center z-10 pt-20">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp5qegUCDMwA0jSGBf67Jj6LpDIfpIHX2QSSz6qKELo_cpnGE_BXFGU7PXKPWEWnDOfOkcdl7hVGCw8A8YY78z66Nuf-33Q_CwiLBMBOIID3trftth9qpsvnE-JtxjBpNckOBmGOA_DFZkdA-ppD2hdn83N2C1szX0oRlTvY8VId7Xp-7k9wyQc0xHXZ6D9-S2SyBUI7Wr-EMh0unRM7JHTAY_Pawrc9d5Ye9fTpEGaESa73fYHL7-EQ" alt="Indo Futurism Crystal" className="w-full h-full object-contain animate-float drop-shadow-[0_0_40px_rgba(184,195,255,0.3)]" />
       </div>
 
-      <div className="relative max-w-5xl mx-auto px-4 text-center">
-        {settings?.promo_banner_text ? (
-          <div className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary/20 to-purple-500/20 border border-purple-500/30 rounded-full px-5 py-2 mb-8 text-xs font-semibold text-white cursor-pointer hover:border-purple-500/50 transition-all glow-blue">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            {settings.promo_banner_text}
-          </div>
-        ) : (
-          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8 text-xs text-gray-400">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            Powered by AI — Gemini 1.5 Flash
-          </div>
-        )}
-
-        {/* SEO Hidden H1 */}
-        <h1 className="sr-only">
-          Jasa Pembuatan Website, Custom Software & Sistem Enterprise Profesional di Indonesia - Wave Projects
-        </h1>
-
-        {/* Visual Hero Title */}
-        <div className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6 block">
-          {settings?.hero_title || (
-            <>
-              Transformasi Digital <br />
-              <span className="gradient-text">Masa Depan.</span>
-            </>
-          )}
+      <div className="relative z-10 max-w-[1440px] mx-auto text-center flex flex-col items-center gap-6">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-glass-stroke bg-surface/30 backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-neon-violet animate-pulse"></span>
+          <span className="font-label text-xs text-soft-peach">Powered by AI — Gemini 1.5 Flash</span>
         </div>
 
-        <p className="lead text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-transparent bg-clip-text bg-gradient-to-br from-white to-on-surface-variant max-w-5xl mx-auto leading-[1.1] font-extrabold tracking-tighter">
+          Technical Elegance <br />
+          <span className="gradient-text-alt">Masa Depan.</span>
+        </h1>
+
+        <p className="font-body text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto">
           {settings?.hero_subtitle || 'Platform all-in-one untuk konsultasi AI, pemesanan, pembayaran, hingga serah terima proyek web & aplikasi. Satu ekosistem. Tanpa ribet.'}
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/chat"
-            className="group relative bg-primary hover:bg-primary-light text-white font-semibold px-8 py-3.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 glow-blue text-sm"
-          >
-            💬 Konsultasikan Proyek Anda
+        <div className="flex flex-col sm:flex-row gap-4 mt-4">
+          <Link href="/chat" className="glow-btn-primary flex items-center justify-center gap-2 px-8 py-4 rounded-full text-white font-label uppercase tracking-widest text-sm hover:scale-105 transition-all duration-500">
+            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
+            Konsultasi Gratis
           </Link>
-          <Link
-            href="#packages"
-            className="bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-white/20 font-medium px-8 py-3.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 text-sm"
-          >
-            Lihat Paket Layanan →
+          <Link href="#packages" className="flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-glass-stroke bg-surface/30 backdrop-blur-md text-white font-label uppercase tracking-widest text-sm hover:bg-white/5 transition-all duration-300">
+            <span className="material-symbols-outlined">explore</span>
+            Lihat Layanan
           </Link>
         </div>
 
-        {/* Floating stats */}
-        <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
-          {[
-            { val: "50+", label: "Proyek Selesai" },
-            { val: "99.9%", label: "Uptime" },
-            { val: "<2.5s", label: "Response Time" },
-            { val: "24/7", label: "AI Available" },
-          ].map((s, i) => (
-            <div key={i} className="glass rounded-xl p-4 hover:scale-105 transition-transform">
-              <p className="text-2xl font-bold gradient-text">{s.val}</p>
-              <p className="text-xs text-gray-500 mt-1">{s.label}</p>
-            </div>
-          ))}
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 mt-16 pt-16 border-t border-glass-stroke/50 w-full max-w-4xl">
+          <div className="flex flex-col items-center">
+            <span className="font-display text-4xl text-primary font-bold">50+</span>
+            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Proyek Selesai</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="font-display text-4xl text-neon-violet font-bold">98%</span>
+            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Client Retention</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="font-display text-4xl text-soft-peach font-bold">&lt;2.5s</span>
+            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Response Time</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="font-display text-4xl text-primary font-bold">24/7</span>
+            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Premium Support</span>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ───── Features ───── */
+/* ───── Core Protocols (Features) ───── */
 function Features() {
   const features = [
-    { icon: "🤖", title: "AI Consultation", desc: "Konsultasi proyek Anda dengan AI yang memahami arsitektur fullstack. Jawaban instan, rekomendasi paket tepat." },
-    { icon: "🔒", title: "Pembayaran Aman", desc: "Integrasi Midtrans untuk DP 30% atau bayar penuh. Dilengkapi signature validation webhook." },
-    { icon: "☁️", title: "Cloud Upload", desc: "Upload file langsung ke Cloudinary tanpa membebani server. Zero timeout, zero hassle." },
-    { icon: "🔔", title: "Real-time Notifikasi", desc: "Push notification via OneSignal ke tim marketing & developer saat ada pesanan atau pembayaran baru." },
-    { icon: "📄", title: "Auto PRD Generation", desc: "AI menganalisis kebutuhan Anda dan menghasilkan dokumen PRD teknis otomatis untuk developer." },
-    { icon: "⚡", title: "Serverless Performance", desc: "Dibangun di atas Vercel Edge Network. Response time < 2.5 detik, kapasitas skalabel tanpa batas." },
+    { icon: "psychology", title: "AI Consultation", desc: "Konsultasi sistem dengan AI arsitektur. Jawaban instan.", color: "text-primary" },
+    { icon: "integration_instructions", title: "API Integrations", desc: "Penghubung ekosistem (Payment, Cloudinary, dll).", color: "text-secondary" },
+    { icon: "security", title: "Keamanan Solid", desc: "Infrastruktur tahan banting & signature validation webhook.", color: "text-tertiary" },
+    { icon: "auto_awesome", title: "Auto PRD Generation", desc: "Hasilkan dokumen teknis secara instan dari obrolan AI.", color: "text-primary" },
   ];
   return (
-    <section id="features" className="py-24 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-          Konsultasi AI & <span className="gradient-text">Alur Kerja Pengembang</span>
-        </h2>
-        <p className="text-gray-500 text-center max-w-xl mx-auto mb-16">
-          Ekosistem terintegrasi yang dirancang khusus untuk mengakali batasan infrastruktur free-tier.
-        </p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((f, i) => (
-            <div key={i} className="glass rounded-2xl p-6 hover:border-primary/30 transition-colors group">
-              <span className="text-3xl mb-4 block group-hover:scale-110 transition-transform">{f.icon}</span>
-              <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+    <section id="features" className="py-24 px-6 max-w-[1440px] mx-auto z-10 relative">
+      <h2 className="font-headline text-3xl md:text-5xl text-on-surface mb-12 flex items-center gap-4 font-bold">
+        <span className="material-symbols-outlined text-primary text-5xl">dashboard</span> Core Protocols
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-/* ───── Packages ───── */
-function Packages() {
-  const [pkgs, setPkgs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/v1/packages")
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.data) {
-          setPkgs(data.data);
-        }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  if (loading) return <div className="text-center py-24 text-gray-500">Memuat Paket dari Cloud...</div>;
-
-  return (
-    <section id="packages" className="py-24 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-          Paket Harga <span className="gradient-text">Pembuat Website Efisien</span>
-        </h2>
-        <p className="text-gray-500 text-center max-w-xl mx-auto mb-16">
-          Setiap paket dioptimalkan untuk infrastruktur cloud gratis. Bayar DP 30% untuk memulai.
-        </p>
-        <div className="grid md:grid-cols-3 gap-6">
-          {pkgs.map((p, i) => (
-            <div
-              key={i}
-              className={`relative glass rounded-2xl p-8 flex flex-col transition-all hover:-translate-y-1 duration-300 ${p.popular ? "border-primary/50 glow-blue" : ""
-                }`}
-            >
-              {p.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-4 py-1 rounded-full">
-                  MOST POPULAR
-                </div>
-              )}
-              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{p.tag}</span>
-              <h3 className="text-2xl font-bold mt-2">{p.name}</h3>
-              <p className="text-3xl font-extrabold gradient-text mt-3 mb-2">Rp {p.price.toLocaleString("id-ID")}</p>
-              <p className="text-sm text-gray-400 mb-6 leading-relaxed flex-1">{p.desc}</p>
-              <ul className="space-y-2 mb-8">
-                {p.features?.map((f: string, j: number) => (
-                  <li key={j} className="flex items-center gap-2 text-sm text-gray-300">
-                    <span className="text-green-400 text-xs">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/checkout"
-                className={`text-center py-3 rounded-xl font-semibold text-sm transition-all ${p.popular
-                  ? "bg-primary hover:bg-primary-light text-white glow-blue"
-                  : "bg-white/5 border border-white/10 hover:border-primary/40 text-gray-300 hover:text-white"
-                  }`}
-              >
-                Pesan Sekarang
-              </Link>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ───── CTA ───── */
-function CTA() {
-  return (
-    <section className="py-24 px-4">
-      <div className="max-w-4xl mx-auto glass rounded-3xl p-12 text-center relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-60 h-60 bg-primary/20 rounded-full blur-[80px]" />
-          <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-secondary/20 rounded-full blur-[80px]" />
-        </div>
-        <div className="relative">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-            Siap Memulai <span className="gradient-text">Proyek Anda?</span>
-          </h2>
-          <p className="text-gray-400 max-w-xl mx-auto mb-8">
-            Konsultasikan kebutuhan Anda dengan AI kami secara gratis. Dapatkan analisis dan rekomendasi paket dalam hitungan detik.
+        {/* Large Dimensional Design feature */}
+        <div className="glass-panel rounded-2xl p-8 flex flex-col group relative overflow-hidden md:col-span-2">
+          <div className="absolute inset-0 -z-10 opacity-20">
+            <div className="bg-cover bg-center w-full h-full" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuASxA-TUqJVJN_D2v0yepJAMrfk9LxFh8O0w7HYi0D7dEbpxwtsQRSLFjy2LkT0fma1QllYf50fsnbRI9KYSIOJAWy6MMSwhfOp_BpGMv6GZ5rICxCLfX0IS7KWFI4SZOhwQ9y18C1I3SSQ_fVqUbdkESSstaILVN3-nLXF-oXADW8-f8qqFD-7cFBkSD-GnYLO8qUnbnBWDUxq7LikvcE6sSr1_xzNalAb9_DFfGEF7AhTugcmcr_5rQ')" }}></div>
+          </div>
+          <div className="flex justify-between items-start mb-6">
+            <span className="material-symbols-outlined text-5xl text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>psychiatry</span>
+            <span className="bg-tertiary-container text-white font-label text-xs px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-2 shadow-[0_0_10px_rgba(215,25,36,0.3)]">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span> Live AI
+            </span>
+          </div>
+          <h3 className="font-headline text-3xl text-white mb-2 font-bold">Cognitive Systems</h3>
+          <p className="font-body text-on-surface-variant flex-grow max-w-md">
+            Mengintegrasikan sistem prediksi AI langsung ke dalam pengalaman UI untuk memangkas proses konsultasi hingga 80%.
           </p>
-          <Link
-            href="/chat"
-            className="inline-block bg-primary hover:bg-primary-light text-white font-semibold px-10 py-4 rounded-full transition-all duration-300 hover:-translate-y-0.5 glow-blue"
-          >
-            💬 Mulai Konsultasi Gratis
-          </Link>
+          <div className="mt-8">
+            <Link href="/chat" className="glow-btn-primary inline-flex text-white font-label text-sm px-8 py-3 rounded-full uppercase tracking-widest hover:scale-105 transition-transform duration-300">
+              Mulai AI Konsultasi
+            </Link>
+          </div>
+        </div>
+
+        {/* Dynamic Small cards */}
+        <div className="flex flex-col gap-6">
+          {features.slice(2).map((f, i) => (
+            <div key={i} className="glass-panel rounded-2xl p-6 flex flex-col group hover:-translate-y-1 transition-transform">
+              <span className={`material-symbols-outlined text-4xl mb-4 ${f.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>{f.icon}</span>
+              <h3 className="font-headline text-xl text-white mb-2 font-bold">{f.title}</h3>
+              <p className="font-body text-sm text-on-surface-variant">{f.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
-  );
-}
-
-/* ───── Footer ───── */
-function Footer() {
-  return (
-    <footer className="border-t border-white/5 py-10 px-4">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-gray-500">
-          © 2026 <span className="gradient-text font-semibold">Wave Projects Center.ID</span> — All Rights Reserved
-        </p>
-        <div className="flex gap-6 text-xs text-gray-600">
-          <span>Vercel</span>
-          <span>TiDB</span>
-          <span>Cloudinary</span>
-          <span>OneSignal</span>
-          <span>Midtrans</span>
-        </div>
-      </div>
-    </footer>
   );
 }
 
@@ -279,26 +183,30 @@ function Portfolio() {
   if (items.length === 0) return null;
 
   return (
-    <section id="portfolio" className="py-24 px-4 bg-white/5">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4">
-          Solusi Jasa Pembuatan <span className="gradient-text">Sistem &amp; Web Custom</span>
+    <section id="portfolio" className="py-24 px-6 bg-surface-container-high relative overflow-hidden text-center z-10 w-full circuit-pattern">
+      <div className="max-w-[1440px] mx-auto relative z-10">
+        <h2 className="font-headline text-3xl md:text-5xl text-white mb-4 font-bold">
+          Technical <span className="gradient-text">Elegance</span>
         </h2>
-        <p className="text-gray-500 text-center max-w-xl mx-auto mb-16">
-          Beberapa proyek software dan sistem yang telah kami selesaikan dengan sukses menggunakan tech stack modern terbaru.
+        <p className="font-body text-lg text-on-surface-variant max-w-2xl mx-auto mb-16">
+          Karya sistem digital yang dirancang teliti dan aman untuk jangka panjang.
         </p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.map((p, i) => (
-            <div key={i} className="glass rounded-2xl overflow-hidden group hover:border-primary/50 transition-all">
-              <div className="h-48 bg-white/10 relative overflow-hidden">
-                <Image src={p.image_url || "/assets/img/og-preview.png"} alt={`Jasa pembuatan sistem ${p.title} oleh Wave Projects`} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div key={i} className="group rounded-2xl overflow-hidden glass-panel flex flex-col hover:border-white/20 transition-all duration-500 text-left">
+              <div className="h-56 overflow-hidden relative border-b border-glass-stroke">
+                <Image src={p.image_url || "/assets/img/og-preview.png"} alt={p.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-container-high via-transparent to-transparent opacity-80"></div>
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-bold mb-2">{p.title}</h3>
-                <p className="text-sm text-gray-400 mb-4 line-clamp-3 leading-relaxed">{p.description}</p>
+              <div className="p-8 flex-grow flex flex-col justify-between">
+                <div>
+                  <h3 className="font-headline text-2xl text-white mb-2 font-bold">{p.title}</h3>
+                  <p className="font-body text-sm text-on-surface-variant mb-6 line-clamp-3">{p.description}</p>
+                </div>
                 {p.live_link && (
-                  <a href={p.live_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-light transition-colors">
-                    Lihat Live Demo <span>&rarr;</span>
+                  <a href={p.live_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-label text-sm text-electric-blue hover:text-primary transition-colors uppercase tracking-widest">
+                    Lihat Live Demo <span className="material-symbols-outlined text-sm">arrow_outward</span>
                   </a>
                 )}
               </div>
@@ -310,84 +218,82 @@ function Portfolio() {
   );
 }
 
+/* ───── Packages ───── */
+function Packages() {
+  const [pkgs, setPkgs] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/v1/packages")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) setPkgs(data.data);
+      });
+  }, []);
+
+  if (pkgs.length === 0) return null;
+
+  return (
+    <section id="packages" className="py-24 px-6 relative z-10 mesh-gradient">
+      <div className="max-w-[1440px] mx-auto">
+        <h2 className="font-headline text-3xl md:text-5xl text-white font-bold text-center mb-4">
+          Paket <span className="gradient-text">Efisien</span>
+        </h2>
+        <p className="font-body text-lg text-on-surface-variant max-w-2xl mx-auto mb-16 text-center">
+          Ekosistem teroptimasi cloud hemat biaya. Bayar DP 30% untuk memulai perjalanan.
+        </p>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {pkgs.map((p, i) => (
+            <div key={i} className={`rounded-2xl glass-panel p-8 flex flex-col relative group hover:-translate-y-2 transition-all duration-500 ${p.popular ? 'border-primary/40 shadow-[0_0_40px_rgba(59,130,246,0.1)]' : ''}`}>
+              {p.popular && <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>}
+
+              <div className="mb-8">
+                <span className="inline-block px-3 py-1 rounded-full bg-surface-container border border-glass-stroke text-on-surface-variant font-label text-[10px] tracking-widest uppercase mb-4">
+                  {p.tag}
+                </span>
+                <h3 className="font-headline text-2xl text-white mb-2 font-bold">{p.name}</h3>
+                <div className="font-display text-4xl text-white font-black tracking-tight my-4">Rp {p.price.toLocaleString("id-ID")}</div>
+                <p className="font-body text-sm text-on-surface-variant line-clamp-4">{p.desc}</p>
+              </div>
+
+              <ul className="flex-col space-y-3 mb-10 flex-grow">
+                {p.features?.map((f: string, j: number) => (
+                  <li key={j} className="flex items-center gap-3 text-on-surface-variant font-body text-sm">
+                    <span className="material-symbols-outlined text-primary text-lg">check_circle</span> {f}
+                  </li>
+                ))}
+              </ul>
+
+              <Link href="/checkout" className={`w-full inline-flex items-center justify-center px-6 py-4 rounded-full font-label text-sm uppercase tracking-widest transition-all duration-300 ${p.popular ? 'glow-btn-primary text-white' : 'glass-button-secondary text-white hover:bg-white/5'}`}>
+                Pesan Sekarang
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ───── SEO Content ───── */
 function SEOContent() {
   return (
-    <section className="py-24 px-4 bg-[#0a0f1e]/80 border-t border-white/5">
+    <section className="py-24 px-6 bg-surface-container-lowest/80 border-t border-glass-stroke">
       <div className="max-w-4xl mx-auto">
         <div className="mb-16">
-          <p className="text-gray-300 leading-relaxed mb-6 text-lg">
+          <p className="font-body text-on-surface-variant opacity-80 leading-relaxed mb-6 text-lg">
             Wave Projects adalah penyedia jasa pembuatan web, jasa pembuatan sistem custom, dan software house profesional yang berfokus menghadirkan solusi digital modern untuk skala bisnis maupun enterprise. Kami ahli dalam membangun website profile, landing page, aplikasi custom, hingga sistem manajemen kompleks dengan performa tinggi dan aman.
           </p>
-          <p className="text-gray-300 leading-relaxed mb-6 text-lg">
+          <p className="font-body text-on-surface-variant opacity-80 leading-relaxed mb-6 text-lg">
             Platform all-in-one untuk konsultasi AI, pemesanan, pembayaran, hingga serah terima proyek web & aplikasi. Satu ekosistem. Tanpa ribet.
-          </p>
-          <p className="text-gray-300 leading-relaxed text-lg">
-            Ditangani langsung oleh tim developer berpengalaman, setiap sistem dirancang responsif dan dioptimasi penuh untuk mesin pencari. Percayakan kebutuhan pembuat website dan sistem kustom masa depan bisnis Anda bersama Wave Projects.
           </p>
         </div>
 
         <div className="space-y-12">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 gradient-text">Solusi Ekosistem Digital Terintegrasi untuk Skala Bisnis & Startup</h2>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Jasa Pembuatan Website Company Profile & Landing Page Berperforma Tinggi</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Deskripsi mendalam tentang optimasi kecepatan, desain stealth/modern, dan mobile-first.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Jasa Pembuatan Sistem Custom: ERP, WMS, OMS, & POS Terintegrasi</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Penjelasan teknis mengenai pengembangan sistem manajemen gudang, *Order Management System*, hingga Point of Sales berbasis web.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Konsultasi Arsitektur Perangkat Lunak & Integrasi Kecerdasan Buatan (AI)</h3>
-            <p className="text-gray-500 leading-relaxed">Layanan konsultasi teknologi modern bagi perusahaan yang ingin mengintegrasikan *workflow* AI ke dalam sistem bisnis mereka.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 gradient-text">Mengapa Wave Projects Adalah Pilihan Utama Partner Teknologi Bisnis Anda?</h2>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Teknologi Modern & Stack Teruji (Laravel, Vercel, & Cloud Database)</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Menggunakan framework Laravel terbaru, manajemen database yang handal, serta deployment otomatis berperforma tinggi.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Keamanan Tingkat Tinggi & Skalabilitas Tanpa Batas</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Sistem dirancang dengan arsitektur bersih (*clean architecture*) yang aman dari celah kerentanan serta siap menampung lonjakan transaksi.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Dukungan Penuh & Perawatan Berkala (Maintenance & Support)</h3>
-            <p className="text-gray-500 leading-relaxed">Komitmen jangka panjang untuk memastikan sistem klien tetap berjalan mulus tanpa *downtime* berarti.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 gradient-text">Jangkauan Layanan Jasa Pembuatan Website & Software House Terdekat</h2>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Jasa Pembuatan Website & Sistem Custom di Tangerang & Tangerang Selatan</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Meliputi wilayah Ciputat, BSD, Serpong, Bintaro, Karawaci, dan seluruh kawasan industri/bisnis di Tangerang Raya.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Jasa Pembuatan Website Profesional untuk Wilayah DKI Jakarta & Sekitarnya</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Melayani kebutuhan digitalisasi korporat dan UMKM di Jakarta Selatan, Jakarta Barat, Jakarta Pusat, dan kota penyangga lainnya.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Layanan Remote & Kolaborasi Proyek Skala Nasional</h3>
-            <p className="text-gray-500 leading-relaxed">Menerima pengerjaan proyek sistem dan web custom dari berbagai kota di seluruh Indonesia secara profesional.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 gradient-text">Portofolio & Studi Kasus Pengembangan Sistem Berhasil</h2>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Implementasi Sistem Warehouse Management System (WMS) Skala Menengah</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Studi kasus bagaimana sistem kustom berhasil memangkas waktu inventaris gudang hingga 50%.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Pengembangan Aplikasi Point of Sales (POS) & Manajemen Stok Terintegrasi</h3>
-            <p className="text-gray-500 leading-relaxed">Solusi pencatatan kasir instan berbasis cloud yang terhubung langsung dengan laporan keuangan real-time.</p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-6 gradient-text">Pertanyaan yang Sering Diajukan Seputar Jasa Pembuatan Website & Sistem</h2>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Berapa lama waktu yang dibutuhkan untuk membuat sebuah website atau sistem custom?</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Penjelasan estimasi waktu pengerjaan berdasarkan tingkat kompleksitas proyek.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Bagaimana alur kerja (workflow) pemesanan proyek di Wave Projects?</h3>
-            <p className="text-gray-500 mb-6 leading-relaxed">Mulai dari konsultasi awal, *wireframing*, *development*, *stress testing*, hingga *deployment* ke server produksi.</p>
-
-            <h3 className="text-xl font-semibold text-white mt-6 mb-2">Apakah sistem yang dibuat dapat dikembangkan lagi di masa depan?</h3>
-            <p className="text-gray-500 leading-relaxed">Penjelasan mengenai arsitektur kode modular yang fleksibel untuk *future-proofing* bisnis klien.</p>
+            <h2 className="font-headline text-2xl sm:text-3xl font-bold mb-6 gradient-text-alt">Solusi Ekosistem Digital Terintegrasi untuk Skala Bisnis & Startup</h2>
+            <h3 className="font-headline text-xl font-semibold text-white mt-6 mb-2">Jasa Pembuatan Website Company Profile & Landing Page Berperforma Tinggi</h3>
+            <p className="font-body text-on-surface-variant opacity-70 mb-6 leading-relaxed">Deskripsi mendalam tentang optimasi kecepatan, desain stealth/modern, dan mobile-first.</p>
           </div>
         </div>
       </div>
@@ -395,7 +301,61 @@ function SEOContent() {
   );
 }
 
-/* ───── Main Page ───── */
+/* ───── CTA & Footer ───── */
+function CTAAndFooter() {
+  return (
+    <>
+      <section className="py-24 px-6 relative z-10 bg-surface-container-lowest">
+        <div className="max-w-4xl mx-auto text-center relative z-10 glass-panel rounded-[3rem] p-12 md:p-20 shadow-[0_0_50px_rgba(59,130,246,0.1)] overflow-hidden">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-30"></div>
+
+          <h2 className="font-headline text-3xl md:text-5xl text-white mb-6 font-bold z-10 relative">Siap Memulai <span className="gradient-text">Proyek Anda?</span></h2>
+          <p className="font-body text-lg text-on-surface-variant mb-10 max-w-xl mx-auto z-10 relative">Konsultasikan kebutuhan Anda dengan AI kami secara gratis. Analisis instan dan tajam.</p>
+
+          <Link href="/chat" className="inline-flex items-center transition-all bg-on-surface text-background font-label text-sm uppercase tracking-widest py-4 px-10 rounded-full hover:bg-white hover:scale-105 z-10 relative">
+            Mulai Diskusi
+          </Link>
+        </div>
+      </section>
+
+      <footer className="w-full border-t border-glass-stroke bg-obsidian-deep pt-20 pb-28 md:pb-12 px-6 z-10 relative mt-auto">
+        <div className="max-w-[1440px] mx-auto w-full grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          <div className="col-span-1 md:col-span-2">
+            <Link href="/" className="font-display text-3xl font-extrabold tracking-tight flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-primary text-3xl">waves</span>
+              <span className="text-on-surface">Wave Projects</span>
+            </Link>
+            <p className="font-body text-sm text-on-surface-variant max-w-md">
+              Pioneering the Indo-Futuristic Frontier. Platform pembuatan IT tanpa hambatan, satu ekosistem dari konsultasi hingga deployment cloud mutakhir.
+            </p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <h4 className="font-label text-sm text-white uppercase tracking-widest opacity-50 mb-2">Connect</h4>
+            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Instagram</a>
+            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">LinkedIn</a>
+          </div>
+          <div className="flex flex-col gap-4">
+            <h4 className="font-label text-sm text-white uppercase tracking-widest opacity-50 mb-2">Legal</h4>
+            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</a>
+            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Terms of Service</a>
+          </div>
+        </div>
+
+        <div className="max-w-[1440px] mx-auto w-full flex flex-col md:flex-row justify-between items-center pt-8 border-t border-glass-stroke/50 gap-4">
+          <p className="font-body text-xs text-on-surface-variant">© 2026 Wave Projects. Engineered with AI and Edge technologies.</p>
+          <div className="flex gap-4 text-on-surface-variant text-xs opacity-60 font-label uppercase tracking-widest">
+            <span>Next.js</span>
+            <span>Vercel</span>
+            <span>TiDB</span>
+            <span>Midtrans</span>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
+
+/* ───── Main App ───── */
 export default function Home() {
   const [settings, setSettings] = useState<any>(null);
 
@@ -410,15 +370,14 @@ export default function Home() {
   return (
     <>
       <Navbar settings={settings} />
-      <main className="flex-1">
+      <main className="flex-1 w-full flex flex-col relative z-0">
         <Hero settings={settings} />
         <Features />
         <Portfolio />
         <Packages />
-        <CTA />
         <SEOContent />
+        <CTAAndFooter />
       </main>
-      <Footer />
     </>
   );
 }
