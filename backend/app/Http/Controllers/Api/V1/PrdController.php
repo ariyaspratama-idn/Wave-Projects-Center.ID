@@ -57,7 +57,7 @@ class PrdController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'PRD sedang dibuat, estimasi 2 menit',
+            'message' => 'Baik, Kak. Semua kebutuhan sistem dan fitur sudah saya catat dengan detail. Tim internal kami sedang menyusun analisis teknisnya. Admin kami akan segera menghubungi Kakak untuk tahap selanjutnya.',
             'generation_id' => $generation->id
         ]);
     }

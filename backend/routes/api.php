@@ -23,6 +23,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/orders/checkout', [\App\Http\Controllers\Api\V1\OrderController::class, 'checkout']);
     Route::post('/payments/callback', [\App\Http\Controllers\Api\V1\PaymentController::class, 'callback']);
     Route::post('/files/signature', [\App\Http\Controllers\Api\V1\FileController::class, 'signature']);
+    Route::post('/telegram/webhook', [\App\Http\Controllers\Api\V1\TelegramWebhookController::class, 'handleWebhook']);
 
     // Universal Auth Routes
     Route::post('/login', [\App\Http\Controllers\Api\V1\AuthController::class, 'login']);
