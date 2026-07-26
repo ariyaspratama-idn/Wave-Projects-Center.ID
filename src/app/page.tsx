@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import Logo from "./logo.png";
 
 /* ───── Navigation ───── */
 function Navbar({ settings }: { settings: any }) {
@@ -17,9 +18,8 @@ function Navbar({ settings }: { settings: any }) {
     <>
       <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-surface-dim/70 backdrop-blur-xl border-b border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)]' : 'bg-transparent'}`}>
         <div className="flex justify-between items-center px-6 lg:px-10 py-4 max-w-[1440px] mx-auto">
-          <Link href="/" className="font-display text-2xl font-extrabold tracking-tight flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-3xl">waves</span>
-            <span className="text-on-surface">Wave Projects</span>
+          <Link href="/" className="font-display text-2xl font-extrabold tracking-tight flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Image src={Logo} alt="Wave Projects Logo" className="h-10 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" priority />
           </Link>
           <div className="hidden md:flex gap-8 items-center">
             <Link href="#portfolio" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Work</Link>
@@ -321,9 +321,8 @@ function CTAAndFooter() {
       <footer className="w-full border-t border-glass-stroke bg-obsidian-deep pt-20 pb-28 md:pb-12 px-6 z-10 relative mt-auto">
         <div className="max-w-[1440px] mx-auto w-full grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="font-display text-3xl font-extrabold tracking-tight flex items-center gap-2 mb-4">
-              <span className="material-symbols-outlined text-primary text-3xl">waves</span>
-              <span className="text-on-surface">Wave Projects</span>
+            <Link href="/" className="flex items-center mb-6 hover:opacity-80 transition-opacity">
+              <Image src={Logo} alt="Wave Projects Logo" className="h-12 w-auto object-contain" />
             </Link>
             <p className="font-body text-sm text-on-surface-variant max-w-md">
               Pioneering the Indo-Futuristic Frontier. Platform pembuatan IT tanpa hambatan, satu ekosistem dari konsultasi hingga deployment cloud mutakhir.
