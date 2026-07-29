@@ -155,8 +155,14 @@ export default function ChatPage() {
                     const hasTrigger = m.content.match(/\[CHECKOUT_TRIGGER:(\d+)\]/);
                     let displayContent = m.content;
                     if (hasTrigger) {
-                        displayContent = m.content.replace(hasTrigger[0], "");
+                        displayContent = displayContent.replace(hasTrigger[0], "");
                     }
+
+                    // Filter teks agar bintang markdown terbuang dan istilah teknis internal disamarkan
+                    displayContent = displayContent
+                        .replace(/\*\*/g, "")
+                        .replace(/\bPRD\b/gi, "Rancangan Kebutuhan Sistem")
+                        .replace(/Dokumen Rekayasa Perangkat Lunak( \(PRD\))?/gi, "Rancangan Kebutuhan Sistem");
 
                     return (
                         <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
