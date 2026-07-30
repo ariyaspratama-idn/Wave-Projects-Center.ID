@@ -141,9 +141,20 @@ async function renderPRDToDocx(prdData) {
   );
 
   // ============ DAFTAR ISI ============
+  const tocSections = [
+    "Pendahuluan & Ringkasan", "Goals & Metrik Terukur (OKR)", "Functional Requirements",
+    "Non-Functional Requirements", "User Stories", "Scope & Batasan",
+    "Arsitektur Sistem & Data Flow", "Schema Database", "API Specification",
+    "UI/UX & Design Guidelines", "Pemetaan Akses per Role", "Integrasi Pihak Ketiga",
+    "SEO & Performance Optimization", "Testing Strategy", "Deployment Strategy",
+    "DevOps & Monitoring", "Security Checklist", "Estimasi Biaya & Pembayaran",
+    "Komunikasi & Kolaborasi", "Timeline & Manajemen Risiko", "Persetujuan & Tanda Tangan",
+    "Analytics & Tracking", "Kepatuhan Data Pribadi (UU PDP)", "Backup & Disaster Recovery",
+    "Acceptance Criteria", "SLA Pasca Go-Live", "Glossary / Daftar Istilah"
+  ];
   children.push(
     heading1("Daftar Isi"),
-    ...Array.from({ length: 27 }, (_, i) => tocItem(`${i + 1}. Bagian ${i + 1}`, 0)),
+    ...tocSections.map((title, i) => tocItem(`${i + 1}. ${title}`, 0)),
     pageBreak()
   );
 

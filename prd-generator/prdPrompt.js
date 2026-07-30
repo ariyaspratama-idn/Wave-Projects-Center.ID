@@ -41,7 +41,8 @@ ATURAN PENTING:
 - Untuk proyek Starter/Landing Page: Fokus pada bagian 1-6, 10, 13, 18, 21, 25, 26, 27. Bagian yang tidak wajib isi dengan array/objek berisi string "TIDAK TERSEDIA PADA PAKET INI / N/A".
 - Untuk proyek Standard/E-Commerce: Semua bagian WAJIB kecuali 16 (opsional).
 - Untuk proyek Ultimate/Enterprise: SEMUA 27 bagian WAJIB tanpa terkecuali.
-- KEDALAMAN TEKNIS TINGKAT TINGGI: Klien menghendaki dokumen yang bisa dibaca langsung oleh System Engineer / Software Developer Pemula (Junior) dan tidak membingungkan mereka. DILARANG menggunakan deskripsi generik. Tulis nama teknologi nyata, struktur folder bayangan, algoritma pseudocode simpel, contoh payload JSON API, dan panduan relasi struktur database (ERD).
+- ATURAN KUANTITAS & KUALITAS MUTLAK: SETIAP penjelasan deskriptif WAJIB memiliki minimal 3-5 sub-paragraf panjang, tidak boleh singkat! 
+- KEDALAMAN KODE & ARSITEKTUR: Pada bagian 7 (Arsitektur), 8 (Database), dan 9 (API), Anda WAJIB MENGHASILKAN CONTOH STRUKTUR FOLDER, CONTOH PAYLOAD JSON, serta LOGIKA ALGORITMA TEKNIKAL yang eksplisit (jelas) agar Programer Junior pemula bisa langsung men-copy/mempraktikkannya. JANGAN gunakan bahasa manajerial, gunakan bahasa Programmer! 
 - EKSTRAKSI HARGA & WAKTU OTOMATIS: Jangan mengarang harga atau waktu rilis. Setialah pada Data Harga & Durasi yang disuntikkan secara dinamis pada "KONTEKS PROYEK TERSIMPAN". Pastikan ter-*render* persis tanpa karangan tambahan.
 - Selalu patuhi standar arsitektur Wave Projects Center (modern serverless cloud, Next.js, Vercel, Node, TiDB, GCP). Dilarang menyertakan kata "gratis/freemium", gantilah dengan "cloud scalable termanajemen".
 

@@ -120,7 +120,7 @@ export default function OrderExecutiveDetail() {
             // Chunk 1
             const res1 = await fetch("/api/v1/admin/prd/generate-chunk", {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 1, projectName: data.order.project_name || data.order.package_name, packagePrice: data.order.total_amount, packageTimeline: data.order.package_name?.toLowerCase().includes('starter') ? '2 Minggu' : data.order.package_name?.toLowerCase().includes('standard') ? '4 Minggu' : 'Sesuai Kesepakatan' })
+                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 1, projectName: data.order.project_name || data.order.package_name, packagePrice: data.order.total_amount || data.order.master_package_price, packageTimeline: data.order.package_name?.toLowerCase().includes('starter') ? '2 Minggu' : data.order.package_name?.toLowerCase().includes('standard') ? '4 Minggu' : 'Sesuai Kesepakatan' })
             });
             if (!res1.ok) {
                 const err = await res1.json().catch(() => ({}));
@@ -132,7 +132,7 @@ export default function OrderExecutiveDetail() {
             // Chunk 2
             const res2 = await fetch("/api/v1/admin/prd/generate-chunk", {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 2, projectName: data.order.project_name || data.order.package_name, prevContext: data1.data, packagePrice: data.order.total_amount, packageTimeline: data.order.package_name?.toLowerCase().includes('starter') ? '2 Minggu' : data.order.package_name?.toLowerCase().includes('standard') ? '4 Minggu' : 'Sesuai Kesepakatan' })
+                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 2, projectName: data.order.project_name || data.order.package_name, prevContext: data1.data, packagePrice: data.order.total_amount || data.order.master_package_price, packageTimeline: data.order.package_name?.toLowerCase().includes('starter') ? '2 Minggu' : data.order.package_name?.toLowerCase().includes('standard') ? '4 Minggu' : 'Sesuai Kesepakatan' })
             });
             if (!res2.ok) {
                 const err = await res2.json().catch(() => ({}));
@@ -144,7 +144,7 @@ export default function OrderExecutiveDetail() {
             // Chunk 3
             const res3 = await fetch("/api/v1/admin/prd/generate-chunk", {
                 method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 3, projectName: data.order.project_name || data.order.package_name, prevContext: data2.data, packagePrice: data.order.total_amount, packageTimeline: data.order.package_name?.toLowerCase().includes('starter') ? '2 Minggu' : data.order.package_name?.toLowerCase().includes('standard') ? '4 Minggu' : 'Sesuai Kesepakatan' })
+                body: JSON.stringify({ rawCustomerRequest: data.brief.core_attributes, part: 3, projectName: data.order.project_name || data.order.package_name, prevContext: data2.data, packagePrice: data.order.total_amount || data.order.master_package_price, packageTimeline: data.order.package_name?.toLowerCase().includes('starter') ? '2 Minggu' : data.order.package_name?.toLowerCase().includes('standard') ? '4 Minggu' : 'Sesuai Kesepakatan' })
             });
             if (!res3.ok) {
                 const err = await res3.json().catch(() => ({}));
