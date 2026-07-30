@@ -94,14 +94,15 @@ export default function OrderExecutiveDetail() {
         fetchExecutiveData(); // reload
     };
 
-    const handleAssignDeveloper = async (userId: number) => {
+    const handleAutoAssign = async () => {
         const token = localStorage.getItem("wave_token");
-        await fetch(`/api/v1/admin/orders/${orderId}/assign`, {
+        const res = await fetch(`/api/v1/admin/orders/${orderId}/auto-assign`, {
             method: 'POST',
-            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-            body: JSON.stringify({ assignedTo: userId || null })
+            headers: { "Authorization": `Bearer ${token}` }
         });
-        alert('Tugas berhasil didelegasikan!');
+        const ans = await res.json();
+        if (ans.success) alert('🤖 AI Load Balancer: ' + ans.message);
+        else alert('Error: ' + ans.error);
         fetchExecutiveData(); // reload
     };
 
@@ -238,18 +239,14 @@ export default function OrderExecutiveDetail() {
                         <h1 className="text-3xl font-extrabold gradient-text">Executive Dashboard: #{orderId.padStart(4, '0')}</h1>
                         <p className="text-sm text-gray-400 mt-1">Paket: <span className="text-white font-semibold">{data.order.package_name}</span></p>
                     </div>
-                    <div className="flex flex-col text-sm border border-white/10 p-2 rounded-xl bg-white/5">
-                        <label className="text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-wider">👷‍♂️ Tugaskan / Dispatch</label>
-                        <select
-                            value={data.order.assigned_to || ''}
-                            onChange={(e) => handleAssignDeveloper(Number(e.target.value))}
-                            className="bg-transparent text-white font-bold outline-none cursor-pointer"
-                        >
-                            <option value="" className="text-black">-- Pilih Developer --</option>
-                            {data.developers?.map((d: any) => (
-                                <option key={d.id} value={d.id} className="text-black">{d.name}</option>
-                            ))}
-                        </select>
+                    <div className="flex border border-white/10 p-2 rounded-xl bg-white/5 items-center gap-3">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-wider">👷‍♂️ PIC (Developer)</span>
+                            <span className="text-sm text-white font-bold">{data.developers?.find((d: any) => d.id === data.order.assigned_to)?.name || <span className="text-red-400">Belum Ditugaskan</span>}</span>
+                        </div>
+                        <button onClick={handleAutoAssign} className="bg-primary/20 text-primary hover:bg-primary hover:text-white border border-primary/30 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ml-2">
+                            ⚡ Auto-Assign (Load Balancer)
+                        </button>
                     </div>
                 </div>
 
