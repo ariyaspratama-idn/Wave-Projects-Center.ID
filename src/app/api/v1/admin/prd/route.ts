@@ -26,6 +26,12 @@ export async function POST(req: Request) {
         // Render to Word Document buffer
         const docxBuffer = await renderPRDToDocx(prdData);
 
+        const base64Docx = Buffer.isBuffer(docxBuffer) ? docxBuffer.toString('base64') : Buffer.from(docxBuffer).toString('base64');
+        import('@/lib/telegram').then(({ sendTelegramDocumentBase64 }) => {
+            sendTelegramDocumentBase64(base64Docx, `${prdData.prdId}.docx`, `📁 <b>DOKUMEN PRD FINAL BERHASIL DIBUAT!</b>\n\n<b>Project:</b> ${prdData.projectName}\n<b>Client:</b> ${prdData.clientName}\n\nSilakan buka file berekstensi .docx ini dan mulai pengembangan.`);
+        }).catch(e => console.error(e));
+
+
         return new NextResponse(docxBuffer as unknown as BodyInit, {
             headers: {
                 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

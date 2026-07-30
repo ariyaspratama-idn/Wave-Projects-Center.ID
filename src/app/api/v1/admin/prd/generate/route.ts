@@ -96,6 +96,11 @@ export async function POST(req: Request) {
 
         // 5. Build standard Base64 response
         const base64Docx = docxBuffer.toString('base64');
+
+        import('@/lib/telegram').then(({ sendTelegramDocumentBase64 }) => {
+            sendTelegramDocumentBase64(base64Docx, `${prdData.prdId}.docx`, `📁 <b>DOKUMEN PRD DRAFT DIBUAT!</b>\n\n<b>Project:</b> ${baseContext.projectName}\n<b>Client:</b> ${baseContext.clientName}\n\nSilakan buka file .docx ini untuk ditinjau oleh developer.`);
+        }).catch(e => console.error(e));
+
         return NextResponse.json({ success: true, fileName: `${prdData.prdId}.docx`, base64: base64Docx });
 
     } catch (e: any) {
