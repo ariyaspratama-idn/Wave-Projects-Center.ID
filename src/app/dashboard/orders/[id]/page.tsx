@@ -17,6 +17,7 @@ export default function OrderExecutiveDetail() {
     const [contactForm, setContactForm] = useState({ client_name: '', client_email: '', client_whatsapp: '', payment_status: '' });
     const [savingContact, setSavingContact] = useState(false);
     const [validatingPayment, setValidatingPayment] = useState(false);
+    const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean, message: string, onConfirm: () => void } | null>(null);
 
     const fetchExecutiveData = () => {
         const token = localStorage.getItem("wave_token");
@@ -65,23 +66,27 @@ export default function OrderExecutiveDetail() {
         fetchExecutiveData();
     }, [orderId]);
 
-    const handleGenerateAiKanban = async () => {
-        if (!confirm("Kirim instruksi Brief ke Sistem AI untuk dibongkar jadi checklist teknikal? (Bisa memakan waktu 10-15 detik)")) return;
+    const handleGenerateAiKanban = () => {
+        setConfirmModal({
+            isOpen: true,
+            message: "Kirim instruksi Brief ke Sistem AI untuk dibongkar jadi checklist teknikal? (Bisa memakan waktu 10-15 detik)",
+            onConfirm: async () => {
+                setConfirmModal(null);
+                setAiGenerating(true);
+                const token = localStorage.getItem("wave_token");
+                const res = await fetch(`/api/v1/admin/orders/${orderId}/kanban-ai`, {
+                    method: 'POST',
+                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
+                });
+                const data = await res.json();
+                setAiGenerating(false);
 
-        setAiGenerating(true);
-        const token = localStorage.getItem("wave_token");
-        const res = await fetch(`/api/v1/admin/orders/${orderId}/kanban-ai`, {
-            method: 'POST',
-            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
+                if (!data.success) {
+                    alert("Gagal memanggil AI: " + (data.error || "Unknown Error"));
+                }
+                fetchExecutiveData(); // reload
+            }
         });
-        const data = await res.json();
-        setAiGenerating(false);
-
-        if (!data.success) {
-            alert("Gagal memanggil AI: " + (data.error || "Unknown Error"));
-        }
-
-        fetchExecutiveData(); // reload
     };
 
     const updateTaskStatus = async (taskId: number, newStatus: string) => {
@@ -198,32 +203,38 @@ export default function OrderExecutiveDetail() {
         }
     };
 
-    const handleValidatePayment = async () => {
+    const handleValidatePayment = () => {
         const isDPPelunasan = data?.order?.payment_status === 'dp_paid';
         const confirmMsg = isDPPelunasan
             ? 'Apakah Anda yakin ingin MEMVALIDASI PELUNASAN 70% ini?\n\nTindakan ini akan:\n• Menandai pembayaran sebagai LUNAS PENUH\n• Mengirim Invoice Lunas ke email klien via Brevo\n• Proyek siap untuk diserahkan (Handover)'
             : 'Apakah Anda yakin ingin MEMVALIDASI pembayaran ini?\n\nTindakan ini akan:\n• Menandai pembayaran (DP/Full) sebagai diterima\n• Mengirim Invoice ke email klien via Brevo\n• Menaikkan status order';
-        if (!confirm(confirmMsg)) return;
 
-        setValidatingPayment(true);
-        try {
-            const token = localStorage.getItem('wave_token');
-            const res = await fetch(`/api/v1/admin/orders/${orderId}/validate-payment`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-            });
-            const result = await res.json();
-            if (result.success) {
-                alert('✅ ' + result.message);
-                fetchExecutiveData();
-            } else {
-                alert('Gagal: ' + result.error);
+        setConfirmModal({
+            isOpen: true,
+            message: confirmMsg,
+            onConfirm: async () => {
+                setConfirmModal(null);
+                setValidatingPayment(true);
+                try {
+                    const token = localStorage.getItem('wave_token');
+                    const res = await fetch(`/api/v1/admin/orders/${orderId}/validate-payment`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        alert('✅ ' + result.message);
+                        fetchExecutiveData();
+                    } else {
+                        alert('Gagal: ' + result.error);
+                    }
+                } catch (e: any) {
+                    alert('Error: ' + e.message);
+                } finally {
+                    setValidatingPayment(false);
+                }
             }
-        } catch (e: any) {
-            alert('Error: ' + e.message);
-        } finally {
-            setValidatingPayment(false);
-        }
+        });
     };
 
     const safeDate = (d: any) => { try { const dt = new Date(d); return isNaN(dt.getTime()) ? '-' : dt.toLocaleDateString('id-ID'); } catch { return '-'; } };
@@ -233,6 +244,29 @@ export default function OrderExecutiveDetail() {
 
     return (
         <div className="space-y-6">
+            {/* Custom Confirm Modal */}
+            {confirmModal && confirmModal.isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="bg-[#0a0f1e] border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-yellow-500/20 text-yellow-400 rounded-full">
+                                ⚠️
+                            </div>
+                            <h3 className="text-xl font-bold text-white">Konfirmasi Tindakan</h3>
+                        </div>
+                        <p className="text-gray-300 text-sm mb-6 whitespace-pre-wrap leading-relaxed">{confirmModal.message}</p>
+                        <div className="flex justify-end gap-3">
+                            <button onClick={() => setConfirmModal(null)} className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:text-white hover:bg-white/5 transition border border-transparent hover:border-white/10">
+                                Batal
+                            </button>
+                            <button onClick={confirmModal.onConfirm} className="px-5 py-2 rounded-lg text-sm font-semibold bg-primary hover:bg-primary-light text-white transition glow-blue">
+                                Oke, Lanjutkan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="space-y-4">
                 <div className="flex justify-between items-start">
                     <div>
