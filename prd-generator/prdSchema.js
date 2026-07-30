@@ -34,8 +34,8 @@ const allProperties = {
   },
   // 7
   arsitekturSistem: {
-    type: "object", additionalProperties: false, required: ["dataFlow", "techStack"],
-    properties: { dataFlow: stringArray("Urutan flow Frontend -> API -> Database"), techStack: { type: "string" } }
+    type: "object", additionalProperties: false, required: ["dataFlow", "techStack", "folderStructure", "corePseudocode"],
+    properties: { dataFlow: stringArray("Urutan flow Frontend -> API -> Database"), techStack: { type: "string" }, folderStructure: { type: "string" }, corePseudocode: { type: "string" } }
   },
   // 8
   schemaDatabase: {
@@ -43,7 +43,7 @@ const allProperties = {
   },
   // 9
   apiSpecification: {
-    type: "array", items: { type: "object", additionalProperties: false, required: ["module", "method", "path", "body", "response", "auth"], properties: { module: { type: "string" }, method: { type: "string" }, path: { type: "string" }, body: { type: "string" }, response: { type: "string" }, auth: { type: "string" } } }
+    type: "array", items: { type: "object", additionalProperties: false, required: ["module", "method", "path", "body", "response", "auth", "requestPayloadExample", "responsePayloadExample"], properties: { module: { type: "string" }, method: { type: "string" }, path: { type: "string" }, body: { type: "string" }, response: { type: "string" }, auth: { type: "string" }, requestPayloadExample: { type: "string" }, responsePayloadExample: { type: "string" } } }
   },
   // 10
   uiUxGuidelines: {

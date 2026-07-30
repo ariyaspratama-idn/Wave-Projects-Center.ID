@@ -183,7 +183,13 @@ async function renderPRDToDocx(prdData) {
 
   // 7. Arsitektur Sistem
   const s7 = d.arsitekturSistem || {};
-  children.push(heading1("7. Arsitektur Sistem & Data Flow"), ...fieldBlockList("Data Flow", s7.dataFlow || []), ...fieldBlockText("Tech Stack", s7.techStack));
+  children.push(
+    heading1("7. Arsitektur Sistem & Data Flow"),
+    ...fieldBlockList("Data Flow", s7.dataFlow || []),
+    ...fieldBlockText("Tech Stack", s7.techStack),
+    ...fieldBlockText("Struktur Folder (Rekomendasi Mutlak)", s7.folderStructure),
+    ...fieldBlockText("Core Pseudocode & Logika Inti", s7.corePseudocode)
+  );
 
   // 8. Schema Database
   const o8 = d.schemaDatabase || [];
@@ -191,7 +197,16 @@ async function renderPRDToDocx(prdData) {
 
   // 9. API Specs
   const o9 = d.apiSpecification || [];
-  children.push(heading1("9. API Specification"), dataTable(["Modul", "Method & Path", "Body", "Response", "Auth"], o9.map(x => [x.module, x.method + " " + x.path, x.body, x.response, x.auth]), [1500, 2526, 1500, 1500, 1000]), pageBreak());
+  children.push(heading1("9. API Specification"));
+  if (o9.length > 0) {
+    children.push(dataTable(["Modul", "Method & Path", "Body", "Response", "Auth"], o9.map(x => [x.module, x.method + " " + x.path, x.body, x.response, x.auth]), [1500, 2526, 1500, 1500, 1000]));
+    o9.forEach(api => {
+      if (api.requestPayloadExample || api.responsePayloadExample) {
+        children.push(...fieldBlockText(`Contoh Request & Response: [${api.method}] ${api.path}`, `Request Payload:\n${api.requestPayloadExample || 'Tidak ada'}\n\nResponse Payload:\n${api.responsePayloadExample || 'Tidak ada'}`));
+      }
+    });
+  }
+  children.push(pageBreak());
 
   // 10. UI/UX
   const s10 = d.uiUxGuidelines || {};

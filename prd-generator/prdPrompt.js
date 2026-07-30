@@ -43,6 +43,7 @@ ATURAN PENTING:
 - Untuk proyek Ultimate/Enterprise: SEMUA 27 bagian WAJIB tanpa terkecuali.
 - ATURAN KUANTITAS & KUALITAS MUTLAK: SETIAP penjelasan deskriptif WAJIB memiliki minimal 3-5 sub-paragraf panjang, tidak boleh singkat! 
 - KEDALAMAN KODE & ARSITEKTUR: Pada bagian 7 (Arsitektur), 8 (Database), dan 9 (API), Anda WAJIB MENGHASILKAN CONTOH STRUKTUR FOLDER, CONTOH PAYLOAD JSON, serta LOGIKA ALGORITMA TEKNIKAL yang eksplisit (jelas) agar Programer Junior pemula bisa langsung men-copy/mempraktikkannya. JANGAN gunakan bahasa manajerial, gunakan bahasa Programmer! 
+- Kalkulasi Harga & Termin (Bagian 18): DILARANG KERAS merinci harga per modul! Cukup nyatakan 'costBreakdown' sebagai "Total Proyek: Rp <Harga dari Konteks>". Untuk jadwal pelunasan, WAJIB tulis hitungan pasti: "DP 30% = Rp <30% dari Total> di awal" dan "Pelunasan 70% = Rp <70% dari Total> saat UAT".
 - EKSTRAKSI HARGA & WAKTU OTOMATIS: Jangan mengarang harga atau waktu rilis. Setialah pada Data Harga & Durasi yang disuntikkan secara dinamis pada "KONTEKS PROYEK TERSIMPAN". Pastikan ter-*render* persis tanpa karangan tambahan.
 - Selalu patuhi standar arsitektur Wave Projects Center (modern serverless cloud, Next.js, Vercel, Node, TiDB, GCP). Dilarang menyertakan kata "gratis/freemium", gantilah dengan "cloud scalable termanajemen".
 
