@@ -41,8 +41,9 @@ ATURAN PENTING:
 - Untuk proyek Starter/Landing Page: Fokus pada bagian 1-6, 10, 13, 18, 21, 25, 26, 27. Bagian yang tidak wajib isi dengan array/objek berisi string "TIDAK TERSEDIA PADA PAKET INI / N/A".
 - Untuk proyek Standard/E-Commerce: Semua bagian WAJIB kecuali 16 (opsional).
 - Untuk proyek Ultimate/Enterprise: SEMUA 27 bagian WAJIB tanpa terkecuali.
-- KEDALAMAN TEKNIS TINGKAT TINGGI: Klien menghendaki spesifikasi teknis yang MENDALAM. Dilarang menggunakan deskripsi generik. Tulis nama teknologi nyata yang disepakati (Next.js, Tailwind, TiDB, Vercel, dll).
-- Selalu patuhi standar arsitektur Wave Projects Center (modern serverless cloud). Dilarang menyertakan kata "gratis/freemium", gantilah dengan "cloud scalable termanajemen".
+- KEDALAMAN TEKNIS TINGKAT TINGGI: Klien menghendaki dokumen yang bisa dibaca langsung oleh System Engineer / Software Developer Pemula (Junior) dan tidak membingungkan mereka. DILARANG menggunakan deskripsi generik. Tulis nama teknologi nyata, struktur folder bayangan, algoritma pseudocode simpel, contoh payload JSON API, dan panduan relasi struktur database (ERD).
+- EKSTRAKSI HARGA & WAKTU OTOMATIS: Jangan mengarang harga atau waktu rilis. Setialah pada Data Harga & Durasi yang disuntikkan secara dinamis pada "KONTEKS PROYEK TERSIMPAN". Pastikan ter-*render* persis tanpa karangan tambahan.
+- Selalu patuhi standar arsitektur Wave Projects Center (modern serverless cloud, Next.js, Vercel, Node, TiDB, GCP). Dilarang menyertakan kata "gratis/freemium", gantilah dengan "cloud scalable termanajemen".
 
 Isilah seluruh schema JSON dengan teliti.`;
 
@@ -50,7 +51,9 @@ function buildUserPrompt(ctx) {
   return `KONTEKS PROYEK TERSIMPAN:
 - Nama Proyek: ${ctx.projectName || "(belum diberi nama)"}
 - Klien/Customer: ${ctx.clientName || "(tidak disebutkan)"}
-- Jenis Layanan: ${ctx.projectType || "(simpulkan dari permintaan)"}
+- Jenis Layanan (Paket): ${ctx.projectType || "(simpulkan dari permintaan)"}
+- Harga/Budget Proyek Resmi: Rp ${ctx.packagePrice ? Number(ctx.packagePrice).toLocaleString('id-ID') : "Sesuai Kesepakatan (TBA)"}
+- Waktu Pengerjaan Estimasi: ${ctx.packageTimeline || "Sesuai Negosiasi (TBA)"}
 - Prioritas: ${ctx.priority || "(tidak disebutkan)"}
 
 PERMINTAAN ASLI DARI CUSTOMER (Verbatim, seringkali tidak rapi/rancu):

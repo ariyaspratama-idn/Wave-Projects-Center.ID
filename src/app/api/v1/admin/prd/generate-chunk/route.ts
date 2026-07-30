@@ -11,7 +11,7 @@ export async function POST(req: Request) {
         jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
 
         const body = await req.json();
-        const { rawCustomerRequest, projectName, part, prevContext } = body;
+        const { rawCustomerRequest, projectName, part, prevContext, packagePrice, packageTimeline } = body;
 
         if (!rawCustomerRequest) {
             return NextResponse.json({ success: false, error: 'rawCustomerRequest required' }, { status: 400 });
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-                    contents: [{ parts: [{ text: buildUserPrompt({ projectName, rawCustomerRequest: rawRequestStr }) + partInfo }] }],
+                    contents: [{ parts: [{ text: buildUserPrompt({ projectName, rawCustomerRequest: rawRequestStr, packagePrice, packageTimeline }) + partInfo }] }],
                     generationConfig: {
                         temperature: 0.3,
                         maxOutputTokens: 8192,
