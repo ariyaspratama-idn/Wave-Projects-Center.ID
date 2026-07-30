@@ -109,6 +109,11 @@ Jika menolak, gunakan format teks AWALAN: "REJECT: <pesan ramah Anda di sini>"`;
             }).catch(e => console.error('Gagal meload whatsapp service', e));
         }
 
+        import('@/lib/telegram').then(({ sendTelegramAlert }) => {
+            const telMsg = `🚨 <b>PESANAN BARU MASUK!</b>\n\n<b>Klien:</b> ${client_name || 'Tanpa Nama'}\n<b>Paket:</b> ${packageName}\n<b>Order ID:</b> #${orderNumber}\n<b>WA:</b> ${client_whatsapp || '-'}\n<b>Harga:</b> Rp ${Number(totalAmount).toLocaleString('id-ID')}\n\nSegera hubungi Klien atau periksa Kanban Board di Dashboard untuk otomatisasi AI PRD!`;
+            sendTelegramAlert(telMsg);
+        }).catch(e => console.error('Gagal meload telegram service', e));
+
         return NextResponse.json({
             success: true,
             message: 'Order created successfully natively on Next.js',

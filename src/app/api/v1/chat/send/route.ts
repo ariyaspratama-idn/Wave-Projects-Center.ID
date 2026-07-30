@@ -57,6 +57,10 @@ export async function POST(req: Request) {
                 [activeToken, customer_name || 'Guest']
             );
             sessionId = result.insertId;
+
+            import('@/lib/telegram').then(({ sendTelegramAlert }) => {
+                sendTelegramAlert(`💬 <b>CHAT BARU DARI KLIEN (AI NOVA)</b>\n\n<b>Nama:</b> ${customer_name || 'Guest'}\n<b>Pesan Pembuka:</b> <i>"${message}"</i>\n\nNova sedang menangani percakapan ini.`);
+            }).catch(e => { });
         }
 
         // 2. Save User Message
