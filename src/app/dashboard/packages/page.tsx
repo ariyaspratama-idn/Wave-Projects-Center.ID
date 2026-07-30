@@ -84,7 +84,7 @@ export default function PackageManagement() {
                 <div className="grid md:grid-cols-3 gap-6">
                     {packages.map(p => (
                         <div key={p.id} className={`glass rounded-2xl p-6 border relative ${p.popular ? 'border-primary/50' : 'border-white/5'}`}>
-                            {p.popular && <div className="absolute top-0 right-0 bg-primary text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl">POPULAR</div>}
+                            {Boolean(p.popular) && <div className="absolute top-0 right-0 bg-primary text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl">POPULAR</div>}
                             <div className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">{p.tag}</div>
                             <h3 className="text-xl font-bold">{p.name}</h3>
                             <h2 className="text-2xl font-extrabold text-blue-400 mt-2 mb-2">Rp {p.price.toLocaleString("id-ID")}</h2>

@@ -5,7 +5,7 @@ export const revalidate = 0;
 
 export async function GET() {
     try {
-        const [rows] = await pool.query('SELECT * FROM packages WHERE is_active = 1');
+        const [rows] = await pool.query('SELECT * FROM packages WHERE is_active = 1 ORDER BY price ASC');
 
         const formatted = Array.isArray(rows) ? rows.map((r: any) => ({
             ...r,

@@ -218,7 +218,7 @@ function Packages() {
   const [pkgs, setPkgs] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/api/v1/packages")
+    fetch("/api/v1/packages", { cache: "no-store" })
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data) setPkgs(data.data);
