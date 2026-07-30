@@ -303,7 +303,7 @@ function SEOContent() {
 }
 
 /* ───── CTA & Footer ───── */
-function CTAAndFooter() {
+function CTAAndFooter({ settings }: { settings: any }) {
   return (
     <>
       <section className="py-24 px-6 relative z-10 bg-surface-container-lowest">
@@ -331,13 +331,13 @@ function CTAAndFooter() {
           </div>
           <div className="flex flex-col gap-4">
             <h4 className="font-label text-sm text-white uppercase tracking-widest opacity-50 mb-2">Sosial Media</h4>
-            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Instagram</a>
-            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">LinkedIn</a>
+            <a href={settings?.instagram_url || "#"} target="_blank" rel="noopener noreferrer" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Instagram</a>
+            <a href={settings?.linkedin_url || "#"} target="_blank" rel="noopener noreferrer" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">LinkedIn</a>
           </div>
           <div className="flex flex-col gap-4">
             <h4 className="font-label text-sm text-white uppercase tracking-widest opacity-50 mb-2">Legalitas</h4>
-            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Kebijakan Privasi</a>
-            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Syarat Ketentuan</a>
+            <a href={settings?.privacy_policy_url || "#"} target="_blank" rel="noopener noreferrer" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Kebijakan Privasi</a>
+            <a href={settings?.terms_conditions_url || "#"} target="_blank" rel="noopener noreferrer" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Syarat Ketentuan</a>
           </div>
         </div>
 
@@ -376,7 +376,7 @@ export default function Home() {
         <Portfolio />
         <Packages />
         <SEOContent />
-        <CTAAndFooter />
+        <CTAAndFooter settings={settings} />
       </main>
     </>
   );

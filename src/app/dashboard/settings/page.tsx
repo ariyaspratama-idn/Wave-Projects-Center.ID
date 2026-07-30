@@ -7,7 +7,12 @@ export default function AgencySettings() {
         agency_name: "",
         promo_banner_text: "",
         hero_subtitle: "",
-        whatsapp_contact: ""
+        whatsapp_contact: "",
+        company_email: "",
+        instagram_url: "",
+        linkedin_url: "",
+        privacy_policy_url: "",
+        terms_conditions_url: ""
     });
     const [saving, setSaving] = useState(false);
 
@@ -20,7 +25,12 @@ export default function AgencySettings() {
                         agency_name: data.data.agency_name || "",
                         promo_banner_text: data.data.promo_banner_text || "",
                         hero_subtitle: data.data.hero_subtitle || "",
-                        whatsapp_contact: data.data.whatsapp_contact || ""
+                        whatsapp_contact: data.data.whatsapp_contact || "",
+                        company_email: data.data.company_email || "",
+                        instagram_url: data.data.instagram_url || "",
+                        linkedin_url: data.data.linkedin_url || "",
+                        privacy_policy_url: data.data.privacy_policy_url || "",
+                        terms_conditions_url: data.data.terms_conditions_url || ""
                     });
                 }
             });
@@ -68,8 +78,32 @@ export default function AgencySettings() {
                     <input type="text" placeholder="+628..." value={settings.whatsapp_contact} onChange={e => setSettings({ ...settings, whatsapp_contact: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-primary/50 outline-none" />
                 </div>
                 <div>
+                    <label className="text-sm font-semibold mb-2 block">Email Agensi</label>
+                    <input type="email" placeholder="contoh@gmail.com" value={settings.company_email} onChange={e => setSettings({ ...settings, company_email: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-primary/50 outline-none" />
+                </div>
+                <div>
                     <label className="text-sm font-semibold mb-2 block">Sub-Title Landing Page (Deskripsi Singkat)</label>
                     <textarea rows={3} value={settings.hero_subtitle} onChange={e => setSettings({ ...settings, hero_subtitle: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-primary/50 outline-none resize-y" />
+                </div>
+
+                <h2 className="text-xl font-bold mt-8 mb-4 border-b border-white/10 pb-2">Link Footer & Sosial Media</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="text-sm font-semibold mb-2 block">Link Instagram</label>
+                        <input type="url" placeholder="https://instagram.com/..." value={settings.instagram_url} onChange={e => setSettings({ ...settings, instagram_url: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-primary/50 outline-none" />
+                    </div>
+                    <div>
+                        <label className="text-sm font-semibold mb-2 block">Link LinkedIn</label>
+                        <input type="url" placeholder="https://linkedin.com/in/..." value={settings.linkedin_url} onChange={e => setSettings({ ...settings, linkedin_url: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-primary/50 outline-none" />
+                    </div>
+                    <div>
+                        <label className="text-sm font-semibold mb-2 block">Link Kebijakan Privasi</label>
+                        <input type="url" placeholder="https://..." value={settings.privacy_policy_url} onChange={e => setSettings({ ...settings, privacy_policy_url: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-primary/50 outline-none" />
+                    </div>
+                    <div>
+                        <label className="text-sm font-semibold mb-2 block">Link Syarat Ketentuan</label>
+                        <input type="url" placeholder="https://..." value={settings.terms_conditions_url} onChange={e => setSettings({ ...settings, terms_conditions_url: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-primary/50 outline-none" />
+                    </div>
                 </div>
 
                 <div className="pt-4 border-t border-white/10 flex justify-end">
