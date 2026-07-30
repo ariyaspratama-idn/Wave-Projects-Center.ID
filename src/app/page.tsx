@@ -18,8 +18,8 @@ function Navbar({ settings }: { settings: any }) {
     <>
       <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-surface-dim/70 backdrop-blur-xl border-b border-white/10 shadow-[0_0_30px_rgba(59,130,246,0.1)]' : 'bg-transparent'}`}>
         <div className="flex justify-between items-center px-6 lg:px-10 py-4 max-w-[1440px] mx-auto">
-          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity bg-white/95 px-4 py-2 rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-            <Image src={Logo} alt="Wave Projects Logo" className="h-10 md:h-12 w-auto object-contain" priority />
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <Image src={Logo} alt="Wave Projects Logo" className="h-12 md:h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" priority />
           </Link>
           <div className="hidden md:flex gap-8 items-center">
             <Link href="#portfolio" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Portofolio</Link>
@@ -277,18 +277,22 @@ function SEOContent() {
       <div className="max-w-4xl mx-auto">
         <div className="mb-16">
           <p className="font-body text-on-surface-variant opacity-80 leading-relaxed mb-6 text-lg">
-            Wave Projects adalah penyedia jasa pembuatan web, jasa pembuatan sistem custom, dan software house profesional yang berfokus menghadirkan solusi digital modern untuk skala bisnis maupun enterprise. Kami ahli dalam membangun website profile, landing page, aplikasi custom, hingga sistem manajemen kompleks dengan performa tinggi dan aman.
+            Wave Projects adalah spesialis pembuatan ekosistem digital untuk startup, agensi, dan perusahaan. Kami membangun lebih dari sekadar website—kami merancang arsitektur aplikasi berbasis cloud, automasi operasional, dan antarmuka premium yang berpusat pada kepuasan pengguna.
           </p>
           <p className="font-body text-on-surface-variant opacity-80 leading-relaxed mb-6 text-lg">
-            Platform all-in-one untuk konsultasi AI, pemesanan, pembayaran, hingga serah terima proyek web & aplikasi. Satu ekosistem. Tanpa ribet.
+            Teknologi andalan kami (Next.js, Tailwind, TiDB, Vercel) memastikan produk digital Anda mampu menangani traffic tinggi tanpa mengorbankan kecepatan sedikit pun. Semuanya dirangkum dalam desain Indo-Futuristic yang berani, elegan, dan menatap ke masa depan.
           </p>
         </div>
 
         <div className="space-y-12">
           <div>
-            <h2 className="font-headline text-2xl sm:text-3xl font-bold mb-6 gradient-text-alt">Solusi Ekosistem Digital Terintegrasi untuk Skala Bisnis & Startup</h2>
-            <h3 className="font-headline text-xl font-semibold text-white mt-6 mb-2">Jasa Pembuatan Website Company Profile & Landing Page Berperforma Tinggi</h3>
-            <p className="font-body text-on-surface-variant opacity-70 mb-6 leading-relaxed">Deskripsi mendalam tentang optimasi kecepatan, desain stealth/modern, dan mobile-first.</p>
+            <h2 className="font-headline text-2xl sm:text-3xl font-bold mb-6 gradient-text-alt">Solusi Ekosistem Digital Berperforma Tinggi</h2>
+
+            <h3 className="font-headline text-xl font-semibold text-white mt-6 mb-2">Jasa Pembuatan Landing Page & Web Profile Interaktif</h3>
+            <p className="font-body text-on-surface-variant opacity-70 mb-6 leading-relaxed">Pikat pelanggan di detik pertama dengan animasi mulus, struktur SEO yang teroptimasi, dan alur navigasi (UI/UX) yang intuitif. Sangat cocok bagi agensi atau merk yang mendambakan konversi tinggi.</p>
+
+            <h3 className="font-headline text-xl font-semibold text-white mt-6 mb-2">Sistem ERP Custom & Aplikasi Manajemen Operasional</h3>
+            <p className="font-body text-on-surface-variant opacity-70 mb-6 leading-relaxed">Butuh lebih dari sekadar display? Kami mengembangkan portal admin (dashboard) dengan fitur rekap otomatis, pengaturan tugas cerdas, dan interaksi basis data *real-time* berbasis serverless cloud untuk efisiensi bisnis mutlak.</p>
           </div>
         </div>
       </div>
@@ -307,7 +311,7 @@ function CTAAndFooter() {
           <h2 className="font-headline text-3xl md:text-5xl text-white mb-6 font-bold z-10 relative">Siap Memulai <span className="gradient-text">Proyek Anda?</span></h2>
           <p className="font-body text-lg text-on-surface-variant mb-10 max-w-xl mx-auto z-10 relative">Konsultasikan kebutuhan Anda dengan AI kami secara gratis. Analisis instan dan tajam.</p>
 
-          <Link href="/chat" className="inline-flex items-center transition-all bg-on-surface text-background font-label text-sm uppercase tracking-widest py-4 px-10 rounded-full hover:bg-white hover:scale-105 z-10 relative">
+          <Link href="/chat" className="inline-flex items-center justify-center glow-btn-primary font-label text-sm font-bold uppercase tracking-widest py-4 px-10 rounded-full hover:scale-105 z-10 relative transition-transform">
             Mulai Diskusi
           </Link>
         </div>
@@ -316,8 +320,8 @@ function CTAAndFooter() {
       <footer className="w-full border-t border-glass-stroke bg-obsidian-deep pt-20 pb-28 md:pb-12 px-6 z-10 relative mt-auto">
         <div className="max-w-[1440px] mx-auto w-full grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="inline-flex items-center mb-6 hover:opacity-80 transition-opacity bg-white/95 px-5 py-3 rounded-2xl">
-              <Image src={Logo} alt="Wave Projects Logo" className="h-12 w-auto object-contain" />
+            <Link href="/" className="inline-flex items-center mb-6 hover:opacity-80 transition-opacity">
+              <Image src={Logo} alt="Wave Projects Logo" className="h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
             </Link>
             <p className="font-body text-sm text-on-surface-variant max-w-md">
               Pioneering the Indo-Futuristic Frontier. Platform pembuatan IT tanpa hambatan, satu ekosistem dari konsultasi hingga deployment cloud mutakhir.

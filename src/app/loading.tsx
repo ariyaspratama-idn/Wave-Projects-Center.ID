@@ -7,8 +7,8 @@ export default function Loading() {
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L2c+PC9zdmc+')] opacity-20"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[100px]"></div>
 
-            <div className="relative w-40 h-40 md:w-56 md:h-56 animate-pulse-slow z-10 flex items-center justify-center mb-8 bg-white/95 rounded-full p-6 shadow-[0_0_40px_rgba(45,91,255,0.2)]">
-                <Image src={Logo} alt="Memuat Wave Projects" priority className="object-contain w-full h-full" />
+            <div className="relative w-40 h-40 md:w-56 md:h-56 animate-pulse-slow z-10 flex items-center justify-center mb-8">
+                <Image src={Logo} alt="Memuat Wave Projects" priority className="object-contain w-full h-full drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]" />
             </div>
 
             <div className="flex items-center gap-3 z-10">
