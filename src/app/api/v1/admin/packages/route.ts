@@ -37,6 +37,14 @@ export async function POST(req: Request) {
         if (!authHeader) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
 
+        // Lazy migration for POST to ensure we don't crash when adding from dashboard immediately
+        try {
+            await pool.query("ALTER TABLE packages ADD COLUMN tag VARCHAR(100) DEFAULT ''");
+            await pool.query("ALTER TABLE packages ADD COLUMN `desc` TEXT");
+            await pool.query("ALTER TABLE packages ADD COLUMN popular BOOLEAN DEFAULT FALSE");
+            await pool.query("ALTER TABLE packages ADD COLUMN estimated_days INT DEFAULT 0");
+        } catch (e) { }
+
         const body = await req.json();
         let { id, name, desc, price, estimated_days, tag, code, popular, active } = body;
 
