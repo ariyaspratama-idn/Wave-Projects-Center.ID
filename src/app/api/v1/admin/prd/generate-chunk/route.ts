@@ -19,8 +19,9 @@ export async function POST(req: Request) {
 
         const rawRequestStr = typeof rawCustomerRequest === 'object' ? JSON.stringify(rawCustomerRequest, null, 2) : String(rawCustomerRequest);
 
-        // Fetch schema dynamically by reading the file to avoid CJS import errors
+        // Fetch schema and prompts dynamically by reading the file to avoid CJS import errors
         const { prdAiOutputSchemaPart1, prdAiOutputSchemaPart2, prdAiOutputSchemaPart3 } = require('../../../../../../../prd-generator/prdSchema');
+        const { SYSTEM_PROMPT, buildUserPrompt } = require('../../../../../../../prd-generator/prdPrompt');
 
         let schemaToUse = prdAiOutputSchemaPart1;
         let partInfo = "";
@@ -64,8 +65,8 @@ export async function POST(req: Request) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    systemInstruction: { parts: [{ text: "Anda adalah Product Manager ahli yang memformat sistem ke dalam JSON PRD teknikal." }] },
-                    contents: [{ parts: [{ text: "Permintaan Klien: " + rawRequestStr + "\nNama Proyek: " + projectName + "\n\nEkstrak seluruh informasi teknis ke dalam struktur JSON yang diminta." + partInfo }] }],
+                    systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+                    contents: [{ parts: [{ text: buildUserPrompt({ projectName, rawCustomerRequest: rawRequestStr }) + partInfo }] }],
                     generationConfig: {
                         temperature: 0.3,
                         maxOutputTokens: 8192,
