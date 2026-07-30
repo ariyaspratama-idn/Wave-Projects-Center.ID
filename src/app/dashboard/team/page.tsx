@@ -8,7 +8,7 @@ export default function UsersManagementPage() {
     const [user, setUser] = useState<any>(null);
     const [form, setForm] = useState({
         name: "", email: "", phone: "", password: "", role: "Admin",
-        github_username: "", bank_name: "", bank_account_number: "", bank_account_name: "", notification_email: ""
+        github_username: "", bank_name: "", bank_account_number: "", bank_account_name: "", notification_email: "", telegram_id: ""
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ text: string, type: "success" | "error" } | null>(null);
@@ -42,7 +42,7 @@ export default function UsersManagementPage() {
             const data = await res.json();
             if (data.success) {
                 setMessage({ text: data.message || "Akun berhasil dibuat!", type: "success" });
-                setForm({ name: "", email: "", phone: "", password: "", role: "Admin", github_username: "", bank_name: "", bank_account_number: "", bank_account_name: "", notification_email: "" });
+                setForm({ name: "", email: "", phone: "", password: "", role: "Admin", github_username: "", bank_name: "", bank_account_number: "", bank_account_name: "", notification_email: "", telegram_id: "" });
             } else {
                 setMessage({ text: data.message || "Gagal membuat akun.", type: "error" });
             }
