@@ -56,6 +56,34 @@ export async function POST(req: Request) {
             }
         }
 
+        // Cek jika Push Webhook GitHub mengandung perintah khusus Stage Pipeline
+        const lcMessage = latestCommit.message.toLowerCase();
+        let statusBumpLog = '';
+        let newOrderStatus = '';
+
+        if (lcMessage.includes('begin testing') || lcMessage.includes('deploy test')) {
+            newOrderStatus = 'Testing';
+            statusBumpLog = 'Memulai fase Testing berdasarkan instruksi Commit.';
+        } else if (lcMessage.includes('need revision') || lcMessage.includes('fix:')) {
+            newOrderStatus = 'Revision';
+            statusBumpLog = 'Mengembalikan ke fase Revision akibat perbaikan kode.';
+        } else if (lcMessage.includes('final payment') || lcMessage.includes('deploy prod')) {
+            newOrderStatus = 'Final Payment';
+            statusBumpLog = 'Peluncuran produksi dimulai. Menunggu Final Payment dari klien.';
+        } else if (lcMessage.includes('release v') || lcMessage.includes('handover')) {
+            newOrderStatus = 'Handover';
+            statusBumpLog = 'Versi final dirilis. Serah terima sistem (Handover).';
+        } else if (lcMessage.includes('chore:') || lcMessage.includes('maintenance')) {
+            newOrderStatus = 'Maintenance';
+            statusBumpLog = 'Memasuki fase Maintenance pasca-peluncuran.';
+        }
+
+        if (newOrderStatus !== '') {
+            await pool.query("UPDATE orders SET status = ? WHERE id = ?", [newOrderStatus, orderId]);
+            await pool.query("INSERT INTO order_status_logs (order_id, status, notes, created_at) VALUES (?, ?, ?, NOW())", [orderId, newOrderStatus, `GitHub Bot: ${statusBumpLog}`]);
+            message += ` | Webhook Auto-Pilot: Memajukan Order ke fase [${newOrderStatus}].`;
+        }
+
         await pool.query(
             "INSERT INTO project_deployments (order_id, platform, message, status, url) VALUES (?, 'GITHUB', ?, 'PUSHED', ?)",
             [Number(orderId), message, url]

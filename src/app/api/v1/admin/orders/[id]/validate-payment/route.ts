@@ -47,7 +47,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             const remainingAmount = fullPrice - dpAmount;
 
             newPaymentStatus = 'dp_paid';
-            newOrderStatus = 'Down Payment';
+            newOrderStatus = 'Development';
             logNote = `DP 30% sebesar Rp ${dpAmount.toLocaleString('id-ID')} telah diverifikasi. Sisa tagihan: Rp ${remainingAmount.toLocaleString('id-ID')}`;
             financeAmount = dpAmount;
             financeDesc = `Pembayaran DP 30% - Order #${orderId} (${clientName})`;
@@ -105,7 +105,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         } else {
             // ═══ CASE 3: Full Payment — Single validation = LUNAS ═══
             newPaymentStatus = 'paid';
-            newOrderStatus = 'Down Payment';
+            newOrderStatus = 'Development';
             logNote = `Pembayaran penuh sebesar Rp ${fullPrice.toLocaleString('id-ID')} telah diverifikasi. Status: LUNAS.`;
             financeAmount = fullPrice;
             financeDesc = `Pembayaran Penuh - Order #${orderId} (${clientName})`;
@@ -184,6 +184,47 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 }
             } catch (aiErr) {
                 console.error('Auto-PRD generation failed (non-blocking):', aiErr);
+            }
+
+            // 6. AUTO-ASSIGN DEVELOPER ALGORITHM (Workload Balancer)
+            try {
+                const [developers]: any = await pool.query(`
+                    SELECT u.id, u.name FROM users u 
+                    INNER JOIN user_roles ur ON ur.user_id = u.id 
+                    WHERE ur.role_id = 2 AND u.status = 'active'
+                `);
+
+                if (developers.length > 0) {
+                    let bestDev = null;
+                    let minScore = Infinity;
+
+                    for (const dev of developers) {
+                        let score = 0;
+                        const [activeOrders]: any = await pool.query(`
+                            SELECT o.id, COALESCE(p.price, o.total_amount) as package_price FROM orders o LEFT JOIN packages p ON o.package_id = p.id WHERE o.assigned_to = ? AND o.status NOT IN ('maintenance', 'completed', 'handover')
+                        `, [dev.id]);
+
+                        score += (activeOrders.length * 100);
+
+                        for (const ao of activeOrders) {
+                            score += (Number(ao.package_price) / 100000);
+                            const [tasks]: any = await pool.query("SELECT status FROM kanban_tasks WHERE order_id = ?", [ao.id]);
+                            for (const t of tasks) if (t.status === 'DOING') score += 10; else if (t.status === 'TODO') score += 5;
+                        }
+
+                        if (score < minScore) {
+                            minScore = score;
+                            bestDev = dev;
+                        }
+                    }
+
+                    if (bestDev) {
+                        await pool.query("UPDATE orders SET assigned_to = ? WHERE id = ?", [bestDev.id, orderId]);
+                        await pool.query("INSERT INTO order_status_logs (order_id, status, notes, created_at) VALUES (?, ?, ?, NOW())", [orderId, 'Development', `System Auto-Pilot: Pesanan didelegasikan kepada ${bestDev.name} via AI Workload Balancer.`]);
+                    }
+                }
+            } catch (balErr) {
+                console.error('Auto-Assign Load Balancer failed (non-blocking):', balErr);
             }
         }
 

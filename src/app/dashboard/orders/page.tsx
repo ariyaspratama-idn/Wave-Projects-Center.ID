@@ -160,22 +160,16 @@ export default function OrderTracking() {
                                 {isInternal && (
                                     <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-white/5">
                                         {/* Status Pusher Controller */}
-                                        <div className="bg-white/5 rounded-xl p-4 border border-white/10 space-y-3">
+                                        <div className="bg-white/5 rounded-xl p-4 border border-white/10 space-y-3 relative overflow-hidden group">
+                                            <div className="absolute inset-0 bg-blue-500/5 backdrop-blur-[2px] z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <p className="text-[10px] text-blue-300 font-bold bg-slate-900/80 px-3 py-1.5 rounded-full ring-1 ring-blue-500/50">Disetir oleh GitHub Webhook</p>
+                                            </div>
                                             <h4 className="font-bold text-sm mb-4">Kendali Operasional Proyek</h4>
-                                            {currentStageIdx < STAGES.length - 1 ? (
-                                                <button onClick={() => handleUpdateStatus(o.id, STAGES[currentStageIdx + 1])} className="w-full bg-primary hover:bg-primary-light text-white font-bold py-3 rounded-xl transition-all">
-                                                    Majukan Proyek ke: {STAGES[currentStageIdx + 1]} ➔
-                                                </button>
-                                            ) : (
-                                                <div className="text-green-400 font-bold text-center bg-green-500/10 p-3 rounded-xl">Proyek telah selesai (Maintenance Active)</div>
-                                            )}
 
-                                            <button
-                                                onClick={() => handleAutoAssign(o.id)}
-                                                className="w-full bg-[#1e293b] hover:bg-[#334155] border border-blue-500/30 text-blue-300 font-bold py-2 rounded-xl transition-all shadow-[0_0_10px_rgba(59,130,246,0.1)] text-xs mt-2"
-                                            >
-                                                🤖 Auto-Assign Developer (Workload Balancer)
-                                            </button>
+                                            <div className="w-full bg-[#1e293b] border border-blue-500/30 text-blue-300 font-bold py-3 rounded-xl transition-all shadow-[0_0_10px_rgba(59,130,246,0.1)] text-xs text-center">
+                                                🤖 Auto-Pilot Aktif Secara Penuh
+                                            </div>
+                                            <p className="text-[10px] text-gray-500 text-center px-2">Progress akan otomatis memajukan/memundurkan status saat Developer Push Github (contoh commit message: 'deploy test', 'need revision', dsb).</p>
                                         </div>
 
                                         {/* Internal Team Notes (Mini Chat) */}
