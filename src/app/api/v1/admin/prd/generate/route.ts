@@ -87,9 +87,9 @@ export async function POST(req: Request) {
         prdData.prdId = `PRD-CUSTOM-${Date.now()}`;
 
         // Ensure Finance section holds the custom price if the AI didn't catch it
-        if (!prdData.crossFunctionalOperations) prdData.crossFunctionalOperations = {};
-        if (!prdData.crossFunctionalOperations.finance) prdData.crossFunctionalOperations.finance = {};
-        prdData.crossFunctionalOperations.finance.budgetEstimateNotes = `Harga Kesepakatan Final: Rp ${customPrice || 'TBA'} (ditambahkan manual oleh Admin). ` + (prdData.crossFunctionalOperations.finance.budgetEstimateNotes || '');
+        if (!prdData.estimasiBiaya) prdData.estimasiBiaya = {};
+        if (!prdData.estimasiBiaya.schedule) prdData.estimasiBiaya.schedule = "";
+        prdData.estimasiBiaya.schedule = `Harga Kesepakatan Final: Rp ${customPrice || 'TBA'} (disuntik manual). ` + prdData.estimasiBiaya.schedule;
 
         // 4. Render DOCX Buffer
         const docxBuffer = await renderPRDToDocx(prdData);

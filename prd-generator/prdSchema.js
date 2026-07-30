@@ -1,405 +1,144 @@
 /**
  * prdSchema.js
  * ------------------------------------------------------------------
- * JSON Schema describing the AI-generated part of the PRD.
- * Structured to meet Global Software Engineering Standards.
+ * JSON Schema describing the 27-Section Architecture for Wave Projects PRD.
  */
 
-const stringArray = (description, itemDescription) => ({
-  type: "array",
-  description,
-  items: { type: "string", description: itemDescription || description },
-});
-
-const raciValue = {
-  type: "string",
-  description: 'RACI value for this role. Must be one of: "R", "A", "R/A", "C", "I", or "-".',
-};
-
-const part1Keys = [
-  "introduction",
-  "expectedOutcomes",
-  "personas",
-  "functionalRequirements",
-  "nonFunctionalRequirements",
-  "dataFlow",
-  "outOfScope",
-  "assumptions"
-];
-
-const part2Keys = [
-  "crossFunctionalOperations",
-  "timeline",
-  "risks",
-  "suggestedAttachments",
-  "analyticsAndConversion",
-  "dataPrivacy",
-  "drAndBackup",
-  "acceptanceCriteria"
-];
-
-const part3Keys = [
-  "slaPascaGoLive",
-  "glossary",
-  "backendArchitecture",
-  "frontendArchitecture",
-  "databaseSchemaDetailed",
-  "coreBusinessLogicPseudocode"
-];
+const stringArray = (desc) => ({ type: "array", description: desc, items: { type: "string" } });
 
 const allProperties = {
-  introduction: {
-    type: "object",
-    additionalProperties: false,
-    required: ["background", "userProblems", "businessModel"],
-    properties: {
-      background: { type: "string", description: "Latar belakang proyek dan mengapa ini dibangun (The 'Why')." },
-      userProblems: stringArray("Daftar masalah yang ingin dipecahkan.", "Satu rumusan masalah."),
-      businessModel: { type: "string", description: "Skema harga/model bisnis (misal: One-Time Development Fee)." },
-    },
+  // 1
+  pendahuluan: {
+    type: "object", additionalProperties: false, required: ["projectName", "version", "date", "clientInfo", "overview"],
+    properties: { projectName: { type: "string" }, version: { type: "string" }, date: { type: "string" }, clientInfo: { type: "string" }, overview: { type: "string" } }
   },
-  expectedOutcomes: {
-    type: "object",
-    additionalProperties: false,
-    required: ["impactEstimates", "keyMetrics"],
-    properties: {
-      impactEstimates: stringArray("Estimasi dampak/hasil proyek.", "Satu dampak spesifik."),
-      keyMetrics: stringArray("Metrik Kesuksesan (Uptime, Adopsi Pengguna, Efisiensi).", "Satu metrik."),
-    },
+  // 2
+  okr: {
+    type: "array", items: { type: "object", additionalProperties: false, required: ["objective", "keyResult", "target"], properties: { objective: { type: "string" }, keyResult: { type: "string" }, target: { type: "string" } } }
   },
-  personas: {
-    type: "array",
-    description: "Daftar pengguna (aktor) yang akan mengoperasikan sistem beserta batasan hak aksesnya.",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["role", "description", "objective"],
-      properties: {
-        role: { type: "string", description: "Nama Peran / Aktor (mis. Super Admin, Calon Pendaftar)." },
-        description: { type: "string", description: "Deskripsi karakter & tanggung jawab." },
-        objective: { type: "string", description: "Tujuan Utama Penggunaan Sistem." },
-      }
-    }
-  },
+  // 3
   functionalRequirements: {
-    type: "array",
-    description: "Daftar fitur utama skala besar (Epic Level) beserta logika alur data secara runut.",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["epicName", "description", "validationRules"],
-      properties: {
-        epicName: { type: "string", description: "Nama modul/epic." },
-        description: { type: "string", description: "Deskripsi fitur secara konkrit." },
-        validationRules: stringArray("Aturan validasi/bisnis logika.", "Satu aturan validasi."),
-      }
-    }
+    type: "array", items: { type: "object", additionalProperties: false, required: ["id", "feature", "pic", "priority"], properties: { id: { type: "string" }, feature: { type: "string" }, pic: { type: "string" }, priority: { type: "string" } } }
   },
+  // 4
   nonFunctionalRequirements: {
-    type: "object",
-    additionalProperties: false,
-    required: ["performance", "security", "uiux", "architecturePhilosophy"],
-    properties: {
-      performance: stringArray("Beban maksimal, kecepatan halaman, availability.", "Satu kriteria performa."),
-      security: stringArray("HTTPS, Firewall, Enkripsi, Backup.", "Satu standar keamanan."),
-      uiux: stringArray("Tema, responsivitas, pedoman antarmuka.", "Satu panduan UI/UX."),
-      architecturePhilosophy: { type: "string", description: "Penjelasan arsitektur (misal Self-Hosted First, Cloud-Native, dll)." },
-    }
+    type: "object", additionalProperties: false, required: ["performance", "security", "scalability", "accessibility"],
+    properties: { performance: { type: "string" }, security: { type: "string" }, scalability: { type: "string" }, accessibility: { type: "string" } }
   },
-  dataFlow: {
-    type: "array",
-    description: "Langkah-langkah berjalannya data secara kronologis (alur logika utama).",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["stepOrder", "description"],
-      properties: {
-        stepOrder: { type: "string", description: "Nomor/Urutan langkah (misal '1')." },
-        description: { type: "string", description: "Penjelasan langkah data." },
-      }
-    }
+  // 5
+  userStories: stringArray("Format: 'Sebagai [Role], saya ingin [aksi], sehingga [manfaat]'"),
+  // 6
+  scopeBatasan: {
+    type: "object", additionalProperties: false, required: ["inScope", "outOfScope"],
+    properties: { inScope: stringArray("Daftar In-Scope"), outOfScope: stringArray("Daftar Out-of-Scope") }
   },
-  outOfScope: stringArray(
-    "Batasan ruang lingkup proyek. Hal yang TIDAK termasuk.",
-    "Satu batasan scope."
-  ),
-  assumptions: stringArray(
-    "Asumsi teknis dan ketergantungan hardware/API yang disepakati.",
-    "Satu asumsi."
-  ),
-  crossFunctionalOperations: {
-    type: "object",
-    description: "Koordinasi lintas divisi agen internal (Tugas, RACI).",
-    additionalProperties: false,
-    required: ["raci", "admin", "finance", "cs", "owner"],
-    properties: {
-      raci: {
-        type: "array",
-        description: "Matriks RACI (Responsible, Accountable, Consulted, Informed) lintas divisi.",
-        items: {
-          type: "object",
-          additionalProperties: false,
-          required: ["activity", "dev", "admin", "finance", "cs", "owner"],
-          properties: {
-            activity: { type: "string", description: "Satu deliverable." },
-            dev: raciValue,
-            admin: raciValue,
-            finance: raciValue,
-            cs: raciValue,
-            owner: raciValue,
-          },
-        },
-      },
-      admin: {
-        type: "object",
-        additionalProperties: false,
-        required: ["tasks", "resources"],
-        properties: {
-          tasks: stringArray("Rincian tugas operasional internal.", "Satu tugas."),
-          resources: stringArray("Alat/Akses yang dibutuhkan.", "Satu resource."),
-        },
-      },
-      finance: {
-        type: "object",
-        additionalProperties: false,
-        required: ["budgetEstimateNotes", "paymentTermsSuggestion", "invoiceItems"],
-        properties: {
-          budgetEstimateNotes: { type: "string", description: "Draf estimasi biaya/skema (wajib tervalidasi admin keuangan)." },
-          paymentTermsSuggestion: { type: "string", description: "Saran termin pembayaran (DP, dsb)." },
-          invoiceItems: stringArray("Rincian item tagihan (software, server, layanan).", "Satu item tagihan."),
-        },
-      },
-      cs: {
-        type: "object",
-        additionalProperties: false,
-        required: ["communicationPlan", "customerExpectations", "faq"],
-        properties: {
-          communicationPlan: { type: "string", description: "Metode & frekuensi laporan (misal via RM, Trello)." },
-          customerExpectations: stringArray("Ekspektasi klien yang harus dikelola.", "Satu ekspektasi."),
-          faq: stringArray("FAQ Antisipatif proyek ini.", "Satu pertanyaan+jawaban."),
-        },
-      },
-      owner: {
-        type: "object",
-        additionalProperties: false,
-        required: ["strategicAlignment", "riskAssessment", "decisionNotes"],
-        properties: {
-          strategicAlignment: { type: "string", description: "Keselarasan proyek dengan bisnis." },
-          riskAssessment: { type: "string", description: "Asesmen urgensi & investasi." },
-          decisionNotes: { type: "string", description: "Catatan khusus pemutus final." },
-        },
-      }
-    }
+  // 7
+  arsitekturSistem: {
+    type: "object", additionalProperties: false, required: ["dataFlow", "techStack"],
+    properties: { dataFlow: stringArray("Urutan flow Frontend -> API -> Database"), techStack: { type: "string" } }
   },
-  timeline: {
-    type: "array",
-    description: "Milestone dan estimasi waktu.",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["milestone", "pic", "targetDateNote"],
-      properties: {
-        milestone: { type: "string" },
-        pic: { type: "string" },
-        targetDateNote: { type: "string", description: "Waktu relatif (misal: 'Minggu ke-1')." },
-      },
-    }
+  // 8
+  schemaDatabase: {
+    type: "array", items: { type: "object", additionalProperties: false, required: ["table", "columns", "relations", "index"], properties: { table: { type: "string" }, columns: { type: "string" }, relations: { type: "string" }, index: { type: "string" } } }
   },
-  risks: {
-    type: "array",
-    description: "Risiko spesifik pengerjaan.",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["risk", "impact", "mitigation", "pic"],
-      properties: {
-        risk: { type: "string" },
-        impact: { type: "string" },
-        mitigation: { type: "string" },
-        pic: { type: "string" },
-      }
-    }
+  // 9
+  apiSpecification: {
+    type: "array", items: { type: "object", additionalProperties: false, required: ["module", "method", "path", "body", "response", "auth"], properties: { module: { type: "string" }, method: { type: "string" }, path: { type: "string" }, body: { type: "string" }, response: { type: "string" }, auth: { type: "string" } } }
   },
-  suggestedAttachments: stringArray("Dokumen referensi.", "Satu saran dokumen."),
-  analyticsAndConversion: {
-    type: "object",
-    additionalProperties: false,
-    required: ["metrics", "notes"],
-    properties: {
-      metrics: stringArray("Daftar metrik pelacakan (Page Views, Conversion, dll).", "Satu metrik."),
-      notes: { type: "string", description: "Catatan terkait Analytics (contoh: setup GA4)." }
-    }
+  // 10
+  uiUxGuidelines: {
+    type: "object", additionalProperties: false, required: ["colorPalette", "typography", "layout", "responsiveness"],
+    properties: { colorPalette: { type: "string" }, typography: { type: "string" }, layout: { type: "string" }, responsiveness: { type: "string" } }
   },
-  dataPrivacy: {
-    type: "array",
-    description: "Daftar poin kepatuhan UU PDP (Data Privacy).",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["requirement", "status", "pic"],
-      properties: {
-        requirement: { type: "string" },
-        status: { type: "string" },
-        pic: { type: "string" }
-      }
-    }
+  // 11
+  roleAccessMapping: {
+    type: "array", items: { type: "object", additionalProperties: false, required: ["role", "feature", "crudPermissions"], properties: { role: { type: "string" }, feature: { type: "string" }, crudPermissions: { type: "string" } } }
   },
-  drAndBackup: {
-    type: "object",
-    additionalProperties: false,
-    required: ["strategies", "procedure"],
-    properties: {
-      strategies: {
-        type: "array",
-        items: {
-          type: "object",
-          additionalProperties: false,
-          required: ["component", "strategy", "frequency", "rto", "rpo"],
-          properties: {
-            component: { type: "string" },
-            strategy: { type: "string" },
-            frequency: { type: "string" },
-            rto: { type: "string" },
-            rpo: { type: "string" }
-          }
-        }
-      },
-      procedure: stringArray("Langkah-langkah prosedur Disaster Recovery.", "Satu langkah DR.")
-    }
+  // 12
+  thirdPartyIntegrations: {
+    type: "array", items: { type: "object", additionalProperties: false, required: ["service", "provider", "purpose"], properties: { service: { type: "string" }, provider: { type: "string" }, purpose: { type: "string" } } }
   },
-  acceptanceCriteria: stringArray("Kriteria penerimaan/Definition of Done per User Story.", "Satu kriteria (AC)."),
-  slaPascaGoLive: {
-    type: "array",
-    description: "Daftar SLA dukungan purna jual/Go-Live.",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["category", "duration", "response_time", "pic"],
-      properties: {
-        category: { type: "string" },
-        duration: { type: "string" },
-        response_time: { type: "string" },
-        pic: { type: "string" }
-      }
-    }
+  // 13
+  seoAndPerformance: {
+    type: "object", additionalProperties: false, required: ["metaTags", "openGraph", "optimizationStrategy"],
+    properties: { metaTags: { type: "string" }, openGraph: { type: "string" }, optimizationStrategy: { type: "string" } }
   },
+  // 14
+  testingStrategy: {
+    type: "object", additionalProperties: false, required: ["unitTest", "integrationTest", "uat", "browserMatrix"],
+    properties: { unitTest: { type: "string" }, integrationTest: { type: "string" }, uat: { type: "string" }, browserMatrix: { type: "string" } }
+  },
+  // 15
+  deploymentStrategy: {
+    type: "object", additionalProperties: false, required: ["environment", "cicdPipeline", "domainConfig"],
+    properties: { environment: { type: "string" }, cicdPipeline: { type: "string" }, domainConfig: { type: "string" } }
+  },
+  // 16
+  devOpsMonitoring: {
+    type: "object", additionalProperties: false, required: ["logging", "errorTracking", "uptimeAlerting"],
+    properties: { logging: { type: "string" }, errorTracking: { type: "string" }, uptimeAlerting: { type: "string" } }
+  },
+  // 17
+  securityChecklist: stringArray("Daftar keamanan seperti HTTPS, CORS, rate limiting, dll"),
+  // 18
+  estimasiBiaya: {
+    type: "object", additionalProperties: false, required: ["costBreakdown", "paymentMethod", "schedule"],
+    properties: { costBreakdown: stringArray("Breakdown anggaran"), paymentMethod: { type: "string" }, schedule: { type: "string" } }
+  },
+  // 19
+  komunikasiKolaborasi: {
+    type: "object", additionalProperties: false, required: ["tools", "frequency", "pics"],
+    properties: { tools: { type: "string" }, frequency: { type: "string" }, pics: stringArray("Channel PIC") }
+  },
+  // 20
+  timelineRisiko: {
+    type: "object", additionalProperties: false, required: ["ganttMilestones", "risks", "mitigation"],
+    properties: { ganttMilestones: stringArray("Timeline per milestone"), risks: stringArray("Risiko"), mitigation: stringArray("Mitigasi") }
+  },
+  // 21
+  persetujuanSignOff: {
+    type: "array", items: { type: "object", additionalProperties: false, required: ["role", "name", "date"], properties: { role: { type: "string" }, name: { type: "string" }, date: { type: "string" } } }
+  },
+  // 22
+  analyticsTracking: {
+    type: "object", additionalProperties: false, required: ["metrics", "tools"],
+    properties: { metrics: stringArray("Metrics tracked"), tools: { type: "string" } }
+  },
+  // 23
+  kepatuhanDataPDP: {
+    type: "array", items: { type: "object", additionalProperties: false, required: ["item", "description", "compliance"], properties: { item: { type: "string" }, description: { type: "string" }, compliance: { type: "string" } } }
+  },
+  // 24
+  backupDisasterRecovery: {
+    type: "object", additionalProperties: false, required: ["rtoRpo", "drProcedures"],
+    properties: { rtoRpo: stringArray("Tabel RTO/RPO"), drProcedures: stringArray("5 langkah DR") }
+  },
+  // 25
+  acceptanceCriteria: stringArray("9 Kriteria Definition of Done"),
+  // 26
+  slaDukungan: {
+    type: "array", items: { type: "object", additionalProperties: false, required: ["tier", "duration", "description"], properties: { tier: { type: "string" }, duration: { type: "string" }, description: { type: "string" } } }
+  },
+  // 27
   glossary: {
-    type: "array",
-    description: "Daftar Istilah teknis/domain yang digunakan.",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["term", "definition"],
-      properties: {
-        term: { type: "string" },
-        definition: { type: "string" }
-      }
-    }
-  },
-  backendArchitecture: {
-    type: "object",
-    additionalProperties: false,
-    required: ["techStack", "apiEndpoints", "securityProtocols"],
-    properties: {
-      techStack: { type: "string", description: "Node.js, Laravel, Go, etc." },
-      apiEndpoints: {
-        type: "array",
-        items: {
-          type: "object",
-          additionalProperties: false,
-          required: ["method", "path", "authRequired", "payload", "response"],
-          properties: {
-            method: { type: "string" },
-            path: { type: "string" },
-            authRequired: { type: "string" },
-            payload: { type: "string" },
-            response: { type: "string" }
-          }
-        }
-      },
-      securityProtocols: stringArray("CORS, Rate Limiting, JWT.", "Satu aturan keamanan backend.")
-    }
-  },
-  frontendArchitecture: {
-    type: "object",
-    additionalProperties: false,
-    required: ["techStack", "stateManagement", "routesMap"],
-    properties: {
-      techStack: { type: "string", description: "React, Next.js, Vue, etc." },
-      stateManagement: { type: "string", description: "Redux, Zustand, Context API." },
-      routesMap: {
-        type: "array",
-        items: {
-          type: "object",
-          additionalProperties: false,
-          required: ["path", "componentName", "accessLevel", "dataRequirements"],
-          properties: {
-            path: { type: "string" },
-            componentName: { type: "string" },
-            accessLevel: { type: "string" },
-            dataRequirements: { type: "string" }
-          }
-        }
-      }
-    }
-  },
-  databaseSchemaDetailed: {
-    type: "array",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["tableName", "description", "columns", "relations"],
-      properties: {
-        tableName: { type: "string" },
-        description: { type: "string" },
-        columns: {
-          type: "array",
-          items: {
-            type: "object",
-            additionalProperties: false,
-            required: ["name", "type", "constraints", "description"],
-            properties: {
-              name: { type: "string" },
-              type: { type: "string" },
-              constraints: { type: "string" },
-              description: { type: "string" }
-            }
-          }
-        },
-        relations: stringArray("Relasi tabel. Misal: id_user -> users.id (1:N).", "Satu relasi.")
-      }
-    }
-  },
-  coreBusinessLogicPseudocode: {
-    type: "array",
-    items: {
-      type: "object",
-      additionalProperties: false,
-      required: ["epicName", "logicSteps", "syntaxExample"],
-      properties: {
-        epicName: { type: "string" },
-        logicSteps: stringArray("Langkah-langkah if/else algoritma.", "Satu baris pseudo-code."),
-        syntaxExample: { type: "string", description: "Contoh syntax nyata SQL atau JS/PHP." }
-      }
-    }
+    type: "array", items: { type: "object", additionalProperties: false, required: ["term", "meaning"], properties: { term: { type: "string" }, meaning: { type: "string" } } }
   }
-}; // end allProperties
+};
+
+const allKeys = Object.keys(allProperties);
+const part1Keys = allKeys.slice(0, 9);
+const part2Keys = allKeys.slice(9, 18);
+const part3Keys = allKeys.slice(18, 27);
 
 function createSchema(keys) {
   const props = {};
   keys.forEach(k => props[k] = allProperties[k]);
-  return {
-    type: "object",
-    additionalProperties: false,
-    required: keys,
-    properties: props
-  };
+  return { type: "object", additionalProperties: false, required: keys, properties: props };
 }
 
 const prdAiOutputSchemaPart1 = createSchema(part1Keys);
 const prdAiOutputSchemaPart2 = createSchema(part2Keys);
 const prdAiOutputSchemaPart3 = createSchema(part3Keys);
-
-const prdAiOutputSchema = createSchema([...part1Keys, ...part2Keys, ...part3Keys]); // For backwards compatibility or typescript
+const prdAiOutputSchema = createSchema(allKeys);
 
 module.exports = { prdAiOutputSchemaPart1, prdAiOutputSchemaPart2, prdAiOutputSchemaPart3, prdAiOutputSchema };
