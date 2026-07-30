@@ -240,7 +240,7 @@ function Packages() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {pkgs.map((p, i) => (
             <div key={i} className={`rounded-2xl glass-panel p-8 flex flex-col relative group hover:-translate-y-2 transition-all duration-500 ${p.popular ? 'border-primary/40 shadow-[0_0_40px_rgba(234,179,8,0.15)]' : ''}`}>
-              {p.popular && <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>}
+              {Boolean(p.popular) && <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>}
 
               <div className="mb-8">
                 <span className="inline-block px-3 py-1 rounded-full bg-surface-container border border-glass-stroke text-on-surface-variant font-label text-[10px] tracking-widest uppercase mb-4">
