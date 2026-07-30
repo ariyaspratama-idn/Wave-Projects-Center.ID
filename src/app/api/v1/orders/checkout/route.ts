@@ -4,7 +4,7 @@ import pool from '@/lib/db';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { package_id, client_name, client_email, client_whatsapp, project_purpose, payment_choice, github_url } = body;
+        const { package_id, client_name, client_email, client_whatsapp, project_purpose, payment_choice, github_url, attachment } = body;
 
         if (!package_id) return NextResponse.json({ success: false, message: 'Package ID required' }, { status: 400 });
 
@@ -54,16 +54,23 @@ Jika menolak, gunakan format teks AWALAN: "REJECT: <pesan ramah Anda di sini>"`;
 
         const orderNumber = `WAVE-${Date.now()}`;
 
+        // Silent Migration for attachment_url
+        await pool.query('ALTER TABLE orders ADD COLUMN attachment_url VARCHAR(255) NULL AFTER github_url').catch(() => { });
+
         const [orderResult]: any = await pool.query(
-            `INSERT INTO orders (package_id, client_name, client_email, client_whatsapp, project_purpose, payment_choice, github_url, order_number, status, total_amount, payment_status, created_at, updated_at) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-            [package_id, client_name || '', client_email || '', client_whatsapp || '', project_purpose || '', payment_choice || 'FULL', github_url || '', orderNumber, 'pending', totalAmount, 'unpaid']
+            `INSERT INTO orders (package_id, client_name, client_email, client_whatsapp, project_purpose, payment_choice, github_url, attachment_url, order_number, status, total_amount, payment_status, created_at, updated_at) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+            [package_id, client_name || '', client_email || '', client_whatsapp || '', project_purpose || '', payment_choice || 'FULL', github_url || '', attachment?.secure_url || null, orderNumber, 'pending', totalAmount, 'unpaid']
         );
 
         const orderId = orderResult.insertId;
 
         // 2. Auto-Bridge Chat History & Repo to PRD Generator
-        let chatHistoryText = `Project Purpose Form: ${project_purpose}\nGithub Reference Repo: ${github_url || 'N/A'}`;
+        let chatHistoryText = `Tujuan Proyek / Project Purpose Form: ${project_purpose}\nLink Repo Github Klien: ${github_url || 'Tidak Ada'}`;
+
+        if (attachment && attachment.secure_url) {
+            chatHistoryText += `\nLink Lampiran Dokumen/Desain (UI/UX Referensi dll): ${attachment.secure_url}`;
+        }
 
         if (body.chat_session) {
             const [sessionRows]: any = await pool.query("SELECT id FROM chat_sessions WHERE session_token = ?", [body.chat_session]);

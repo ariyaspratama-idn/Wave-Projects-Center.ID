@@ -297,6 +297,28 @@ export default function OrderExecutiveDetail() {
                     )}
                 </div>
 
+                {/* Project Details Panel */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+                    <div className="flex gap-2 items-start">
+                        <span className="text-xs text-gray-500 min-w-[120px]">Tujuan Proyek:</span>
+                        <span className="text-sm font-semibold text-white leading-tight whitespace-pre-wrap">{data.order.project_purpose || 'Tidak disebutkan'}</span>
+                    </div>
+                    {data.order.github_url && (
+                        <div className="flex gap-2 items-center">
+                            <span className="text-xs text-gray-500 min-w-[120px]">Github Terkait:</span>
+                            <a href={data.order.github_url} target="_blank" className="text-sm text-blue-400 hover:underline break-all">{data.order.github_url}</a>
+                        </div>
+                    )}
+                    {data.order.attachment_url && (
+                        <div className="flex gap-2 items-center">
+                            <span className="text-xs text-gray-500 min-w-[120px]">Dokumen / UI/UX:</span>
+                            <a href={data.order.attachment_url} target="_blank" className="text-sm text-fuchsia-400 hover:underline flex items-center gap-1">
+                                📎 Buka Lampiran Referensi/Logo
+                            </a>
+                        </div>
+                    )}
+                </div>
+
                 {/* Payment Status Badge + DP Info */}
                 <div className="flex flex-wrap items-center gap-3">
                     <span className="text-xs text-gray-500">Status Bayar:</span>
