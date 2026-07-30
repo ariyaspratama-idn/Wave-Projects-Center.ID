@@ -247,7 +247,9 @@ function Packages() {
                   {p.tag}
                 </span>
                 <h3 className="font-headline text-2xl text-white mb-2 font-bold">{p.name}</h3>
-                <div className="font-display text-4xl text-white font-black tracking-tight my-4">Rp {p.price.toLocaleString("id-ID")}</div>
+                <div className="font-display text-4xl text-white font-black tracking-tight my-4">Rp {p.price.toLocaleString("id-ID")}
+                  <span className="text-sm font-body text-gray-500 block mt-2 font-bold opacity-80 mt-3 border-t border-white/5 pt-3">⏱️ Waktu Pengerjaan: {p.estimated_days || 0} Hari</span>
+                </div>
                 <p className="font-body text-sm text-on-surface-variant line-clamp-4">{p.desc}</p>
               </div>
 

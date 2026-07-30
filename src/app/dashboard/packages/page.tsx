@@ -8,7 +8,7 @@ export default function PackageManagement() {
 
     // Modal State
     const [showModal, setShowModal] = useState(false);
-    const [form, setForm] = useState({ id: null, name: '', tag: '', desc: '', price: 0, code: [] as string[], popular: false, active: true });
+    const [form, setForm] = useState({ id: null, name: '', tag: '', desc: '', price: 0, estimated_days: 0, code: [] as string[], popular: false, active: true });
     const [newFeature, setNewFeature] = useState("");
 
     const fetchPackages = () => {
@@ -30,12 +30,12 @@ export default function PackageManagement() {
     useEffect(() => fetchPackages(), []);
 
     const openEdit = (pkg: any) => {
-        setForm({ ...pkg, active: Boolean(pkg.is_active) });
+        setForm({ ...pkg, estimated_days: pkg.estimated_days || 0, active: Boolean(pkg.is_active) });
         setShowModal(true);
     };
 
     const openAdd = () => {
-        setForm({ id: null, name: '', tag: '', desc: '', price: 0, code: [], popular: false, active: true });
+        setForm({ id: null, name: '', tag: '', desc: '', price: 0, estimated_days: 0, code: [], popular: false, active: true });
         setShowModal(true);
     };
 
@@ -88,6 +88,7 @@ export default function PackageManagement() {
                             <div className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">{p.tag}</div>
                             <h3 className="text-xl font-bold">{p.name}</h3>
                             <h2 className="text-2xl font-extrabold text-blue-400 mt-2 mb-2">Rp {p.price.toLocaleString("id-ID")}</h2>
+                            <div className="text-xs text-yellow-500 font-bold mb-2">⏱️ Waktu Pengerjaan: {p.estimated_days || 0} Hari</div>
                             <p className="text-sm text-gray-400 min-h-[40px] mb-4">{p.desc}</p>
 
                             <ul className="space-y-2 mb-6">
@@ -121,10 +122,11 @@ export default function PackageManagement() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div><label className="text-xs mb-1 block">Harga (Rp)</label><input type="number" value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })} className="w-full bg-white/5 px-3 py-2 rounded-lg text-sm outline-none" /></div>
-                                <div className="flex flex-col gap-2 pt-6">
-                                    <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.popular} onChange={e => setForm({ ...form, popular: e.target.checked })} /> Tandai "Most Popular"</label>
-                                    <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} /> Status Aktif</label>
-                                </div>
+                                <div><label className="text-xs mb-1 block">Estimasi (Hari)</label><input type="number" value={form.estimated_days} onChange={e => setForm({ ...form, estimated_days: Number(e.target.value) })} className="w-full bg-white/5 px-3 py-2 rounded-lg text-sm outline-none" min={0} /></div>
+                            </div>
+                            <div className="flex gap-6 pb-2">
+                                <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.popular} onChange={e => setForm({ ...form, popular: e.target.checked })} /> Tandai "Most Popular"</label>
+                                <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} /> Status Aktif</label>
                             </div>
                             <div>
                                 <label className="text-xs mb-1 block">Deskripsi Pendek</label>

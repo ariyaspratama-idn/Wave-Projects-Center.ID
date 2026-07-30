@@ -70,13 +70,13 @@ export async function POST(req: Request) {
         let aiText = "Terima kasih atas pesannya! Mohon tunggu sebentar, konsultan kami akan segera menganalisisnya.";
         try {
             // Context injection: Fetch all available packages from DB to provide accurate recommendations
-            const [pkgs]: any = await pool.query("SELECT id, name, price, code FROM packages WHERE is_active = 1");
+            const [pkgs]: any = await pool.query("SELECT id, name, price, estimated_days, code FROM packages WHERE is_active = 1");
             let pkgsText = "Berikut adalah paket layanan Wave Projects Center beserta harga dan fiturnya:\n";
             if (pkgs && pkgs.length > 0) {
                 pkgs.forEach((p: any) => {
                     let feats = [];
                     try { feats = Array.isArray(p.code) ? p.code : JSON.parse(p.code); } catch (e) { }
-                    pkgsText += `- [ID_PAKET: ${p.id}] ${p.name}: Rp${Number(p.price).toLocaleString('id-ID')}\n  Fitur: ${(feats || []).join(', ')}\n`;
+                    pkgsText += `- [ID_PAKET: ${p.id}] ${p.name}: Rp${Number(p.price).toLocaleString('id-ID')} (Waktu Pengerjaan: ${p.estimated_days || 0} hari kerja)\n  Fitur: ${(feats || []).join(', ')}\n`;
                 });
             } else {
                 pkgsText = "Saat ini paket belum tersedia di sistem. (Namun Anda tetap bisa menanyakan kebutuhan secara kustom)";

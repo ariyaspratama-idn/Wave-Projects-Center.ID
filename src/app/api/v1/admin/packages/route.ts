@@ -15,6 +15,7 @@ export async function GET(req: Request) {
             await pool.query("ALTER TABLE packages ADD COLUMN tag VARCHAR(100) DEFAULT ''");
             await pool.query("ALTER TABLE packages ADD COLUMN `desc` TEXT");
             await pool.query("ALTER TABLE packages ADD COLUMN popular BOOLEAN DEFAULT FALSE");
+            await pool.query("ALTER TABLE packages ADD COLUMN estimated_days INT DEFAULT 0");
         } catch (e) { }
 
         const [rows] = await pool.query('SELECT * FROM packages ORDER BY price ASC');
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
         jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
 
         const body = await req.json();
-        let { id, name, desc, price, tag, code, popular, active } = body;
+        let { id, name, desc, price, estimated_days, tag, code, popular, active } = body;
 
         let isPopular = popular ? 1 : 0;
         let isActive = active === false ? 0 : 1;
@@ -48,14 +49,14 @@ export async function POST(req: Request) {
         if (id) {
             // Update existing
             await pool.query(
-                "UPDATE packages SET name=?, `desc`=?, price=?, tag=?, code=?, popular=?, is_active=? WHERE id=?",
-                [name, desc, price, tag, codeStr, isPopular, isActive, id]
+                "UPDATE packages SET name=?, `desc`=?, price=?, estimated_days=?, tag=?, code=?, popular=?, is_active=? WHERE id=?",
+                [name, desc, price, estimated_days || 0, tag, codeStr, isPopular, isActive, id]
             );
         } else {
             // Insert new
             await pool.query(
-                "INSERT INTO packages (name, `desc`, price, tag, code, popular, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [name, desc, price, tag, codeStr, isPopular, isActive]
+                "INSERT INTO packages (name, `desc`, price, estimated_days, tag, code, popular, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [name, desc, price, estimated_days || 0, tag, codeStr, isPopular, isActive]
             );
         }
 
