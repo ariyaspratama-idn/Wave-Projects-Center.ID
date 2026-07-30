@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { renderPRDToDocx } from '../../../../../../prd-generator/prdDocxRenderer';
+import pool from '@/lib/db';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'waveprojects_super_secret_key_123!';
 
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
         jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
 
         const body = await req.json();
-        const { fullPrdData, projectName } = body;
+        const { fullPrdData, projectName, orderId } = body;
 
         if (!fullPrdData) {
             return NextResponse.json({ success: false, error: 'fullPrdData (hasil chunk) required' }, { status: 400 });
@@ -26,9 +27,17 @@ export async function POST(req: Request) {
         // Render to Word Document buffer
         const docxBuffer = await renderPRDToDocx(prdData);
 
+        let developerChatId = undefined;
+        if (orderId) {
+            const [devData]: any = await pool.query("SELECT u.telegram_id FROM orders o JOIN users u ON o.assigned_to = u.id WHERE o.id = ?", [orderId]);
+            if (devData.length > 0 && devData[0].telegram_id) {
+                developerChatId = devData[0].telegram_id;
+            }
+        }
+
         const base64Docx = Buffer.isBuffer(docxBuffer) ? docxBuffer.toString('base64') : Buffer.from(docxBuffer).toString('base64');
         import('@/lib/telegram').then(({ sendTelegramDocumentBase64 }) => {
-            sendTelegramDocumentBase64(base64Docx, `${prdData.prdId}.docx`, `📁 <b>DOKUMEN PRD FINAL BERHASIL DIBUAT!</b>\n\n<b>Project:</b> ${prdData.projectName}\n<b>Client:</b> ${prdData.clientName}\n\nSilakan buka file berekstensi .docx ini dan mulai pengembangan.`);
+            sendTelegramDocumentBase64(base64Docx, `${prdData.prdId}.docx`, `📁 <b>DOKUMEN PRD PENGEMBANGAN!</b>\n\n<b>Project:</b> ${prdData.projectName}\n<b>Client:</b> ${prdData.clientName}\n\nSilakan buka file referensi .docx ini dan segera lakukan eksekusi pengembangan sistem.`, developerChatId);
         }).catch(e => console.error(e));
 
 

@@ -168,7 +168,8 @@ export default function OrderExecutiveDetail() {
                 },
                 body: JSON.stringify({
                     fullPrdData,
-                    projectName: data.order.project_name || data.order.package_name
+                    projectName: data.order.project_name || data.order.package_name,
+                    orderId: Number(orderId)
                 })
             });
 
