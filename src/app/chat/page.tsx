@@ -144,8 +144,8 @@ export default function ChatPage() {
                 <div className="h-4 w-px bg-white/10" />
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    <span className="text-sm font-semibold">AI Consultant</span>
-                    <span className="text-xs text-gray-500">• Gemini 1.5 Flash</span>
+                    <span className="text-sm font-semibold">Konsultan AI</span>
+                    <span className="text-xs text-gray-500">• Bertenaga Gemini</span>
                 </div>
             </header>
 

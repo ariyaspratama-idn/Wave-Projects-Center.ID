@@ -22,12 +22,12 @@ function Navbar({ settings }: { settings: any }) {
             <Image src={Logo} alt="Wave Projects Logo" className="h-10 md:h-12 w-auto object-contain" priority />
           </Link>
           <div className="hidden md:flex gap-8 items-center">
-            <Link href="#portfolio" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Work</Link>
-            <Link href="#features" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Services</Link>
-            <Link href="#packages" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Packages</Link>
-            <Link href="/chat" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Lab & AI</Link>
-            <Link href="/checkout" className="glow-btn-primary text-white font-label text-sm px-6 py-2 rounded-full active:scale-95 transition-transform uppercase tracking-widest">
-              Start Project
+            <Link href="#portfolio" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Portofolio</Link>
+            <Link href="#features" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Layanan</Link>
+            <Link href="#packages" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Paket</Link>
+            <Link href="/chat" className="font-label text-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors duration-300">Konsultasi AI</Link>
+            <Link href="/checkout" className="glow-btn-primary font-label text-sm px-6 py-2 rounded-full active:scale-95 transition-transform uppercase tracking-widest">
+              Mulai Proyek
             </Link>
           </div>
         </div>
@@ -37,11 +37,11 @@ function Navbar({ settings }: { settings: any }) {
       <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] rounded-full border border-white/10 z-50 bg-surface-container-lowest/50 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex justify-between px-2 py-2">
         <Link href="/" className="flex flex-col items-center justify-center bg-primary/20 text-primary rounded-full px-4 py-2 ring-1 ring-primary/50">
           <span className="material-symbols-outlined text-xl mb-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
-          <span className="text-[10px] font-label">Home</span>
+          <span className="text-[10px] font-label">Beranda</span>
         </Link>
         <Link href="#features" className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-white/5 rounded-full">
           <span className="material-symbols-outlined text-xl mb-0.5">auto_awesome</span>
-          <span className="text-[10px] font-label">Services</span>
+          <span className="text-[10px] font-label">Layanan</span>
         </Link>
         <Link href="/chat" className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-white/5 rounded-full">
           <span className="material-symbols-outlined text-xl mb-0.5">psychology</span>
@@ -49,7 +49,7 @@ function Navbar({ settings }: { settings: any }) {
         </Link>
         <Link href="/checkout" className="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-white/5 rounded-full">
           <span className="material-symbols-outlined text-xl mb-0.5">shopping_cart</span>
-          <span className="text-[10px] font-label">Order</span>
+          <span className="text-[10px] font-label">Pesan</span>
         </Link>
       </nav>
     </>
@@ -63,12 +63,12 @@ function Hero({ settings }: { settings: any }) {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L2c+PC9zdmc+')] [mask-image:linear-gradient(to_bottom,white,transparent)]"></div>
       <div className="relative z-10 max-w-[1440px] mx-auto text-center flex flex-col items-center gap-6 pt-16">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-glass-stroke bg-surface/30 backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-neon-violet animate-pulse"></span>
-          <span className="font-label text-xs text-soft-peach">Powered by AI — Gemini 1.5 Flash</span>
+          <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+          <span className="font-label text-xs text-primary-light">Didukung oleh AI — Gemini 1.5 Flash</span>
         </div>
 
         <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-transparent bg-clip-text bg-gradient-to-br from-white to-on-surface-variant max-w-5xl mx-auto leading-[1.1] font-extrabold tracking-tighter">
-          Technical Elegance <br />
+          Inovasi Teknologi <br />
           <span className="gradient-text-alt">Masa Depan.</span>
         </h1>
 
@@ -77,7 +77,7 @@ function Hero({ settings }: { settings: any }) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <Link href="/chat" className="glow-btn-primary flex items-center justify-center gap-2 px-8 py-4 rounded-full text-white font-label uppercase tracking-widest text-sm hover:scale-105 transition-all duration-500">
+          <Link href="/chat" className="glow-btn-primary flex items-center justify-center gap-2 px-8 py-4 rounded-full font-label uppercase tracking-widest text-sm hover:scale-105 transition-all duration-500">
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
             Konsultasi Gratis
           </Link>
@@ -94,16 +94,16 @@ function Hero({ settings }: { settings: any }) {
             <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Proyek Selesai</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-display text-4xl text-neon-violet font-bold">98%</span>
-            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Client Retention</span>
+            <span className="font-display text-4xl text-secondary font-bold">98%</span>
+            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Retensi Klien</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-display text-4xl text-soft-peach font-bold">&lt;2.5s</span>
-            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Response Time</span>
+            <span className="font-display text-4xl text-primary-light font-bold">&lt;2.5s</span>
+            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Respon Cepat</span>
           </div>
           <div className="flex flex-col items-center">
             <span className="font-display text-4xl text-primary font-bold">24/7</span>
-            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Premium Support</span>
+            <span className="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-2">Dukungan Penuh</span>
           </div>
         </div>
       </div>
@@ -114,35 +114,35 @@ function Hero({ settings }: { settings: any }) {
 /* ───── Core Protocols (Features) ───── */
 function Features() {
   const features = [
-    { icon: "psychology", title: "AI Consultation", desc: "Konsultasi sistem dengan AI arsitektur. Jawaban instan.", color: "text-primary" },
-    { icon: "integration_instructions", title: "API Integrations", desc: "Penghubung ekosistem (Payment, Cloudinary, dll).", color: "text-secondary" },
-    { icon: "security", title: "Keamanan Solid", desc: "Infrastruktur tahan banting & signature validation webhook.", color: "text-tertiary" },
-    { icon: "auto_awesome", title: "Auto PRD Generation", desc: "Hasilkan dokumen teknis secara instan dari obrolan AI.", color: "text-primary" },
+    { icon: "psychology", title: "Konsultasi AI", desc: "Konsultasi sistem dengan AI arsitektur. Jawaban instan.", color: "text-primary" },
+    { icon: "integration_instructions", title: "Integrasi API", desc: "Penghubung ekosistem (Midtrans, dll).", color: "text-secondary" },
+    { icon: "security", title: "Keamanan Solid", desc: "Infrastruktur Cloud modern & aman.", color: "text-accent" },
+    { icon: "auto_awesome", title: "Automasi Kebutuhan", desc: "Hasilkan dokumen teknis instan dari chat.", color: "text-primary" },
   ];
   return (
     <section id="features" className="py-24 px-6 max-w-[1440px] mx-auto z-10 relative">
       <h2 className="font-headline text-3xl md:text-5xl text-on-surface mb-12 flex items-center gap-4 font-bold">
-        <span className="material-symbols-outlined text-primary text-5xl">dashboard</span> Core Protocols
+        <span className="material-symbols-outlined text-primary text-5xl">dashboard</span> Fitur Utama
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        {/* Large Dimensional Design feature */}
+        {/* Large Feature */}
         <div className="glass-panel rounded-2xl p-8 flex flex-col group relative overflow-hidden md:col-span-2">
           <div className="absolute inset-0 -z-10 opacity-20">
             <div className="bg-cover bg-center w-full h-full" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuASxA-TUqJVJN_D2v0yepJAMrfk9LxFh8O0w7HYi0D7dEbpxwtsQRSLFjy2LkT0fma1QllYf50fsnbRI9KYSIOJAWy6MMSwhfOp_BpGMv6GZ5rICxCLfX0IS7KWFI4SZOhwQ9y18C1I3SSQ_fVqUbdkESSstaILVN3-nLXF-oXADW8-f8qqFD-7cFBkSD-GnYLO8qUnbnBWDUxq7LikvcE6sSr1_xzNalAb9_DFfGEF7AhTugcmcr_5rQ')" }}></div>
           </div>
           <div className="flex justify-between items-start mb-6">
             <span className="material-symbols-outlined text-5xl text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>psychiatry</span>
-            <span className="bg-tertiary-container text-white font-label text-xs px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-2 shadow-[0_0_10px_rgba(215,25,36,0.3)]">
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span> Live AI
+            <span className="bg-primary-container text-white font-label text-xs px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-2 shadow-[0_0_10px_rgba(202,138,4,0.3)]">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse"></span> AI Aktif
             </span>
           </div>
-          <h3 className="font-headline text-3xl text-white mb-2 font-bold">Cognitive Systems</h3>
+          <h3 className="font-headline text-3xl text-white mb-2 font-bold">Sistem Kognitif Pintar</h3>
           <p className="font-body text-on-surface-variant flex-grow max-w-md">
-            Mengintegrasikan sistem prediksi AI langsung ke dalam pengalaman UI untuk memangkas proses konsultasi hingga 80%.
+            Mengintegrasikan sistem prediksi AI langsung ke dalam antarmuka obrolan untuk memangkas hambatan konsultasi hingga 80%.
           </p>
           <div className="mt-8">
-            <Link href="/chat" className="glow-btn-primary inline-flex text-white font-label text-sm px-8 py-3 rounded-full uppercase tracking-widest hover:scale-105 transition-transform duration-300">
+            <Link href="/chat" className="glow-btn-primary inline-flex font-label text-sm px-8 py-3 rounded-full uppercase tracking-widest hover:scale-105 transition-transform duration-300">
               Mulai AI Konsultasi
             </Link>
           </div>
@@ -181,7 +181,7 @@ function Portfolio() {
     <section id="portfolio" className="py-24 px-6 bg-surface-container-high relative overflow-hidden text-center z-10 w-full circuit-pattern">
       <div className="max-w-[1440px] mx-auto relative z-10">
         <h2 className="font-headline text-3xl md:text-5xl text-white mb-4 font-bold">
-          Technical <span className="gradient-text">Elegance</span>
+          Karya <span className="gradient-text">Terbaik Kami</span>
         </h2>
         <p className="font-body text-lg text-on-surface-variant max-w-2xl mx-auto mb-16">
           Karya sistem digital yang dirancang teliti dan aman untuk jangka panjang.
@@ -200,8 +200,8 @@ function Portfolio() {
                   <p className="font-body text-sm text-on-surface-variant mb-6 line-clamp-3">{p.description}</p>
                 </div>
                 {p.live_link && (
-                  <a href={p.live_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-label text-sm text-electric-blue hover:text-primary transition-colors uppercase tracking-widest">
-                    Lihat Live Demo <span className="material-symbols-outlined text-sm">arrow_outward</span>
+                  <a href={p.live_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-label text-sm text-secondary hover:text-primary transition-colors uppercase tracking-widest">
+                    Lihat Demo Langsung <span className="material-symbols-outlined text-sm">arrow_outward</span>
                   </a>
                 )}
               </div>
@@ -239,7 +239,7 @@ function Packages() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {pkgs.map((p, i) => (
-            <div key={i} className={`rounded-2xl glass-panel p-8 flex flex-col relative group hover:-translate-y-2 transition-all duration-500 ${p.popular ? 'border-primary/40 shadow-[0_0_40px_rgba(59,130,246,0.1)]' : ''}`}>
+            <div key={i} className={`rounded-2xl glass-panel p-8 flex flex-col relative group hover:-translate-y-2 transition-all duration-500 ${p.popular ? 'border-primary/40 shadow-[0_0_40px_rgba(234,179,8,0.15)]' : ''}`}>
               {p.popular && <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>}
 
               <div className="mb-8">
@@ -259,7 +259,7 @@ function Packages() {
                 ))}
               </ul>
 
-              <Link href="/checkout" className={`w-full inline-flex items-center justify-center px-6 py-4 rounded-full font-label text-sm uppercase tracking-widest transition-all duration-300 ${p.popular ? 'glow-btn-primary text-white' : 'glass-button-secondary text-white hover:bg-white/5'}`}>
+              <Link href="/checkout" className={`w-full inline-flex items-center justify-center px-6 py-4 rounded-full font-label text-sm uppercase tracking-widest transition-all duration-300 ${p.popular ? 'glow-btn-primary' : 'glass-button-secondary text-white hover:bg-white/5'}`}>
                 Pesan Sekarang
               </Link>
             </div>
@@ -324,14 +324,14 @@ function CTAAndFooter() {
             </p>
           </div>
           <div className="flex flex-col gap-4">
-            <h4 className="font-label text-sm text-white uppercase tracking-widest opacity-50 mb-2">Connect</h4>
+            <h4 className="font-label text-sm text-white uppercase tracking-widest opacity-50 mb-2">Sosial Media</h4>
             <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Instagram</a>
             <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">LinkedIn</a>
           </div>
           <div className="flex flex-col gap-4">
-            <h4 className="font-label text-sm text-white uppercase tracking-widest opacity-50 mb-2">Legal</h4>
-            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Terms of Service</a>
+            <h4 className="font-label text-sm text-white uppercase tracking-widest opacity-50 mb-2">Legalitas</h4>
+            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Kebijakan Privasi</a>
+            <a href="#" className="font-body text-sm text-on-surface-variant hover:text-primary transition-colors">Syarat Ketentuan</a>
           </div>
         </div>
 

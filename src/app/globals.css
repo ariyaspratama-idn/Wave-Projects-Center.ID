@@ -1,123 +1,142 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #adc6ff;
-  --color-primary-light: #d8e2ff;
-  --color-primary-container: #2d5bff;
-  --color-secondary: #ddb7ff;
-  --color-secondary-container: #8000e2;
-  --color-tertiary: #ffb3ac;
-  --color-tertiary-container: #d71924;
-  --color-accent: #A855F7;
-  
-  --color-obsidian-deep: #050505;
-  --color-surface: #131317;
-  --color-surface-dim: #050505;
-  --color-surface-container: #1f1f23;
-  --color-surface-container-high: #2a2a2e;
-  --color-surface-container-lowest: #0e0e12;
-  
-  --color-electric-blue: #3B82F6;
-  --color-neon-violet: #A855F7;
-  --color-soft-peach: #FFB299;
-  
-  --color-on-surface: #e4e1e7;
-  --color-on-surface-variant: #c4c5d9;
-  --color-outline: #8e90a2;
-  --color-outline-variant: #434656;
-  --color-glass-stroke: rgba(255, 255, 255, 0.12);
+  /* Wave Blue & Gold Theme */
+  --color-primary: #EAB308;
+  /* Gold */
+  --color-primary-light: #FDE047;
+  --color-primary-container: #CA8A04;
+
+  --color-secondary: #60A5FA;
+  /* Blue */
+  --color-secondary-container: #2563EB;
+  --color-accent: #93C5FD;
+
+  --color-obsidian-deep: #020617;
+  /* Very Dark Blue/Slate */
+  --color-surface: #0F172A;
+  /* Slate 900 */
+  --color-surface-dim: #020617;
+  --color-surface-container: #1E293B;
+  /* Slate 800 */
+  --color-surface-container-high: #334155;
+  /* Slate 700 */
+  --color-surface-container-lowest: #020617;
+
+  --color-on-surface: #F8FAFC;
+  --color-on-surface-variant: #CBD5E1;
+  --color-outline: #475569;
+  --color-glass-stroke: rgba(255, 255, 255, 0.08);
+
+  --font-display: var(--font-syne);
+  --font-headline: var(--font-syne);
+  --font-body: var(--font-jakarta);
+  --font-label: var(--font-syne);
 
   --spacing-gutter: 24px;
 }
 
 :root {
-  --background: #050505;
-  --foreground: #e4e1e7;
+  --background: #020617;
+  --foreground: #F8FAFC;
 }
 
-* { box-sizing: border-box; }
-body { background: var(--background); color: var(--foreground); -webkit-font-smoothing: antialiased; }
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
 
 /* Backgrounds & Textures */
 .mesh-gradient {
   background-color: var(--color-obsidian-deep);
-  background-image: 
-      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-      radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
-      radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.25) 0, transparent 60%),
+    radial-gradient(at 100% 0%, rgba(202, 138, 4, 0.15) 0, transparent 60%);
 }
 
-.ambient-glow-primary {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, var(--color-primary-container) 0%, transparent 70%);
-  opacity: 0.15;
-  filter: blur(60px);
-  z-index: 0;
-  pointer-events: none;
-}
-.ambient-glow-secondary {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, var(--color-tertiary-container) 0%, transparent 70%);
-  opacity: 0.1;
-  filter: blur(80px);
-  z-index: 0;
-  pointer-events: none;
-}
 .circuit-pattern {
-  background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M10 10h80v80h-80z" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/><path d="M20 20c10-10 30-10 40 0s10 30 0 40-30 10-40 0-10-30 0-40zm10 10c5-5 15-5 20 0s5 15 0 20-15 5-20 0-5-15 0-20z" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M10 10h80v80h-80z" fill="none" stroke="rgba(255,255,255,0.015)" stroke-width="1"/><path d="M20 20c10-10 30-10 40 0s10 30 0 40-30 10-40 0-10-30 0-40zm10 10c5-5 15-5 20 0s5 15 0 20-15 5-20 0-5-15 0-20z" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/></svg>');
   background-size: 100px 100px;
 }
 
 /* Glass & Buttons */
-.glass, .glass-panel {
-  background: rgba(19, 19, 23, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-top-color: rgba(255, 255, 255, 0.15);
-  border-left-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+.glass,
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-left-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
 }
+
 .glass-button-secondary {
   background: transparent;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
+
 .glow-btn-primary {
-  background: linear-gradient(90deg, var(--color-primary-container), var(--color-secondary-container));
-  box-shadow: 0 0 20px rgba(45, 91, 255, 0.4);
+  background: linear-gradient(90deg, var(--color-primary-container), var(--color-primary));
+  box-shadow: 0 4px 20px rgba(202, 138, 4, 0.3);
+  color: #020617;
+  /* Dark text for gold button */
 }
-.glow-btn-primary:hover { box-shadow: 0 0 30px rgba(45, 91, 255, 0.6); }
+
+.glow-btn-primary:hover {
+  box-shadow: 0 6px 30px rgba(202, 138, 4, 0.5);
+}
 
 /* Text Utilities */
-.text-gradient, .gradient-text {
-  background: linear-gradient(to right, var(--color-primary), var(--color-tertiary));
+.text-gradient,
+.gradient-text {
+  background: linear-gradient(to right, var(--color-primary-light), var(--color-primary-container));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
 .gradient-text-alt {
-  background: linear-gradient(90deg, var(--color-electric-blue), var(--color-neon-violet));
+  background: linear-gradient(90deg, var(--color-accent), var(--color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 /* Animations */
 @keyframes pulse-slow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
+
 .animate-pulse-slow {
   animation: pulse-slow 3s ease-in-out infinite;
 }
+
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
+
 .animate-float {
   animation: float 5s ease-in-out infinite;
 }
