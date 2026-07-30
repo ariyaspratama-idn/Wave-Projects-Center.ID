@@ -191,7 +191,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
                 const [developers]: any = await pool.query(`
                     SELECT u.id, u.name FROM users u 
                     INNER JOIN user_roles ur ON ur.user_id = u.id 
-                    WHERE ur.role_id = 2 AND u.status = 'active'
+                    WHERE ur.role_id = 2
                 `);
 
                 if (developers.length > 0) {
