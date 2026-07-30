@@ -29,9 +29,14 @@ export async function POST(req: Request) {
 
         let developerChatId = undefined;
         if (orderId) {
-            const [devData]: any = await pool.query("SELECT u.telegram_id FROM orders o JOIN users u ON o.assigned_to = u.id WHERE o.id = ?", [orderId]);
-            if (devData.length > 0 && devData[0].telegram_id) {
-                developerChatId = devData[0].telegram_id;
+            try {
+                const [devData]: any = await pool.query("SELECT u.telegram_id FROM orders o JOIN users u ON o.assigned_to = u.id WHERE o.id = ?", [orderId]);
+                if (devData.length > 0 && devData[0].telegram_id) {
+                    developerChatId = devData[0].telegram_id;
+                }
+            } catch (err: any) {
+                console.warn("[PRD] Fallback. Column telegram_id may not exist on prod deployment yet:", err.message);
+                // will fallback to main admin telegram bot if undefined
             }
         }
 

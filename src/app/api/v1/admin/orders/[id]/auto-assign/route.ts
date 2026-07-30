@@ -17,7 +17,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         if (orderRows.length === 0) return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
 
         const [developers]: any = await pool.query(`
-            SELECT u.id, u.name, u.telegram_id 
+            SELECT u.id, u.name 
             FROM users u 
             INNER JOIN user_roles ur ON ur.user_id = u.id 
             WHERE ur.role_id = 2
