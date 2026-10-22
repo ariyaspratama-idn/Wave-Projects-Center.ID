@@ -3,8 +3,6 @@ import type { NextRequest } from 'next/server';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
-// Gunakan credential yang sudah ada (dari process.env)
-// Jika belum ada/tidak diset, Redis constructor akan mencari UPSTASH_REDIS_REST_URL dan UPSTASH_REDIS_REST_TOKEN otomatis
 let ratelimit: Ratelimit | null = null;
 try {
     if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
@@ -18,18 +16,54 @@ try {
     console.error("Upstash Redis gagal diinisiasi. Pastikan credentials ada di environment.", e);
 }
 
+// Basic Auth: return null kalau lolos, atau response 401/503 kalau gagal
+function checkBasicAuth(request: NextRequest): NextResponse | null {
+    const user = process.env.BASIC_AUTH_USER;
+    const pass = process.env.BASIC_AUTH_PASS;
+
+    // Aman secara default: kalau env belum diisi, semua akses ditolak
+    if (!user || !pass) {
+        return new NextResponse('Auth not configured', { status: 503 });
+    }
+
+    const header = request.headers.get('authorization');
+    if (header?.startsWith('Basic ')) {
+        try {
+            const decoded = atob(header.slice(6));
+            const i = decoded.indexOf(':');
+            if (decoded.slice(0, i) === user && decoded.slice(i + 1) === pass) {
+                return null;
+            }
+        } catch {
+            // header rusak, jatuh ke 401 di bawah
+        }
+    }
+
+    return new NextResponse('Authentication required', {
+        status: 401,
+        headers: { 'WWW-Authenticate': 'Basic realm="Wave Projects"' },
+    });
+}
+
 export async function middleware(request: NextRequest) {
-    // Hanya rate limit untuk endpoint chat
+    // 1. Pengaman login untuk semua halaman dan API
+    const denied = checkBasicAuth(request);
+    if (denied) return denied;
+
+    // 2. Rate limit hanya untuk endpoint chat
     if (request.nextUrl.pathname.startsWith('/api/v1/chat/send')) {
         if (!ratelimit) {
-            // Jika Redis belum diset oleh user (gunakan API key yang sudah ada kata user), bypass
             return NextResponse.next();
         }
 
-        const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
+        // Di belakang Cloudflare, IP asli ada di cf-connecting-ip
+        const ip =
+            request.headers.get('cf-connecting-ip') ||
+            request.headers.get('x-forwarded-for') ||
+            '127.0.0.1';
 
         try {
-            const { success, limit, reset, remaining } = await ratelimit.limit(ip);
+            const { success } = await ratelimit.limit(ip);
 
             if (!success) {
                 return NextResponse.json(
@@ -42,7 +76,7 @@ export async function middleware(request: NextRequest) {
             }
         } catch (error) {
             console.error("Gagal melakukan rate limit check", error);
-            // Bypass on failure so we don't block legitimate traffic if DB is down
+            // Bypass kalau DB bermasalah agar trafik sah tidak terblokir
         }
     }
 
@@ -50,5 +84,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: '/api/v1/chat/send',
+    // Sebelumnya hanya '/api/v1/chat/send'. Sekarang semua rute, kecuali aset statis.
+    matcher: '/((?!_next/static|_next/image|favicon.ico).*)',
 };
