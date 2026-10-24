@@ -43,6 +43,7 @@ export async function POST(req: Request) {
             return NextResponse.json({
                 success: true,
                 data: {
+                    limit_reached: true,
                     session_token: `CHAT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                     reply: "Wah, obrolan kita seru banget nih! Biar rancangan sistem kamu ini bisa langsung dieksekusi jadi PRD resmi dan masuk ke tahap penawaran harga, yuk langsung lanjutin obrolan ini via WhatsApp bareng mentor software kami di sini: https://wa.me/085156618435"
                 }
@@ -71,7 +72,7 @@ export async function POST(req: Request) {
 
         // 3. Generate AI Response
         let contactText = "WhatsApp: 085156618435 | Email: a.pramadhan.id@gmail.com";
-        let aiText = "Terima kasih atas pesannya! Mohon tunggu sebentar, konsultan kami akan segera menganalisisnya.";
+        let aiText = `Maaf, sistem AI sedang terkendala. Silakan hubungi admin kami melalui: ${contactText}`;
         try {
             // Context injection: Fetch all available packages from DB to provide accurate recommendations
             const [pkgs]: any = await pool.query("SELECT id, name, price, estimated_days, code FROM packages WHERE is_active = 1");
@@ -108,6 +109,7 @@ export async function POST(req: Request) {
                     if (parsed.whatsapp) contactText = `WhatsApp: wa.me/${parsed.whatsapp.replace(/[^0-9]/g, '')} | Email: ${parsed.email}`;
                 }
             } catch (e) { }
+            aiText = `Maaf, sistem AI sedang terkendala. Silakan hubungi admin kami melalui: ${contactText}`;
 
             // Context injection 4: Fetch Portfolios for brag rights
             let portText = "";
@@ -144,7 +146,7 @@ export async function POST(req: Request) {
             6. Jika pelanggan hanya menyapa (baru mulai percakapan), balaslah dengan ramah, selipkan inti dari slogan (Bantu bangun software ekosistem satu pintu), dan tanyakan project apa yang ingin mereka wujudkan.
             7. CHECKOUT TRIGGER (SUPER PENTING): Jika klien SUDAH SETUJU mengambil suatu paket dan bertanya cara membayarnya / langkah selanjutnya, kamu WAJIB menyertakan kode rahasia ini tepat di akhir teks balasanmu tanpa modifikasi apa pun: \`[CHECKOUT_TRIGGER:<ID_PAKET>]\`. Contoh: jika mereka ambil Paket Ultimate yang ID-nya 3, kamu balas: "Baik, silakan klik tombol di bawah ini: [CHECKOUT_TRIGGER:3]".`;
 
-            // Restructure prompt history into OpenAI Messages format
+            // Susun riwayat percakapan dalam format OpenAI (system / user / assistant)
             const messages: any[] = [{ role: "system", content: systemPrompt }];
 
             chatHistoryDb.forEach((msg: any) => {
@@ -155,17 +157,30 @@ export async function POST(req: Request) {
             });
             messages.push({ role: "user", content: message });
 
-            return NextResponse.json({
-                success: true,
-                data: {
-                    session_token: activeToken,
-                    session_id: sessionId,
-                    messages: messages,
-                    customer_name: customer_name,
-                    contact_text: contactText
+            // Panggil n8n (jaringan internal Docker). Prompt dan kunci AI tidak pernah sampai ke browser.
+            const webhookUrl = process.env.N8N_CHAT_WEBHOOK_URL;
+            if (webhookUrl) {
+                try {
+                    const n8nRes = await fetch(webhookUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ messages }),
+                        signal: AbortSignal.timeout(90000)
+                    });
+                    if (n8nRes.ok) {
+                        const n8nData = await n8nRes.json();
+                        if (n8nData && typeof n8nData.reply === 'string' && n8nData.reply.trim()) {
+                            aiText = n8nData.reply;
+                        }
+                    } else {
+                        console.error("n8n membalas status", n8nRes.status);
+                    }
+                } catch (n8nErr) {
+                    console.error("Gagal memanggil n8n:", n8nErr);
                 }
-            });
-
+            } else {
+                console.error("N8N_CHAT_WEBHOOK_URL belum diisi");
+            }
         } catch (outerGenErr: any) {
             console.error("Outer AI processing failed:", outerGenErr);
             return NextResponse.json({
@@ -173,6 +188,40 @@ export async function POST(req: Request) {
                 error: `Mohon maaf, sistem database kami sedang padat. Silakan hubungi admin.`
             }, { status: 500 });
         }
+
+        // 4. Simpan jawaban AI + eskalasi ke admin (dulu dikerjakan oleh /chat/save)
+        try {
+            const lowerPrompt = (message || "").toLowerCase();
+            const lowerResponse = aiText.toLowerCase();
+            const needsHuman = lowerResponse.includes("whatsapp") || lowerResponse.includes("wa.me");
+
+            if (lowerPrompt.includes("ultimate") || lowerResponse.includes("ultimate") || lowerPrompt.includes("custom") || lowerResponse.includes("custom")) {
+                import('@/lib/whatsapp').then(({ sendAdminAlert }) => {
+                    sendAdminAlert(customer_name || 'Guest', 'Paket Ultimate / Custom', String(sessionId)).catch((e: any) => console.error(e));
+                }).catch(e => console.error("Gagal load whatsapp lib", e));
+            }
+
+            if (needsHuman) {
+                await pool.query("UPDATE chat_sessions SET needs_human = 1 WHERE id = ?", [sessionId]);
+            }
+
+            await pool.query(
+                "INSERT INTO chat_messages (chat_session_id, sender, content) VALUES (?, ?, ?)",
+                [sessionId, 'ai', aiText]
+            );
+        } catch (saveErr) {
+            console.error("Gagal menyimpan jawaban AI:", saveErr);
+        }
+
+        return NextResponse.json({
+            success: true,
+            data: {
+                session_token: activeToken,
+                session_id: sessionId,
+                reply: aiText,
+                contact_text: contactText
+            }
+        });
 
     } catch (e: any) {
         return NextResponse.json({ success: false, error: e.message }, { status: 500 });

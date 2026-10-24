@@ -61,7 +61,10 @@ export default function ChatPage() {
             const data = await res.json();
 
             if (data.success && data.data) {
-                if (data.data.reply) {
+                                if (data.data.reply) {
+                    if (!data.data.limit_reached && data.data.session_token) {
+                        localStorage.setItem("wave_chat_session", data.data.session_token);
+                    }
                     setMessages((prev) => [...prev, { role: "ai", content: data.data.reply }]);
                     setLoading(false);
                     return;
