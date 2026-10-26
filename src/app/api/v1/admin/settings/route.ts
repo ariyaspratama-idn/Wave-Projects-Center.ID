@@ -1,5 +1,19 @@
 import { NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
 import pool from '@/lib/db';
+
+const JWT_SECRET = process.env.JWT_SECRET || '';
+
+function isAdmin(req: Request): boolean {
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !JWT_SECRET) return false;
+    try {
+        jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+        return true;
+    } catch {
+        return false;
+    }
+}
 
 export async function GET() {
     try {
@@ -32,6 +46,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+    if (!isAdmin(req)) {
+        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
     try {
         const body = await req.json();
         const settings = body.settings;
